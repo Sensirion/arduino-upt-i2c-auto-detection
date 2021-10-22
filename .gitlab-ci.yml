@@ -1,6 +1,6 @@
 stages:
   - validate
-
+  - test
 
 syntax_check:
   stage: validate
@@ -18,3 +18,19 @@ cppcheck:
   tags: [linux, docker]
   script:
     - cppcheck --std=c++11 --language=c++ --error-exitcode=1 --enable=warning,style,performance,portability src/*
+
+compile_test:
+    stage: test
+    image:
+        name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.4.0
+    tags: [docker, linux]
+    before_script:
+        - rm -rf ../sensirion-core-arduino-library
+    script:
+        - arduino-cli lib install "Sensirion Core"@0.5.2
+        - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:samd:mkrzero examples/exampleUsage
+        - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:avr:mega examples/exampleUsage
+        - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:avr:nano examples/exampleUsage
+        - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:avr:uno examples/exampleUsage
+        - arduino-cli compile --libraries=".." --warnings all --fqbn esp32:esp32:esp32 examples/exampleUsage
+        - arduino-cli compile --libraries=".." --warnings all --fqbn esp8266:esp8266:generic examples/exampleUsage
