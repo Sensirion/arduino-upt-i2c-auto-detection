@@ -28,6 +28,11 @@ compile_test:
         - rm -rf ../sensirion-core-arduino-library
     script:
         - arduino-cli lib install "Sensirion Core"@0.5.2
+        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-sht4x
+        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-scd4x
+        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-sfa3x
+        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-svm40
+        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-sen44
         - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:samd:mkrzero examples/exampleUsage
         - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:avr:mega examples/exampleUsage
         - arduino-cli compile --libraries=".." --warnings all --fqbn arduino:avr:nano examples/exampleUsage
