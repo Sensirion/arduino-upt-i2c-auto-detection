@@ -27,6 +27,7 @@ compile_test:
     before_script:
         - rm -rf ../sensirion-core-arduino-library
     script:
+        - export ARDUINO_LIBRARY_ENABLE_UNSAFE_INSTALL=true
         - arduino-cli lib install "Sensirion Core"@0.5.2
         - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-sht4x
         - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-scd4x
