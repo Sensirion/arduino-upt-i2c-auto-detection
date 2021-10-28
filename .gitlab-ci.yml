@@ -24,6 +24,7 @@ compile_test:
     image:
         name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
     tags: [docker, linux]
+    needs: []
     before_script:
         - rm -rf ../sensirion-core-arduino-library
     script:
