@@ -1,6 +1,6 @@
 stages:
   - validate
-
+  - test
 
 syntax_check:
   stage: validate
@@ -18,3 +18,25 @@ cppcheck:
   tags: [linux, docker]
   script:
     - cppcheck --std=c++11 --language=c++ --error-exitcode=1 --enable=warning,style,performance,portability src/*
+
+compile_test:
+    stage: test
+    image:
+        name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
+    tags: [docker, linux]
+    needs: []
+    script:
+        - export ARDUINO_LIBRARY_ENABLE_UNSAFE_INSTALL=true
+        - arduino-cli lib install "Sensirion Core@0.5.2"
+        - arduino-cli lib install "Sensirion I2C SCD4x@0.3.1"
+        - arduino-cli lib install "Sensirion I2C SFA3x@0.1.0"
+        - arduino-cli lib install "Sensirion I2C SVM40@0.1.0"
+        - arduino-cli lib install "Sensirion I2C SEN44@0.1.0"
+        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-sht4x
+        - ln -s $PWD ~/Arduino/libraries/
+        - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/exampleUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/exampleUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/exampleUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/exampleUsage
+        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/exampleUsage
+        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/exampleUsage
