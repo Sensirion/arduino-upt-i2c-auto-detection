@@ -32,7 +32,7 @@ compile_test:
         - arduino-cli lib install "Sensirion I2C SFA3x@0.1.0"
         - arduino-cli lib install "Sensirion I2C SVM40@0.1.0"
         - arduino-cli lib install "Sensirion I2C SEN44@0.1.0"
-        - arduino-cli lib install --git-url https://github.com/Sensirion/arduino-i2c-sht4x
+        - arduino-cli lib install "Sensirion I2C SHT4x@0.1.0"
         - ln -s $PWD ~/Arduino/libraries/
         - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/exampleUsage
         - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/exampleUsage
