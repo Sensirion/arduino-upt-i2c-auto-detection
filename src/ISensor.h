@@ -32,8 +32,8 @@
 #define _I_SENSOR_H_
 
 class ISensor {
-    public:
-        virtual void newMeasurement() = 0;
+  public:
+    virtual void newMeasurement() = 0;
 };
 
 #endif /* _I_SENSOR_H_ */

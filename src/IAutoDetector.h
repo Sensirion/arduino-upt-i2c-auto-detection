@@ -34,8 +34,8 @@
 #include "SensorList.h"
 
 class IAutoDetector {
-    public:
-        virtual void findSensors(SensorList& sensorList) = 0;
+  public:
+    virtual void findSensors(SensorList& sensorList) = 0;
 };
 
 #endif /* _I_AUTO_DETECTOR_ */

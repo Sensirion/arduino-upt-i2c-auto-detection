@@ -31,13 +31,10 @@
 #include "SensorManager.h"
 
 void SensorManager::init() {
-
 }
 
 void SensorManager::updateData() {
-
 }
 
 void SensorManager::getData() {
-    
 }
