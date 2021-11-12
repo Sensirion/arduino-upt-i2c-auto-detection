@@ -31,11 +31,19 @@
 #ifndef _SENSOR_MANAGER_H_
 #define _SENSOR_MANAGER_H_
 
+#include "SensorList.h"
+#include "IAutoDetector.h"
+
 class SensorManager {
     public:
         void init();
         void updateData();
         void getData();
+        explicit SensorManager(IAutoDetector& detector_)
+        : _detector(detector_){};
+    private:
+        SensorList _sensorList;
+        IAutoDetector& _detector;
 };
 
 #endif /* _SENSOR_MANAGER_H_ */
