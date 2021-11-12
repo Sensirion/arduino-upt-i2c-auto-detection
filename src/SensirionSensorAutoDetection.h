@@ -36,6 +36,7 @@
 #include "SensirionI2CSfa3x.h"
 #include "SensirionI2CSht4x.h"
 #include "SensirionI2CSvm40.h"
+#include "SensorManager.h"
 #include <Arduino.h>
 
 #endif /* _SENSIRION_SENSOR_AUTO_DETECTION_H_ */
