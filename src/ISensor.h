@@ -35,11 +35,9 @@
 
 class ISensor {
   public:
+    virtual ~ISensor() = default;
     virtual uint16_t start() = 0;
     virtual uint16_t newMeasurement() = 0;
-
-  protected:
-    ~ISensor() = default;
 };
 
 #endif /* _I_SENSOR_H_ */
