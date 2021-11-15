@@ -34,6 +34,9 @@
 class ISensor {
   public:
     virtual void newMeasurement() = 0;
+
+  protected:
+    ~ISensor() = default;
 };
 
 #endif /* _I_SENSOR_H_ */
