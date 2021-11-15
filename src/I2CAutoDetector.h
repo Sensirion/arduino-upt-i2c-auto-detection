@@ -35,4 +35,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#endif
+class I2CAutoDetector : public IAutoDetector {
+  public:
+    void findSensors(SensorList& sensorList) override;
+};
+
+#endif /* _I2C_AUTO_DETECTOR_H_ */

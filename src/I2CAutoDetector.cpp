@@ -29,3 +29,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "I2CAutoDetector.h"
+
+void I2CAutoDetector::findSensors(SensorList& sensorList) {
+    Serial.println("Searching for Sensors..");
+    int nSensors = 0;
+    for (byte address = 1; address < 127; address++) {
+        Wire.beginTransmission(address);
+        byte error = Wire.endTransmission();
+
+        if (error == 0) {
+            Serial.print("Found Address 0x");
+            if (address < 16) {
+                Serial.print('0');
+            }
+            Serial.print(address, HEX);
+            Serial.print(": ");
+
+            switch (address) {
+                    // case (/* sensor address */):
+                    //     Serial.print("Adding /* sensor name */ .. ");
+                    //     error = putInFreeMemory(sensorList, new /* ISensor object
+                    //     */);
+                    //     if (error) {
+                    //         nSensor++;
+                    //         Serial.println("Success!");
+                    //     }
+                    //     else {
+                    //         Serial.println("ERROR: Failed to Add Sensor!");
+                    //     }
+                    //     break;
+
+                    // further cases
+
+                default:
+                    Serial.println("No matching sensor!");
+            }
+        }
+    }
+    if (nSensors == 0) {
+        Serial.println("No sensors detected!");
+    }
+}
