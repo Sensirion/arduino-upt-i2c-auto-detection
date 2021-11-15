@@ -28,15 +28,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSIRION_SENSOR_AUTO_DETECTION_H_
-#define _SENSIRION_SENSOR_AUTO_DETECTION_H_
+#ifndef _I_AUTO_DETECTOR_
+#define _I_AUTO_DETECTOR_
 
-#include "SensirionI2CScd4x.h"
-#include "SensirionI2CSen44.h"
-#include "SensirionI2CSfa3x.h"
-#include "SensirionI2CSht4x.h"
-#include "SensirionI2CSvm40.h"
-#include "SensorManager.h"
-#include <Arduino.h>
+#include "SensorList.h"
 
-#endif /* _SENSIRION_SENSOR_AUTO_DETECTION_H_ */
+class IAutoDetector {
+  public:
+    virtual void findSensors(SensorList& sensorList) = 0;
+};
+
+#endif /* _I_AUTO_DETECTOR_ */
