@@ -53,5 +53,14 @@ Scd4x::Scd4x(TwoWire& wire) {
 }
 
 void Scd4x::newMeasurement() {
-
+    uint16_t error;
+    error = _driver.readMeasurement(_co2, _temperature, _humidity);
+    if (error) {
+        char errorMessage[256];
+        Serial.print("Error trying to execute readMeasurement(): ");
+        errorToString(error, errorMessage, 256);
+        Serial.println(errorMessage);
+    } else if (_co2 == 0) {
+        Serial.println("Invalid sample detected.");
+    }
 }
