@@ -33,9 +33,12 @@
 
 #include "ISensor.h"
 #include "SensirionI2CScd4x.h"
+#include <Arduino.h>
+#include <Wire.h>
 
 class Scd4x : public ISensor {
   public:
+    explicit Scd4x(TwoWire& wire);
     void newMeasurement() override;
 
   private:

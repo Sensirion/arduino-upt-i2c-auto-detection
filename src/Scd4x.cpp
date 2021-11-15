@@ -30,5 +30,28 @@
  */
 #include "Scd4x.h"
 
+Scd4x::Scd4x(TwoWire& wire) {
+    uint16_t error;
+    char errorMessage[256];
+
+    _driver.begin(wire);
+
+    // stop potentially previously started measurement
+    error = _driver.stopPeriodicMeasurement();
+    if (error) {
+        Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
+        errorToString(error, errorMessage, 256);
+        Serial.println(errorMessage);
+    }
+    // Start Measurement
+    error = _driver.startPeriodicMeasurement();
+    if (error) {
+        Serial.print("Error trying to execute startPeriodicMeasurement(): ");
+        errorToString(error, errorMessage, 256);
+        Serial.println(errorMessage);
+    }
+}
+
 void Scd4x::newMeasurement() {
+
 }
