@@ -32,5 +32,7 @@
 #define _I2C_AUTO_DETECTOR_H_
 
 #include "IAutoDetector.h"
+#include <Arduino.h>
+#include <Wire.h>
 
 #endif
