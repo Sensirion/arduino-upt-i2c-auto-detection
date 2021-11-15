@@ -38,6 +38,9 @@
 class I2CAutoDetector : public IAutoDetector {
   public:
     void findSensors(SensorList& sensorList) override;
+
+  private:
+    bool putInFreeMemory(SensorList& sensorList, ISensor* pSensor);
 };
 
 #endif /* _I2C_AUTO_DETECTOR_H_ */
