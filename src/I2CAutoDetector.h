@@ -37,9 +37,11 @@
 
 class I2CAutoDetector : public IAutoDetector {
   public:
+    explicit I2CAutoDetector(TwoWire& wire) : _wire(wire){};
     void findSensors(SensorList& sensorList) override;
 
   private:
+    TwoWire& _wire;
     bool putInFreeMemory(SensorList& sensorList, ISensor* pSensor);
 };
 

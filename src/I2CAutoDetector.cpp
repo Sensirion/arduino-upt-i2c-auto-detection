@@ -34,8 +34,8 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
     Serial.println("Searching for Sensors..");
     int nSensors = 0;
     for (byte address = 1; address < 127; address++) {
-        Wire.beginTransmission(address);
-        byte error = Wire.endTransmission();
+        _wire.beginTransmission(address);
+        byte error = _wire.endTransmission();
 
         if (error == 0) {
             Serial.print("Found Address 0x");

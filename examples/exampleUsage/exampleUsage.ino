@@ -3,7 +3,7 @@
 #include "I2CAutoDetector.h"
 
 
-I2CAutoDetector detector;
+I2CAutoDetector detector(Wire);
 SensorManager sm(detector);
 
 Scd4x scd(Wire);
