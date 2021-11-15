@@ -32,10 +32,14 @@
 #define _SCD4X_H_
 
 #include "ISensor.h"
+#include "SensirionI2CScd4x.h"
 
 class Scd4x : public ISensor {
-    public:
-        void newMeasurement() override;
+  public:
+    void newMeasurement() override;
+
+  private:
+    SensirionI2CScd4x _driver;
 };
 
 #endif /* _SCD4X_H_ */
