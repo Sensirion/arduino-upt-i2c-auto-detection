@@ -31,6 +31,13 @@
 #ifndef _DATA_POINT_H_
 #define _DATA_POINT_H_
 
-struct DataPoint {};
+#include <Arduino.h>
+
+struct DataPoint {
+    const char* label;
+    String unit; // change to enum
+    float value = 0;
+    unsigned long timeStamp = millis();
+};
 
 #endif /* _DATA_POINT_H_ */
