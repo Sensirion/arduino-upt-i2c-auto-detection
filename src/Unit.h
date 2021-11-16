@@ -28,21 +28,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DATA_POINT_H_
-#define _DATA_POINT_H_
+#ifndef _UNIT_H_
+#define _UNIT_H_
 
-#include "Unit.h"
-#include <Arduino.h>
+enum Unit { TEMPERATURE_CELSIUS, RELATIVE_HUMIDITY_PERCENTAGE };
+static const char* unitStr[] = {"C", "%RH"};
 
-struct DataPoint {
-    const char* label;
-    const Unit unit;
-    float value = 0;
-    unsigned long timeStamp = millis();
-    DataPoint() = delete;
-    DataPoint(const char* label_, const Unit& unit_)
-        : label(label_), unit(unit_) {
-    }
-};
-
-#endif /* _DATA_POINT_H_ */
+#endif /* _UNIT_H_ */
