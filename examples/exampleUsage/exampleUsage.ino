@@ -1,7 +1,6 @@
+#include "I2CAutoDetector.h"
 #include "Scd4x.h"
 #include "SensirionSensorAutoDetection.h"
-#include "I2CAutoDetector.h"
-
 
 SensorList sl;
 I2CAutoDetector* pDetector;
