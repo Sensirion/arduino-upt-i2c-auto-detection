@@ -30,7 +30,7 @@
  */
 #include "Scd4x.h"
 
-void Scd4x::start() {
+bool Scd4x::start() {
     char errorMessage[256];
 
     _driver.begin(_wire);
@@ -41,6 +41,7 @@ void Scd4x::start() {
         Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
         errorToString(error, errorMessage, 256);
         Serial.println(errorMessage);
+        return false;
     }
     // Start Measurement
     error = _driver.startPeriodicMeasurement();
@@ -48,7 +49,9 @@ void Scd4x::start() {
         Serial.print("Error trying to execute startPeriodicMeasurement(): ");
         errorToString(error, errorMessage, 256);
         Serial.println(errorMessage);
+        return false;
     }
+    return true;
 }
 
 void Scd4x::newMeasurement() {
