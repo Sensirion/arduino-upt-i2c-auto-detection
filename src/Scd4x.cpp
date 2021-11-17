@@ -30,12 +30,10 @@
  */
 #include "Scd4x.h"
 
-Scd4x::Scd4x(TwoWire& wire) {}
-
 void Scd4x::start() {
     char errorMessage[256];
 
-    _driver.begin(wire);
+    _driver.begin(_wire);
 
     // stop potentially previously started measurement
     uint16_t error = _driver.stopPeriodicMeasurement();
