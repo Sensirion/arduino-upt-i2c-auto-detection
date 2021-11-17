@@ -31,6 +31,8 @@
 #ifndef _I_SENSOR_H_
 #define _I_SENSOR_H_
 
+#include <Arduino.h>
+
 class ISensor {
   public:
     virtual uint16_t start() = 0;

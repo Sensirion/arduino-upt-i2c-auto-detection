@@ -30,7 +30,7 @@
  */
 #include "Scd4x.h"
 
-bool Scd4x::start() {
+uint16_t Scd4x::start() {
     char errorMessage[256];
 
     _driver.begin(_wire);
@@ -41,7 +41,7 @@ bool Scd4x::start() {
         Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
         errorToString(error, errorMessage, 256);
         Serial.println(errorMessage);
-        return false;
+        return error;
     }
     // Start Measurement
     error = _driver.startPeriodicMeasurement();
@@ -49,20 +49,22 @@ bool Scd4x::start() {
         Serial.print("Error trying to execute startPeriodicMeasurement(): ");
         errorToString(error, errorMessage, 256);
         Serial.println(errorMessage);
-        return false;
+        return error;
     }
-    return true;
+    return error;
 }
 
-void Scd4x::newMeasurement() {
-    uint16_t error;
-    error = _driver.readMeasurement(_co2, _temperature, _humidity);
+uint16_t Scd4x::newMeasurement() {
+    uint16_t error = _driver.readMeasurement(_co2, _temperature, _humidity);
     if (error) {
         char errorMessage[256];
         Serial.print("Error trying to execute readMeasurement(): ");
         errorToString(error, errorMessage, 256);
         Serial.println(errorMessage);
+        return error;
     } else if (_co2 == 0) {
         Serial.println("Invalid sample detected.");
+        return true;
     }
+    return error;
 }
