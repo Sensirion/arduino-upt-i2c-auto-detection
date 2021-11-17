@@ -33,6 +33,7 @@
 
 class ISensor {
   public:
+    virtual void start() = 0;
     virtual void newMeasurement() = 0;
 
   protected:
