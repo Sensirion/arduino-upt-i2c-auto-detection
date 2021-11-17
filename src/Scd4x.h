@@ -43,6 +43,7 @@ class Scd4x : public ISensor {
     void newMeasurement() override;
 
   private:
+    TwoWire& _wire;
     SensirionI2CScd4x _driver;
     uint16_t _co2 = 0;
     float _temperature = 0.0f;
