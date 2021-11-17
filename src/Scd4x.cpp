@@ -52,6 +52,9 @@ Scd4x::Scd4x(TwoWire& wire) {
     }
 }
 
+void Scd4x::start() {
+}
+
 void Scd4x::newMeasurement() {
     uint16_t error;
     error = _driver.readMeasurement(_co2, _temperature, _humidity);

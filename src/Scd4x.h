@@ -39,6 +39,7 @@
 class Scd4x : public ISensor {
   public:
     explicit Scd4x(TwoWire& wire);
+    void start() override;
     void newMeasurement() override;
 
   private:
