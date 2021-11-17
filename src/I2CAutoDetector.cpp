@@ -82,18 +82,3 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         Serial.println("No sensors detected!");
     }
 }
-
-// returns true if adding sensor failed
-bool I2CAutoDetector::putInFreeMemory(SensorList& sensorList,
-                                      ISensor* pSensor) {
-    int i = 0;
-    while (i < 16) {
-        if (!sensorList.sensors[i]) {
-            sensorList.sensors[i] = pSensor;
-            return false;
-        }
-        ++i;
-    }
-    delete pSensor;
-    return true;
-}

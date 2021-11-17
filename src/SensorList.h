@@ -35,6 +35,7 @@
 
 struct SensorList {
     ISensor* sensors[16] = {};
+    bool addSensor(ISensor* pSensor);
 };
 
 #endif /* _SENSOR_LIST_H */

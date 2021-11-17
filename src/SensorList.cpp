@@ -28,21 +28,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _I2C_AUTO_DETECTOR_H_
-#define _I2C_AUTO_DETECTOR_H_
+#include "SensorList.h"
 
-#include "IAutoDetector.h"
-#include "Scd4x.h"
-#include <Arduino.h>
-#include <Wire.h>
-
-class I2CAutoDetector : public IAutoDetector {
-  public:
-    explicit I2CAutoDetector(TwoWire& wire) : _wire(wire){};
-    void findSensors(SensorList& sensorList) override;
-
-  private:
-    TwoWire& _wire;
-};
-
-#endif /* _I2C_AUTO_DETECTOR_H_ */
+bool SensorList::addSensor(ISensor* pSensor) {
+    for (int i = 0; i < 16; ++i) {
+        if (sensors[i]) {
+            sensors[i] = pSensor;
+            return false;
+        }
+    }
+    delete pSensor;
+    return true;
+}
