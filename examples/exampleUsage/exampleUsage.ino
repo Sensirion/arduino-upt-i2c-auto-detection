@@ -3,22 +3,14 @@
 #include "SensirionSensorAutoDetection.h"
 
 SensorList sl;
-I2CAutoDetector* pDetector;
-SensorManager* pSm;
+I2CAutoDetector i2CAutoDetector(Wire);
 
-Scd4x scd(Wire);
-int i;
 void setup() {
     Serial.begin(115200);
     Serial.println();
     Wire.begin();
-    pDetector = new I2CAutoDetector(Wire);
-    pSm = new SensorManager(*pDetector);
-    pDetector->findSensors(sl);
+    i2CAutoDetector.findSensors(sl);
 }
 
 void loop() {
-    Serial.println("loop");
-    delay(1000);
-    i++;
 }
