@@ -33,8 +33,8 @@
 
 class ISensor {
   public:
-    virtual bool start() = 0;
-    virtual void newMeasurement() = 0;
+    virtual uint16_t start() = 0;
+    virtual uint16_t newMeasurement() = 0;
 
   protected:
     ~ISensor() = default;
