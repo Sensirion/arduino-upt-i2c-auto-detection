@@ -46,31 +46,25 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
             Serial.print(": ");
 
             switch (address) {
-                case (0x62):
+                case (0x62): {
                     Serial.print("Adding SCD4X .. ");
-                    error = putInFreeMemory(sensorList, new Scd4x(_wire));
+                    ISensor* pSensor = new Scd4x(_wire);
+                    error = pSensor->start();
+                    if (error) {
+                        Serial.println("ERROR: Failed to Start Sensor!");
+                        delete pSensor;
+                        break;
+                    }
+                    error = sensorList.addSensor(pSensor);
                     if (error) {
                         Serial.println("ERROR: Failed to Add Sensor!");
+                        delete pSensor;
                     } else {
                         nSensors++;
                         Serial.println("Success!");
                     }
                     break;
-
-                    // case (/* sensor address */):
-                    //     Serial.print("Adding /* sensor name */ .. ");
-                    //     error = putInFreeMemory(sensorList, new /* ISensor
-                    //     object
-                    //     */);
-                    //     if (error) {
-                    //         Serial.println("ERROR: Failed to Add Sensor!");
-                    //     }
-                    //     else {
-                    //         nSensor++;
-                    //         Serial.println("Success!");
-                    //     }
-                    //     break;
-
+                }
                     // further cases
 
                 default:

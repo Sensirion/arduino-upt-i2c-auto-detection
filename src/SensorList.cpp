@@ -37,6 +37,5 @@ bool SensorList::addSensor(ISensor* pSensor) {
             return false;
         }
     }
-    delete pSensor;
     return true;
 }
