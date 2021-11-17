@@ -30,14 +30,15 @@
  */
 #include "Scd4x.h"
 
-Scd4x::Scd4x(TwoWire& wire) {
-    uint16_t error;
+Scd4x::Scd4x(TwoWire& wire) {}
+
+void Scd4x::start() {
     char errorMessage[256];
 
     _driver.begin(wire);
 
     // stop potentially previously started measurement
-    error = _driver.stopPeriodicMeasurement();
+    uint16_t error = _driver.stopPeriodicMeasurement();
     if (error) {
         Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
         errorToString(error, errorMessage, 256);
@@ -50,9 +51,6 @@ Scd4x::Scd4x(TwoWire& wire) {
         errorToString(error, errorMessage, 256);
         Serial.println(errorMessage);
     }
-}
-
-void Scd4x::start() {
 }
 
 void Scd4x::newMeasurement() {
