@@ -32,7 +32,7 @@
 
 bool SensorList::addSensor(ISensor* pSensor) {
     for (int i = 0; i < 16; ++i) {
-        if (sensors[i]) {
+        if (sensors[i] == nullptr) {
             sensors[i] = pSensor;
             return false;
         }
