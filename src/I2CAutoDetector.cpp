@@ -51,13 +51,20 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
                     ISensor* pSensor = new Scd4x(_wire);
                     error = pSensor->start();
                     if (error) {
-                        Serial.println("ERROR: Failed to Start Sensor!");
+                        char errorMessage[256];
+                        Serial.print(
+                            "\nError trying to start() sensor instance: ");
+                        errorToString(error, errorMessage, 256);
+                        Serial.println(errorMessage);
                         delete pSensor;
                         break;
                     }
-                    error = sensorList.addSensor(pSensor);
+                    error = sensorList.addSensor(
+                        pSensor);  // not in line with sensirion core error
+                                   // messages
                     if (error) {
-                        Serial.println("ERROR: Failed to Add Sensor!");
+                        Serial.println("\nError trying to add sensor instance "
+                                       "to sensorList.");
                         delete pSensor;
                     } else {
                         nSensors++;

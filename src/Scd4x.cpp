@@ -32,26 +32,14 @@
 #include "SensirionCore.h"
 
 uint16_t Scd4x::start() {
-    char errorMessage[256];
-
     _driver.begin(_wire);
-
     // stop potentially previously started measurement
     uint16_t error = _driver.stopPeriodicMeasurement();
     if (error) {
-        Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
-        errorToString(error, errorMessage, 256);
-        Serial.println(errorMessage);
         return error;
     }
     // Start Measurement
     error = _driver.startPeriodicMeasurement();
-    if (error) {
-        Serial.print("Error trying to execute startPeriodicMeasurement(): ");
-        errorToString(error, errorMessage, 256);
-        Serial.println(errorMessage);
-        return error;
-    }
     return error;
 }
 
@@ -68,5 +56,5 @@ uint16_t Scd4x::newMeasurement() {
         return SensorSpecificError | 0x01;  // spececific co2 error
         // needs to be handled at a higher leverl
     }
-    return error;
+    return 0;
 }
