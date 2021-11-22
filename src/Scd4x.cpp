@@ -28,18 +28,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _I_SENSOR_H_
-#define _I_SENSOR_H_
+#include "Scd4x.h"
+#include "SensirionCore.h"
 
-#include <Arduino.h>
+uint16_t Scd4x::start() {
+    char errorMessage[256];
 
-class ISensor {
-  public:
-    virtual uint16_t start() = 0;
-    virtual uint16_t newMeasurement() = 0;
+    _driver.begin(_wire);
 
-  protected:
-    ~ISensor() = default;
-};
+    // stop potentially previously started measurement
+    uint16_t error = _driver.stopPeriodicMeasurement();
+    if (error) {
+        Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
+        errorToString(error, errorMessage, 256);
+        Serial.println(errorMessage);
+        return error;
+    }
+    // Start Measurement
+    error = _driver.startPeriodicMeasurement();
+    if (error) {
+        Serial.print("Error trying to execute startPeriodicMeasurement(): ");
+        errorToString(error, errorMessage, 256);
+        Serial.println(errorMessage);
+        return error;
+    }
+    return error;
+}
 
-#endif /* _I_SENSOR_H_ */
+uint16_t Scd4x::newMeasurement() {
+    uint16_t error = _driver.readMeasurement(_co2, _temperature, _humidity);
+    if (error) {
+        char errorMessage[256];
+        Serial.print("Error trying to execute readMeasurement(): ");
+        errorToString(error, errorMessage, 256);
+        Serial.println(errorMessage);
+        return error;
+    } else if (_co2 == 0) {
+        Serial.println("Invalid sample detected.");
+        return SensorSpecificError | 0x01;  // spececific co2 error
+        // needs to be handled at a higher leverl
+    }
+    return error;
+}

@@ -28,18 +28,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _I_SENSOR_H_
-#define _I_SENSOR_H_
+#ifndef _SCD4X_H_
+#define _SCD4X_H_
 
+#include "ISensor.h"
+#include "SensirionI2CScd4x.h"
 #include <Arduino.h>
+#include <Wire.h>
 
-class ISensor {
+class Scd4x : public ISensor {
   public:
-    virtual uint16_t start() = 0;
-    virtual uint16_t newMeasurement() = 0;
+    explicit Scd4x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t newMeasurement() override;
 
-  protected:
-    ~ISensor() = default;
+  private:
+    TwoWire& _wire;
+    SensirionI2CScd4x _driver;
+    uint16_t _co2 = 0;
+    float _temperature = 0.0f;
+    float _humidity = 0.0f;
 };
 
-#endif /* _I_SENSOR_H_ */
+#endif /* _SCD4X_H_ */
