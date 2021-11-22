@@ -29,6 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "Scd4x.h"
+#include "SensirionCore.h"
 
 uint16_t Scd4x::start() {
     char errorMessage[256];
@@ -64,7 +65,8 @@ uint16_t Scd4x::newMeasurement() {
         return error;
     } else if (_co2 == 0) {
         Serial.println("Invalid sample detected.");
-        return true;
+        return SensorSpecificError | 0x01;  // spececific co2 error
+        // needs to be handled at a higher leverl
     }
     return error;
 }
