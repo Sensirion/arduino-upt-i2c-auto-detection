@@ -34,7 +34,8 @@
 #include "ISensor.h"
 
 struct SensorList {
-    ISensor* sensors[16] = {};
+    static constexpr int MAX_SENSORS = 16;
+    ISensor* sensors[MAX_SENSORS] = {};
     bool addSensor(ISensor* pSensor);
 };
 

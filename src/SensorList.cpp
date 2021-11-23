@@ -31,7 +31,7 @@
 #include "SensorList.h"
 
 bool SensorList::addSensor(ISensor* pSensor) {
-    for (int i = 0; i < 16; ++i) {
+    for (int i = 0; i < MAX_SENSORS; ++i) {
         if (sensors[i] == nullptr) {
             sensors[i] = pSensor;
             return false;
