@@ -32,7 +32,6 @@
 #define _I_AUTO_DETECTOR_
 
 #include "SensorList.h"
-#include <Arduino.h>
 
 class IAutoDetector {
   public:

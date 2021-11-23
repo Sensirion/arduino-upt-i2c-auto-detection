@@ -33,7 +33,6 @@
 
 #include "ISensor.h"
 #include "SensirionI2CScd4x.h"
-#include <Arduino.h>
 #include <Wire.h>
 
 class Scd4x : public ISensor {

@@ -32,8 +32,6 @@
 #define _I2C_AUTO_DETECTOR_H_
 
 #include "IAutoDetector.h"
-#include "Scd4x.h"
-#include <Arduino.h>
 #include <Wire.h>
 
 class I2CAutoDetector : public IAutoDetector {

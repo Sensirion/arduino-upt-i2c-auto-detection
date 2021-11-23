@@ -29,6 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "I2CAutoDetector.h"
+#include "Scd4x.h"
+#include "SensirionCore.h"
 
 void I2CAutoDetector::findSensors(SensorList& sensorList) {
     Serial.println("Searching for Sensors..");
