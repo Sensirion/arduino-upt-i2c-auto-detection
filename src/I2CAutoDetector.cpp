@@ -36,50 +36,49 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
     for (byte address = 1; address < 127; address++) {
         _wire.beginTransmission(address);
         byte error = _wire.endTransmission();
+        if (error) {
+            continue;
+        }
+        Serial.print("Found Address 0x");
+        if (address < 16) {
+            Serial.print('0');
+        }
+        Serial.print(address, HEX);
+        Serial.print(": ");
 
-        if (error == 0) {
-            Serial.print("Found Address 0x");
-            if (address < 16) {
-                Serial.print('0');
-            }
-            Serial.print(address, HEX);
-            Serial.print(": ");
-
-            switch (address) {
-                case (0x62): {
-                    Serial.print("Adding SCD4X .. ");
-                    ISensor* pSensor = new Scd4x(_wire);
-                    error = pSensor->start();
-                    if (error) {
-                        char errorMessage[256];
-                        Serial.print(
-                            "\nError trying to start() sensor instance: ");
-                        errorToString(error, errorMessage, 256);
-                        Serial.println(errorMessage);
-                        delete pSensor;
-                        break;
-                    }
-                    error = sensorList.addSensor(
-                        pSensor);  // not in line with sensirion core error
-                                   // messages
-                    if (error) {
-                        Serial.println("\nError trying to add sensor instance "
-                                       "to sensorList.");
-                        delete pSensor;
-                    } else {
-                        nSensors++;
-                        Serial.println("Success!");
-                    }
+        switch (address) {
+            case (0x62): {
+                Serial.print("Adding SCD4X .. ");
+                ISensor* pSensor = new Scd4x(_wire);
+                error = pSensor->start();
+                if (error) {
+                    char errorMessage[256];
+                    Serial.print("\nError trying to start() sensor instance: ");
+                    errorToString(error, errorMessage, 256);
+                    Serial.println(errorMessage);
+                    delete pSensor;
                     break;
                 }
-                    // further cases
-
-                default:
-                    Serial.println("No matching sensor!");
+                error = sensorList.addSensor(
+                    pSensor);  // not in line with sensirion core error
+                               // messages
+                if (error) {
+                    Serial.println("\nError trying to add sensor instance "
+                                   "to sensorList.");
+                    delete pSensor;
+                } else {
+                    nSensors++;
+                    Serial.println("Success!");
+                }
+                break;
             }
+                // further cases
+
+            default:
+                Serial.println("No matching sensor!");
         }
     }
-    if (nSensors == 0) {
-        Serial.println("No sensors detected!");
-    }
+}
+if (nSensors == 0) {
+    Serial.println("No sensors detected!");
 }
