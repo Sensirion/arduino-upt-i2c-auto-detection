@@ -32,12 +32,17 @@
 #include "Scd4x.h"
 #include "SensirionCore.h"
 
+byte I2CAutoDetector::probeAddress(byte& address) {
+    _wire.beginTransmission(address);
+    byte error = _wire.endTransmission();
+    return error;
+}
+
 void I2CAutoDetector::findSensors(SensorList& sensorList) {
     Serial.println("Searching for Sensors..");
     int nSensors = 0;
     for (byte address = 1; address < 127; address++) {
-        _wire.beginTransmission(address);
-        byte error = _wire.endTransmission();
+        byte error = probeAddress(address);
         if (error) {
             continue;
         }

@@ -41,6 +41,7 @@ class I2CAutoDetector : public IAutoDetector {
 
   private:
     TwoWire& _wire;
+    byte probeAddress(const byte& address);
 };
 
 #endif /* _I2C_AUTO_DETECTOR_H_ */
