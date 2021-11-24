@@ -37,6 +37,7 @@
 
 class Scd4x : public ISensor {
   public:
+    static const uint16_t I2C_ADDRESS = 0x62;
     explicit Scd4x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
     uint16_t measure() override;

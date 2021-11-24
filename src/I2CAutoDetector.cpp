@@ -50,7 +50,7 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         ISensor* pSensor = nullptr;
 
         switch (address) {
-            case (0x62): {
+            case (Scd4x::I2C_ADDRESS): {
                 Serial.print("Adding SCD4X .. ");
                 pSensor = new Scd4x(_wire);
             }
