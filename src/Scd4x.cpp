@@ -43,7 +43,7 @@ uint16_t Scd4x::start() {
     return error;
 }
 
-uint16_t Scd4x::newMeasurement() {
+uint16_t Scd4x::measure() {
     uint16_t error = _driver.readMeasurement(_co2, _temperature, _humidity);
     if (error) {
         char errorMessage[256];
