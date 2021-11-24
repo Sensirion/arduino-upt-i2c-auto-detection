@@ -32,10 +32,19 @@
 #include "Scd4x.h"
 #include "SensirionCore.h"
 
-byte I2CAutoDetector::probeAddress(byte& address) {
+byte I2CAutoDetector::probeAddress(const byte& address) {
     _wire.beginTransmission(address);
     byte error = _wire.endTransmission();
     return error;
+}
+
+ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
+    switch (address) {
+        case (Scd4x::I2C_ADDRESS): {
+            return new Scd4x(_wire);
+        }
+        default: { return nullptr; }
+    }
 }
 
 void I2CAutoDetector::findSensors(SensorList& sensorList) {
@@ -52,22 +61,10 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         }
         Serial.print(address, HEX);
         Serial.print(": ");
-        ISensor* pSensor = nullptr;
-
-        switch (address) {
-            case (Scd4x::I2C_ADDRESS): {
-                Serial.print("Adding SCD4X .. ");
-                pSensor = new Scd4x(_wire);
-            }
-
-                // further cases
-
-            default: {
-                Serial.println("No matching sensor!");
-                continue;
-            }
+        ISensor* pSensor = createSensorFromAddress(address);
+        if (!pSensor) {
+            continue;
         }
-
         error = pSensor->start();
         if (error) {
             char errorMessage[256];
