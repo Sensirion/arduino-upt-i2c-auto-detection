@@ -48,19 +48,11 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
 }
 
 void I2CAutoDetector::findSensors(SensorList& sensorList) {
-    Serial.println("Searching for Sensors..");
-    int nSensors = 0;
     for (byte address = 1; address < 127; address++) {
         byte error = probeAddress(address);
         if (error) {
             continue;
         }
-        Serial.print("Found Address 0x");
-        if (address < 16) {
-            Serial.print('0');
-        }
-        Serial.print(address, HEX);
-        Serial.print(": ");
         ISensor* pSensor = createSensorFromAddress(address);
         if (!pSensor) {
             continue;
@@ -68,7 +60,7 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         error = pSensor->start();
         if (error) {
             char errorMessage[256];
-            Serial.print("\nError trying to start() sensor instance: ");
+            Serial.print("Error trying to start() sensor instance: ");
             errorToString(error, errorMessage, 256);
             Serial.println(errorMessage);
             delete pSensor;
@@ -77,15 +69,9 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         error = sensorList.addSensor(pSensor);  // not in line with sensirion
                                                 // core error messages
         if (error) {
-            Serial.println("\nError trying to add sensor instance "
+            Serial.println("Error trying to add sensor instance "
                            "to sensorList.");
             delete pSensor;
-        } else {
-            nSensors++;
-            Serial.println("Success!");
         }
-    }
-    if (nSensors == 0) {
-        Serial.println("No sensors detected!");
     }
 }
