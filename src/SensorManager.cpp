@@ -31,6 +31,7 @@
 #include "SensorManager.h"
 
 void SensorManager::init() {
+    _detector.findSensors(_sensorList);
 }
 
 void SensorManager::updateData() {
