@@ -34,7 +34,17 @@ void SensorManager::init() {
     _detector.findSensors(_sensorList);
 }
 
-void SensorManager::updateData() {
+uint16_t SensorManager::updateData() {
+    uint16_t error;
+    for (int i = 0; i < SensorList::LENGTH; ++i) {
+        if (_sensorList.sensors[i]) {
+            error = _sensorList.sensors[i]->measure();
+            if (error) {
+                return error;
+            }
+        }
+    }
+    return error;
 }
 
 void SensorManager::getData() {

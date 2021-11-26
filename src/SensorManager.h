@@ -32,12 +32,13 @@
 #define _SENSOR_MANAGER_H_
 
 #include "IAutoDetector.h"
+#include "SensirionCore.h"
 #include "SensorList.h"
 
 class SensorManager {
   public:
     void init();
-    void updateData();
+    uint16_t updateData();
     void getData();
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
 
