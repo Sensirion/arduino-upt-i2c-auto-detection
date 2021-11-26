@@ -44,17 +44,5 @@ uint16_t Scd4x::start() {
 }
 
 uint16_t Scd4x::measure() {
-    uint16_t error = _driver.readMeasurement(_co2, _temperature, _humidity);
-    if (error) {
-        char errorMessage[256];
-        Serial.print("Error trying to execute readMeasurement(): ");
-        errorToString(error, errorMessage, 256);
-        Serial.println(errorMessage);
-        return error;
-    } else if (_co2 == 0) {
-        Serial.println("Invalid sample detected.");
-        return SensorSpecificError | 0x01;  // spececific co2 error
-        // needs to be handled at a higher leverl
-    }
-    return 0;
+    return _driver.readMeasurement(_co2, _temperature, _humidity);
 }
