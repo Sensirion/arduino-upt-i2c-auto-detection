@@ -49,6 +49,8 @@ class ISensor {
     virtual unsigned long getLatestMeasurementTimeStamp() const = 0;
     virtual SensorId getSensorId() const = 0;
     virtual size_t getNumberOfDataPoints() const = 0;
+    virtual void setMeasurementInterval(unsigned long& interval) = 0;
+    virtual unsigned long getMeasurementInterval() const = 0;
 };
 
 #endif /* _I_SENSOR_H_ */

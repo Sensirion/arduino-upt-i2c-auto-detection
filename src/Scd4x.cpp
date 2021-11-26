@@ -82,3 +82,11 @@ size_t Scd4x::getNumberOfDataPoints() const {
 unsigned long Scd4x::getLatestMeasurementTimeStamp() const {
     return _latestMeasurementTimeStamp;
 }
+
+void Scd4x::setMeasurementInterval(unsigned long& interval) {
+    _measurementInterval = interval;
+}
+
+unsigned long Scd4x::getMeasurementInterval() const {
+    return _measurementInterval;
+}

@@ -46,6 +46,8 @@ class Scd4x : public ISensor {
     unsigned long getLatestMeasurementTimeStamp() const override;
     SensorId getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
+    void setMeasurementInterval(unsigned long& interval) override;
+    unsigned long getMeasurementInterval() const override;
 
   private:
     TwoWire& _wire;
@@ -55,6 +57,7 @@ class Scd4x : public ISensor {
     uint16_t _co2 = 0;
     float _temperature = 0.0f;
     float _humidity = 0.0f;
+    unsigned long _measurementInterval = 5000;
 };
 
 #endif /* _SCD4X_H_ */
