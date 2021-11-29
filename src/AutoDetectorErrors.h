@@ -28,15 +28,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSOR_LIST_H
-#define _SENSOR_LIST_H
+#ifndef _AUTO_DETECTOR_ERRORS_H_
+#define _AUTO_DETECTOR_ERRORS_H_
 
-#include "ISensor.h"
+#include <stdint.h>
 
-struct SensorList {
-    static constexpr int LENGTH = 16;
-    ISensor* sensors[LENGTH] = {};
-    uint16_t addSensor(ISensor* pSensor);
+enum AutoDetectorError : uint16_t {
+    NO_ERROR = 0,
+    FULL_SENSOR_LIST_ERROR = 1,
 };
 
-#endif /* _SENSOR_LIST_H */
+#endif /* _AUTO_DETECTOR_ERRORS_H_ */

@@ -29,13 +29,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SensorList.h"
+#include "AutoDetectorErrors.h"
 
-bool SensorList::addSensor(ISensor* pSensor) {
+uint16_t SensorList::addSensor(ISensor* pSensor) {
     for (int i = 0; i < LENGTH; ++i) {
         if (sensors[i] == nullptr) {
             sensors[i] = pSensor;
-            return false;
+            return NO_ERROR;
         }
     }
-    return true;
+    return FULL_SENSOR_LIST_ERROR;
 }
