@@ -29,6 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "I2CAutoDetector.h"
+#include "AutoDetectorErrors.h"
 #include "Scd4x.h"
 #include "SensirionCore.h"
 
@@ -49,26 +50,25 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
 
 void I2CAutoDetector::findSensors(SensorList& sensorList) {
     for (byte address = 1; address < 127; address++) {
-        byte error = probeAddress(address);
-        if (error) {
+        byte probeFailed = probeAddress(address);
+        if (probeFailed) {
             continue;
         }
         ISensor* pSensor = createSensorFromAddress(address);
         if (!pSensor) {
             continue;
         }
-        error = pSensor->start();
-        if (error) {
+        uint16_t startFailed = pSensor->start();
+        if (startFailed) {
             char errorMessage[256];
             Serial.print("Error trying to start() sensor instance: ");
-            errorToString(error, errorMessage, 256);
+            errorToString(startFailed, errorMessage, 256);
             Serial.println(errorMessage);
             delete pSensor;
             continue;
         }
-        error = sensorList.addSensor(pSensor);  // not in line with sensirion
-                                                // core error messages
-        if (error) {
+        AutoDetectorError addFailed = sensorList.addSensor(pSensor);
+        if (addFailed) {
             Serial.println("Error trying to add sensor instance "
                            "to sensorList.");
             delete pSensor;

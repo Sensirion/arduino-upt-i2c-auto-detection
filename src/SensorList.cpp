@@ -29,9 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SensorList.h"
-#include "AutoDetectorErrors.h"
 
-uint16_t SensorList::addSensor(ISensor* pSensor) {
+AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     for (int i = 0; i < LENGTH; ++i) {
         if (sensors[i] == nullptr) {
             sensors[i] = pSensor;
