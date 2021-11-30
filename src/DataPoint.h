@@ -35,9 +35,13 @@
 
 struct DataPoint {
     const char* label;
-    String unit; // change to enum
+    String unit;  // change to enum
     float value = 0;
     unsigned long timeStamp = millis();
+    DataPoint() = delete;
+    DataPoint(const char* label_, const String& unit_)
+        : label(label_), unit(unit_) {
+    }
 };
 
 #endif /* _DATA_POINT_H_ */
