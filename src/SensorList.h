@@ -31,10 +31,13 @@
 #ifndef _SENSOR_LIST_H
 #define _SENSOR_LIST_H
 
+#include "AutoDetectorErrors.h"
 #include "ISensor.h"
 
 struct SensorList {
-    ISensor* sensors[16] = {};
+    static constexpr int LENGTH = 16;
+    ISensor* sensors[LENGTH] = {};
+    AutoDetectorError addSensor(ISensor* pSensor);
 };
 
 #endif /* _SENSOR_LIST_H */

@@ -28,26 +28,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SCD4X_H_
-#define _SCD4X_H_
+#ifndef _AUTO_DETECTOR_ERRORS_H_
+#define _AUTO_DETECTOR_ERRORS_H_
 
-#include "ISensor.h"
-#include "SensirionI2CScd4x.h"
-#include <Wire.h>
+#include <stdint.h>
 
-class Scd4x : public ISensor {
-  public:
-    static const uint16_t I2C_ADDRESS = 0x62;
-    explicit Scd4x(TwoWire& wire) : _wire(wire){};
-    uint16_t start() override;
-    uint16_t measure() override;
-
-  private:
-    TwoWire& _wire;
-    SensirionI2CScd4x _driver;
-    uint16_t _co2 = 0;
-    float _temperature = 0.0f;
-    float _humidity = 0.0f;
+enum AutoDetectorError : uint16_t {
+    NO_ERROR = 0,
+    FULL_SENSOR_LIST_ERROR = 1,
 };
 
-#endif /* _SCD4X_H_ */
+#endif /* _AUTO_DETECTOR_ERRORS_H_ */

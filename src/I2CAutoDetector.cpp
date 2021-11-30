@@ -28,26 +28,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SCD4X_H_
-#define _SCD4X_H_
+#include "I2CAutoDetector.h"
+#include "AutoDetectorErrors.h"
+#include "Scd4x.h"
+#include "SensirionCore.h"
 
-#include "ISensor.h"
-#include "SensirionI2CScd4x.h"
-#include <Wire.h>
+byte I2CAutoDetector::probeAddress(const byte& address) {
+    _wire.beginTransmission(address);
+    byte error = _wire.endTransmission();
+    return error;
+}
 
-class Scd4x : public ISensor {
-  public:
-    static const uint16_t I2C_ADDRESS = 0x62;
-    explicit Scd4x(TwoWire& wire) : _wire(wire){};
-    uint16_t start() override;
-    uint16_t measure() override;
+ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
+    switch (address) {
+        case (Scd4x::I2C_ADDRESS): {
+            return new Scd4x(_wire);
+        }
+        default: { return nullptr; }
+    }
+}
 
-  private:
-    TwoWire& _wire;
-    SensirionI2CScd4x _driver;
-    uint16_t _co2 = 0;
-    float _temperature = 0.0f;
-    float _humidity = 0.0f;
-};
-
-#endif /* _SCD4X_H_ */
+void I2CAutoDetector::findSensors(SensorList& sensorList) {
+    for (byte address = 1; address < 127; address++) {
+        byte probeFailed = probeAddress(address);
+        if (probeFailed) {
+            continue;
+        }
+        ISensor* pSensor = createSensorFromAddress(address);
+        if (!pSensor) {
+            continue;
+        }
+        uint16_t startFailed = pSensor->start();
+        if (startFailed) {
+            char errorMessage[256];
+            Serial.print("Error trying to start() sensor instance: ");
+            errorToString(startFailed, errorMessage, 256);
+            Serial.println(errorMessage);
+            delete pSensor;
+            continue;
+        }
+        AutoDetectorError addFailed = sensorList.addSensor(pSensor);
+        if (addFailed) {
+            Serial.println("Error trying to add sensor instance "
+                           "to sensorList.");
+            delete pSensor;
+        }
+    }
+}
