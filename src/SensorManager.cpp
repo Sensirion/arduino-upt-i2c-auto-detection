@@ -35,14 +35,12 @@ void SensorManager::init() {
 }
 
 uint16_t SensorManager::updateData() {
-    uint16_t error;
+    uint16_t error = 0;
     for (int i = 0; i < SensorList::LENGTH; ++i) {
-        if (_sensorList.sensors[i]) {
-            error = _sensorList.sensors[i]->measure();
-            if (error) {
-                return error;
-            }
+        if (_sensorList.sensors[i] == nullptr) {
+            continue;
         }
+        error |= _sensorList.sensors[i]->measure();
     }
     return error;
 }
