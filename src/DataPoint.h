@@ -31,11 +31,12 @@
 #ifndef _DATA_POINT_H_
 #define _DATA_POINT_H_
 
+#include "ISensor.h"
 #include "Unit.h"
 #include <Arduino.h>
 
 struct DataPoint {
-    const char* label;
+    const SensorId id;
     const Unit unit;
     float value = 0;
     unsigned long timeStamp = millis();
