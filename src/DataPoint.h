@@ -40,9 +40,7 @@ struct DataPoint {
     const Unit unit;
     float value = 0;
     unsigned long timeStamp = 0;
-    DataPoint() = delete;
-    DataPoint(const char* label_, const Unit& unit_)
-        : label(label_), unit(unit_) {
+    DataPoint(const SensorId& id_, const Unit& unit_) : id(id_), unit(unit_) {
     }
 };
 
