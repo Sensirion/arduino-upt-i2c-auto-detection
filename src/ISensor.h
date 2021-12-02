@@ -38,6 +38,8 @@ class ISensor {
     virtual ~ISensor() = default;
     virtual uint16_t start() = 0;
     virtual uint16_t measure() = 0;
+    virtual void setLatestMeasurementError(uint16_t& error) = 0;
+    virtual uint16_t getLatestMeasurementError() = 0;
 };
 
 #endif /* _I_SENSOR_H_ */
