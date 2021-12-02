@@ -38,7 +38,7 @@
 class SensorManager {
   public:
     void init();
-    uint16_t updateData();
+    void updateData();
     void getData();
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
 
