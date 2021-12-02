@@ -33,6 +33,8 @@
 
 #include <Arduino.h>
 
+enum class SensorId { SCD4X };
+
 class ISensor {
   public:
     virtual ~ISensor() = default;
@@ -40,6 +42,7 @@ class ISensor {
     virtual uint16_t measure() = 0;
     virtual void setLatestMeasurementError(uint16_t& error) = 0;
     virtual uint16_t getLatestMeasurementError() const = 0;
+    virtual SensorId getSensorId() = 0;
 };
 
 #endif /* _I_SENSOR_H_ */
