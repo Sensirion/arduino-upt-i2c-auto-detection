@@ -2,15 +2,17 @@
 #include "Scd4x.h"
 #include "SensirionSensorAutoDetection.h"
 
-SensorList sl;
 I2CAutoDetector i2CAutoDetector(Wire);
+SensorManager sensorManager(i2CAutoDetector);
 
 void setup() {
     Serial.begin(115200);
     Serial.println();
     Wire.begin();
-    i2CAutoDetector.findSensors(sl);
+    sensorManager.init();
 }
 
 void loop() {
+    sensorManager.updateData();
+    delay(500);
 }

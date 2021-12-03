@@ -32,6 +32,7 @@
 #define _SENSOR_MANAGER_H_
 
 #include "IAutoDetector.h"
+#include "SensirionCore.h"
 #include "SensorList.h"
 
 class SensorManager {

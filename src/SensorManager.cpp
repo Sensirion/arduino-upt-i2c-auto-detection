@@ -31,9 +31,17 @@
 #include "SensorManager.h"
 
 void SensorManager::init() {
+    _detector.findSensors(_sensorList);
 }
 
 void SensorManager::updateData() {
+    for (int i = 0; i < SensorList::LENGTH; ++i) {
+        if (_sensorList.sensors[i] == nullptr) {
+            continue;
+        }
+        uint16_t error = _sensorList.sensors[i]->measure();
+        _sensorList.sensors[i]->setLatestMeasurementError(error);
+    }
 }
 
 void SensorManager::getData() {

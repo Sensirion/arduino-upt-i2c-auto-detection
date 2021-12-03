@@ -41,10 +41,13 @@ class Scd4x : public ISensor {
     explicit Scd4x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
     uint16_t measure() override;
+    void setLatestMeasurementError(uint16_t& error) override;
+    uint16_t getLatestMeasurementError() const override;
 
   private:
     TwoWire& _wire;
     SensirionI2CScd4x _driver;
+    uint16_t _latestMeasurementError = 0;
     uint16_t _co2 = 0;
     float _temperature = 0.0f;
     float _humidity = 0.0f;

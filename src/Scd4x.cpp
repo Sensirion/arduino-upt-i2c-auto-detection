@@ -46,3 +46,11 @@ uint16_t Scd4x::start() {
 uint16_t Scd4x::measure() {
     return _driver.readMeasurement(_co2, _temperature, _humidity);
 }
+
+void Scd4x::setLatestMeasurementError(uint16_t& error) {
+    _latestMeasurementError = error;
+}
+
+uint16_t Scd4x::getLatestMeasurementError() const {
+    return _latestMeasurementError;
+}
