@@ -32,6 +32,7 @@
 
 void SensorManager::init() {
     _detector.findSensors(_sensorList);
+    _data.init(_sensorList);
 }
 
 void SensorManager::updateData() {
