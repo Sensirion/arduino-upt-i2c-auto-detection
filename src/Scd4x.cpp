@@ -51,6 +51,6 @@ void Scd4x::setLatestMeasurementError(uint16_t& error) {
     _latestMeasurementError = error;
 }
 
-uint16_t Scd4x::getLatestMeasurementError() {
+uint16_t Scd4x::getLatestMeasurementError() const {
     return _latestMeasurementError;
 }
