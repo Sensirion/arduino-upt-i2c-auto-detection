@@ -32,18 +32,28 @@
 
 void SensorManager::init() {
     _detector.findSensors(_sensorList);
-    _data.init(_sensorList);
+    size_t length = _sensorList.getTotalNumberOfDataPoints();
+    _data.init(length);
 }
 
-void SensorManager::updateData() {
+AutoDetectorError SensorManager::updateData() {
     for (int i = 0; i < SensorList::LENGTH; ++i) {
+        size_t position = 0;
         if (_sensorList.sensors[i] == nullptr) {
             continue;
         }
-        uint16_t error = _sensorList.sensors[i]->measure();
+        if (position + _sensorList.sensors[i]->getNumberOfDataPoints() >
+            _data.getLength()) {
+            return DATAPOINTS_OVERFLOW_ERROR;
+        }
+        uint16_t error =
+            _sensorList.sensors[i]->measure(_data.dataPoints + position);
         _sensorList.sensors[i]->setLatestMeasurementError(error);
+        position += _sensorList.sensors[i]->getNumberOfDataPoints();
     }
+    return NO_ERROR;
 }
 
-void SensorManager::getData() {
+Data& SensorManager::getData() {
+    return _data;
 }
