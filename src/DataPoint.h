@@ -36,10 +36,11 @@
 #include <Arduino.h>
 
 struct DataPoint {
-    const SensorId id;
-    const Unit unit;
+    SensorId id;
+    Unit unit;
     float value = 0;
     unsigned long timeStamp = 0;
+    DataPoint() = default;
     DataPoint(const SensorId& id_, const Unit& unit_) : id(id_), unit(unit_) {
     }
 };
