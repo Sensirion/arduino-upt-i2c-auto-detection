@@ -46,7 +46,6 @@ class Scd4x : public ISensor {
     SensorId getSensorId() override;
 
   private:
-    const SensorId _id = SensorId::SCD4X;
     TwoWire& _wire;
     SensirionI2CScd4x _driver;
     uint16_t _latestMeasurementError = 0;
