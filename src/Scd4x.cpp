@@ -58,3 +58,7 @@ uint16_t Scd4x::getLatestMeasurementError() const {
 SensorId Scd4x::getSensorId() const {
     return SensorId::SCD4X;
 }
+
+size_t Scd4x::getNumberOfDataPoints() const {
+    return 3;
+}

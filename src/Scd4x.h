@@ -44,6 +44,7 @@ class Scd4x : public ISensor {
     void setLatestMeasurementError(uint16_t& error) override;
     uint16_t getLatestMeasurementError() const override;
     SensorId getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
 
   private:
     TwoWire& _wire;
