@@ -37,8 +37,8 @@ void SensorManager::init() {
 }
 
 AutoDetectorError SensorManager::updateData() {
+    size_t position = 0;
     for (int i = 0; i < SensorList::LENGTH; ++i) {
-        size_t position = 0;
         if (_sensorList.sensors[i] == nullptr) {
             continue;
         }
