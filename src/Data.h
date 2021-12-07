@@ -38,6 +38,9 @@ class Data {
     DataPoint* dataPoints = nullptr;
     void init(const size_t& length);
     size_t getLength() const;
+    ~Data() {
+        delete[] dataPoints;
+    }
 
   private:
     size_t _length = 0;
