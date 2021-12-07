@@ -38,6 +38,8 @@ struct SensorList {
     static constexpr int LENGTH = 16;
     ISensor* sensors[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
+    size_t countSensors();
+    size_t getTotalNumberOfDataPoints();
 };
 
 #endif /* _SENSOR_LIST_H */

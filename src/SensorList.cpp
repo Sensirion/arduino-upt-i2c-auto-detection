@@ -39,3 +39,23 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     }
     return FULL_SENSOR_LIST_ERROR;
 }
+
+size_t SensorList::countSensors() {
+    size_t numberOfSensors = 0;
+    for (int i = 0; i < LENGTH; ++i) {
+        if (sensors[i]) {
+            ++numberOfSensors;
+        }
+    }
+    return numberOfSensors;
+}
+
+size_t SensorList::getTotalNumberOfDataPoints() {
+    size_t totalNumberOfDataPoints = 0;
+    for (int i = 0; i < LENGTH; ++i) {
+        if (sensors[i]) {
+            totalNumberOfDataPoints += sensors[i]->getNumberOfDataPoints();
+        }
+    }
+    return totalNumberOfDataPoints;
+}
