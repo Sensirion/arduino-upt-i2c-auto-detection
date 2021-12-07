@@ -33,7 +33,7 @@
 
 #include <Arduino.h>
 
-enum class SensorId { SCD4X };
+enum class SensorId { UNDEFINED, SCD4X };
 
 class ISensor {
   public:

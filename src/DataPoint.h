@@ -36,8 +36,8 @@
 #include <Arduino.h>
 
 struct DataPoint {
-    SensorId id;
-    Unit unit;
+    SensorId id = SensorId::UNDEFINED;
+    Unit unit = Unit::UNDEFINED;
     float value = 0;
     unsigned long timeStamp = 0;
     DataPoint() = default;
