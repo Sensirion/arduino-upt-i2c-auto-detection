@@ -32,5 +32,6 @@
 #define _SENSOR_ID_H_
 
 enum class SensorId { UNDEFINED, SCD4X };
+static const char* sensorIdStr[] = {"UNDEFINED", "Scd4x"};
 
 #endif /* _SENSOR_ID_H_ */
