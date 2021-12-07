@@ -33,8 +33,6 @@
 
 #include <Arduino.h>
 
-enum class SensorId { UNDEFINED, SCD4X };
-
 class ISensor {
   public:
     virtual ~ISensor() = default;

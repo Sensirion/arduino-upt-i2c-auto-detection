@@ -28,23 +28,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DATA_POINT_H_
-#define _DATA_POINT_H_
+#ifndef _SENSOR_ID_H_
+#define _SENSOR_ID_H_
 
-#include "SensorId.h"
-#include "Unit.h"
-#include <Arduino.h>
+enum class SensorId { UNDEFINED, SCD4X };
 
-struct DataPoint {
-    SensorId id = SensorId::UNDEFINED;
-    Unit unit = Unit::UNDEFINED;
-    float value = 0;
-    unsigned long timeStamp = 0;
-    DataPoint() = default;
-    DataPoint(const SensorId& id_, const Unit& unit_, const float& value_,
-              const unsigned long& timeStamp_)
-        : id(id_), unit(unit_), value(value_), timeStamp(timeStamp_) {
-    }
-};
-
-#endif /* _DATA_POINT_H_ */
+#endif /* _SENSOR_ID_H_ */
