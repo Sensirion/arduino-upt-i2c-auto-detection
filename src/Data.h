@@ -28,24 +28,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSOR_MANAGER_H_
-#define _SENSOR_MANAGER_H_
+#ifndef _DATA_H_
+#define _DATA_H_
 
-#include "IAutoDetector.h"
-#include "SensirionCore.h"
-#include "SensorList.h"
+#include "DataPoint.h"
 
-class SensorManager {
+class Data {
   public:
-    void init();
-    void updateData();
-    void getData();
-    explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+    DataPoint* dataPoints = nullptr;
+    void init(const size_t& length);
+    size_t getLength() const;
 
   private:
-    Data _data;
-    SensorList _sensorList;
-    IAutoDetector& _detector;
+    size_t _length = 0;
 };
 
-#endif /* _SENSOR_MANAGER_H_ */
+#endif /* _DATA_H_ */
