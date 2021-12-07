@@ -41,7 +41,9 @@ struct DataPoint {
     float value = 0;
     unsigned long timeStamp = 0;
     DataPoint() = default;
-    DataPoint(const SensorId& id_, const Unit& unit_) : id(id_), unit(unit_) {
+    DataPoint(const SensorId& id_, const Unit& unit_, const float& value_,
+              const unsigned long& timeStamp_)
+        : id(id_), unit(unit_), value(value_), timeStamp(timeStamp_) {
     }
 };
 
