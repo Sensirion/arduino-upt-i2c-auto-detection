@@ -28,21 +28,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _I_SENSOR_H_
-#define _I_SENSOR_H_
+#ifndef _DATA_POINT_H_
+#define _DATA_POINT_H_
 
+#include "ISensor.h"
+#include "Unit.h"
 #include <Arduino.h>
 
-enum class SensorId { SCD4X };
-
-class ISensor {
-  public:
-    virtual ~ISensor() = default;
-    virtual uint16_t start() = 0;
-    virtual uint16_t measure() = 0;
-    virtual void setLatestMeasurementError(uint16_t& error) = 0;
-    virtual uint16_t getLatestMeasurementError() const = 0;
-    virtual SensorId getSensorId() const = 0;
+struct DataPoint {
+    const SensorId id;
+    const Unit unit;
+    float value = 0;
+    unsigned long timeStamp = 0;
+    DataPoint(const SensorId& id_, const Unit& unit_) : id(id_), unit(unit_) {
+    }
 };
 
-#endif /* _I_SENSOR_H_ */
+#endif /* _DATA_POINT_H_ */

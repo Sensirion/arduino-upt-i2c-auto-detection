@@ -28,21 +28,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _I_SENSOR_H_
-#define _I_SENSOR_H_
+#ifndef _UNIT_H_
+#define _UNIT_H_
 
-#include <Arduino.h>
+enum Unit { TEMPERATURE_CELSIUS, RELATIVE_HUMIDITY_PERCENTAGE };
+static const char* unitStr[] = {"C", "%RH"};
 
-enum class SensorId { SCD4X };
-
-class ISensor {
-  public:
-    virtual ~ISensor() = default;
-    virtual uint16_t start() = 0;
-    virtual uint16_t measure() = 0;
-    virtual void setLatestMeasurementError(uint16_t& error) = 0;
-    virtual uint16_t getLatestMeasurementError() const = 0;
-    virtual SensorId getSensorId() const = 0;
-};
-
-#endif /* _I_SENSOR_H_ */
+#endif /* _UNIT_H_ */
