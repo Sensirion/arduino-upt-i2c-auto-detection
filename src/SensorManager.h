@@ -40,7 +40,7 @@ class SensorManager {
   public:
     void init();
     AutoDetectorError updateData();
-    Data& getData();
+    const Data& getData() const;
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
 
   private:

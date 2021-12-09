@@ -54,6 +54,6 @@ AutoDetectorError SensorManager::updateData() {
     return NO_ERROR;
 }
 
-Data& SensorManager::getData() {
+const Data& SensorManager::getData() const {
     return _data;
 }
