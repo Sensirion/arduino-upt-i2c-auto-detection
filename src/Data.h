@@ -38,8 +38,29 @@ class Data {
     DataPoint* dataPoints = nullptr;
     void init(const size_t& length);
     size_t getLength() const;
+    Data() = default;
     ~Data() {
         delete[] dataPoints;
+    }
+    Data(const Data&) = delete;             // copy constructor
+    Data& operator=(const Data&) = delete;  // copy assignment operator
+    Data(Data&& src)
+        : dataPoints(src.dataPoints),
+          _length(src._length) {  // move constructor
+        src.dataPoints = nullptr;
+        src._length = 0;
+    }
+    Data& operator=(Data&& src) {  // move assignment operator
+        if (&src == this) {        // self assignment detection
+            return *this;
+        }
+        delete[] dataPoints;  // release resources if exist
+
+        this->dataPoints = src.dataPoints;
+        src.dataPoints = nullptr;
+        this->_length = src._length;
+        src._length = 0;
+        return *this;
     }
 
   private:
