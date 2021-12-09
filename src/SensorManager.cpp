@@ -46,6 +46,13 @@ AutoDetectorError SensorManager::updateData() {
             _data.getLength()) {
             return DATAPOINTS_OVERFLOW_ERROR;
         }
+        unsigned long currentTimeStamp = millis();
+        unsigned long elapsedTime =
+            currentTimeStamp -
+            _sensorList.sensors[i]->getLastMeasurementTimeStamp();
+        if (elapsedTime < _sensorList.sensors[i]->getMeasurementInterval()) {
+            continue;
+        }
         uint16_t error =
             _sensorList.sensors[i]->measure(_data.dataPoints + position);
         _sensorList.sensors[i]->setLatestMeasurementError(error);
