@@ -46,6 +46,7 @@ class ISensor {
     virtual uint16_t measure(DataPoint dataPoints[]) = 0;
     virtual void setLatestMeasurementError(uint16_t& error) = 0;
     virtual uint16_t getLatestMeasurementError() const = 0;
+    virtual unsigned long getLatestMeasurementTimeStamp() const = 0;
     virtual SensorId getSensorId() const = 0;
     virtual size_t getNumberOfDataPoints() const = 0;
 };

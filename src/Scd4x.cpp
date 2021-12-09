@@ -49,6 +49,7 @@ uint16_t Scd4x::measure(DataPoint dataPoints[]) {
     float humi;
     uint16_t error = _driver.readMeasurement(co2, temp, humi);
     const unsigned long currentTimeStamp = millis();
+    _latestMeasurementTimeStamp = currentTimeStamp;
     if (error) {
         return error;
     }
@@ -76,4 +77,8 @@ SensorId Scd4x::getSensorId() const {
 
 size_t Scd4x::getNumberOfDataPoints() const {
     return 3;
+}
+
+unsigned long Scd4x::getLatestMeasurementTimeStamp() const {
+    return _latestMeasurementTimeStamp;
 }

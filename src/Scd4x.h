@@ -43,6 +43,7 @@ class Scd4x : public ISensor {
     uint16_t measure(DataPoint dataPoints[]) override;
     void setLatestMeasurementError(uint16_t& error) override;
     uint16_t getLatestMeasurementError() const override;
+    unsigned long getLatestMeasurementTimeStamp() const override;
     SensorId getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
 
@@ -50,6 +51,7 @@ class Scd4x : public ISensor {
     TwoWire& _wire;
     SensirionI2CScd4x _driver;
     uint16_t _latestMeasurementError = 0;
+    unsigned long _latestMeasurementTimeStamp = 0;
     uint16_t _co2 = 0;
     float _temperature = 0.0f;
     float _humidity = 0.0f;
