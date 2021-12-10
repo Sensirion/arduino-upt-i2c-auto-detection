@@ -25,11 +25,16 @@ void setup() {
     Serial.println();
     Wire.begin();
     sensorManager.init();
-    delay(5000);
+    /** interval = 2 x loop delay
+     *  Thus the data will only be updated every 2nd loop
+     *  while being printed every loop.
+     */
+    sensorManager.setInterval(10000, SensorId::SCD4X);
+    delay(100);
 }
 
 void loop() {
-    delay(500);
+    delay(5000);
     AutoDetectorError error = sensorManager.updateData();
     if (error) {
         return;
