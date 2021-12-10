@@ -49,7 +49,7 @@ AutoDetectorError SensorManager::updateData() {
         unsigned long currentTimeStamp = millis();
         unsigned long elapsedTime =
             currentTimeStamp -
-            _sensorList.sensors[i]->getLastMeasurementTimeStamp();
+            _sensorList.sensors[i]->getLatestMeasurementTimeStamp();
         if (elapsedTime < _sensorList.sensors[i]->getMeasurementInterval()) {
             continue;
         }
@@ -63,4 +63,14 @@ AutoDetectorError SensorManager::updateData() {
 
 const Data& SensorManager::getData() const {
     return _data;
+}
+
+void SensorManager::setInterval(unsigned long interval, SensorId sensorId) {
+    for (int i = 0; i < SensorList::LENGTH; ++i) {
+        if (_sensorList.sensors[i] == nullptr)
+            continue;
+        if (_sensorList.sensors[i]->getSensorId() == sensorId) {
+            _sensorList.sensors[i]->setMeasurementInterval(interval);
+        }
+    }
 }
