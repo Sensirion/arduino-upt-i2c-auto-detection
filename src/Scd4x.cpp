@@ -43,31 +43,21 @@ uint16_t Scd4x::start() {
     return error;
 }
 
-uint16_t Scd4x::measure(DataPoint dataPoints[]) {
+uint16_t Scd4x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
     uint16_t co2;
     float temp;
     float humi;
     uint16_t error = _driver.readMeasurement(co2, temp, humi);
-    const unsigned long currentTimeStamp = millis();
     if (error) {
         return error;
     }
     dataPoints[0] = DataPoint(SensorId::SCD4X, Unit::PARTS_PER_MILLION,
-                              static_cast<float>(co2), currentTimeStamp);
-    dataPoints[1] = DataPoint(SensorId::SCD4X, Unit::TEMPERATURE_CELSIUS, temp,
-                              currentTimeStamp);
-    dataPoints[2] =
-        DataPoint(SensorId::SCD4X, Unit::RELATIVE_HUMIDITY_PERCENTAGE, humi,
-                  currentTimeStamp);
+                              static_cast<float>(co2), timeStamp);
+    dataPoints[1] =
+        DataPoint(SensorId::SCD4X, Unit::TEMPERATURE_CELSIUS, temp, timeStamp);
+    dataPoints[2] = DataPoint(
+        SensorId::SCD4X, Unit::RELATIVE_HUMIDITY_PERCENTAGE, humi, timeStamp);
     return HighLevelError::NoError;
-}
-
-void Scd4x::setLatestMeasurementError(uint16_t& error) {
-    _latestMeasurementError = error;
-}
-
-uint16_t Scd4x::getLatestMeasurementError() const {
-    return _latestMeasurementError;
 }
 
 SensorId Scd4x::getSensorId() const {
@@ -76,4 +66,8 @@ SensorId Scd4x::getSensorId() const {
 
 size_t Scd4x::getNumberOfDataPoints() const {
     return 3;
+}
+
+unsigned long Scd4x::getMinimumMeasurementInterval() const {
+    return 5000;
 }
