@@ -50,6 +50,7 @@ AutoDetectorError SensorManager::updateData() {
         unsigned long elapsedTime =
             currentTimeStamp - _sensorList.latestMeasurementTimeStamps[i];
         if (elapsedTime < _sensorList.intervals[i]) {
+            position += _sensorList.sensors[i]->getNumberOfDataPoints();
             continue;
         }
         uint16_t error = _sensorList.sensors[i]->measure(
