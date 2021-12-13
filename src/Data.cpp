@@ -32,6 +32,7 @@
 
 void Data::init(const size_t& length) {
     _length = length;
+    delete[] dataPoints;
     dataPoints = new DataPoint[_length];
 }
 
