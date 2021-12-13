@@ -31,6 +31,7 @@
 #include "I2CAutoDetector.h"
 #include "AutoDetectorErrors.h"
 #include "Scd4x.h"
+#include "Sen44.h"
 #include "SensirionCore.h"
 
 byte I2CAutoDetector::probeAddress(const byte& address) {
@@ -43,6 +44,9 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
     switch (address) {
         case (Scd4x::I2C_ADDRESS): {
             return new Scd4x(_wire);
+        }
+        case (Sen44::I2C_ADDRESS): {
+            return new Sen44(_wire);
         }
         default: { return nullptr; }
     }
