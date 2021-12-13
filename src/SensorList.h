@@ -37,6 +37,9 @@
 struct SensorList {
     static constexpr int LENGTH = 16;
     ISensor* sensors[LENGTH] = {};
+    uint16_t latestMeasurementErrors[LENGTH] = {};
+    unsigned long latestMeasurementTimeStamps[LENGTH] = {};
+    unsigned long intervals[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
     size_t countSensors();
     size_t getTotalNumberOfDataPoints();

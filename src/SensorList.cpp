@@ -34,6 +34,7 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     for (int i = 0; i < LENGTH; ++i) {
         if (sensors[i] == nullptr) {
             sensors[i] = pSensor;
+            intervals[i] = pSensor->getMinimumMeasurementInterval();
             return NO_ERROR;
         }
     }

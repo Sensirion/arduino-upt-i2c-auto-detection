@@ -48,14 +48,14 @@ AutoDetectorError SensorManager::updateData() {
         }
         unsigned long currentTimeStamp = millis();
         unsigned long elapsedTime =
-            currentTimeStamp -
-            _sensorList.sensors[i]->getLatestMeasurementTimeStamp();
-        if (elapsedTime < _sensorList.sensors[i]->getMeasurementInterval()) {
+            currentTimeStamp - _sensorList.latestMeasurementTimeStamps[i];
+        if (elapsedTime < _sensorList.intervals[i]) {
             continue;
         }
-        uint16_t error =
-            _sensorList.sensors[i]->measure(_data.dataPoints + position);
-        _sensorList.sensors[i]->setLatestMeasurementError(error);
+        uint16_t error = _sensorList.sensors[i]->measure(
+            _data.dataPoints + position, currentTimeStamp);
+        _sensorList.latestMeasurementErrors[i] = error;
+        _sensorList.latestMeasurementTimeStamps[i] = currentTimeStamp;
         position += _sensorList.sensors[i]->getNumberOfDataPoints();
     }
     return NO_ERROR;
@@ -70,7 +70,11 @@ void SensorManager::setInterval(unsigned long interval, SensorId sensorId) {
         if (_sensorList.sensors[i] == nullptr)
             continue;
         if (_sensorList.sensors[i]->getSensorId() == sensorId) {
-            _sensorList.sensors[i]->setMeasurementInterval(interval);
+            if (interval <
+                _sensorList.sensors[i]->getMinimumMeasurementInterval()) {
+                continue;
+            }
+            _sensorList.intervals[i] = interval;
         }
     }
 }
