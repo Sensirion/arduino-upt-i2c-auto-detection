@@ -31,16 +31,19 @@
 #ifndef _DATA_POINT_H_
 #define _DATA_POINT_H_
 
-#include "ISensor.h"
+#include "SensorId.h"
 #include "Unit.h"
 #include <Arduino.h>
 
 struct DataPoint {
-    const SensorId id;
-    const Unit unit;
+    SensorId id = SensorId::UNDEFINED;
+    Unit unit = Unit::UNDEFINED;
     float value = 0;
     unsigned long timeStamp = 0;
-    DataPoint(const SensorId& id_, const Unit& unit_) : id(id_), unit(unit_) {
+    DataPoint() = default;
+    DataPoint(const SensorId& id_, const Unit& unit_, const float& value_,
+              const unsigned long& timeStamp_)
+        : id(id_), unit(unit_), value(value_), timeStamp(timeStamp_) {
     }
 };
 

@@ -28,15 +28,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _AUTO_DETECTOR_ERRORS_H_
-#define _AUTO_DETECTOR_ERRORS_H_
+#include "Data.h"
 
-#include <stdint.h>
+void Data::init(const size_t& length) {
+    _length = length;
+    delete[] dataPoints;
+    dataPoints = new DataPoint[_length];
+}
 
-enum AutoDetectorError : uint16_t {
-    NO_ERROR = 0,
-    FULL_SENSOR_LIST_ERROR = 1,
-    DATAPOINTS_OVERFLOW_ERROR = 2
-};
-
-#endif /* _AUTO_DETECTOR_ERRORS_H_ */
+size_t Data::getLength() const {
+    return _length;
+}

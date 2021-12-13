@@ -31,6 +31,7 @@
 #ifndef _SENSOR_MANAGER_H_
 #define _SENSOR_MANAGER_H_
 
+#include "Data.h"
 #include "IAutoDetector.h"
 #include "SensirionCore.h"
 #include "SensorList.h"
@@ -38,11 +39,12 @@
 class SensorManager {
   public:
     void init();
-    void updateData();
-    void getData();
+    AutoDetectorError updateData();
+    const Data& getData() const;
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
 
   private:
+    Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
 };

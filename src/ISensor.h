@@ -31,18 +31,23 @@
 #ifndef _I_SENSOR_H_
 #define _I_SENSOR_H_
 
+#include "DataPoint.h"
 #include <Arduino.h>
-
-enum class SensorId { SCD4X };
 
 class ISensor {
   public:
     virtual ~ISensor() = default;
     virtual uint16_t start() = 0;
-    virtual uint16_t measure() = 0;
+    /**
+     * Call appropriate driver methods to perform measurement
+     *
+     * dataPoints[] argument must be at least getNumberOfDataPoints() long
+     */
+    virtual uint16_t measure(DataPoint dataPoints[]) = 0;
     virtual void setLatestMeasurementError(uint16_t& error) = 0;
     virtual uint16_t getLatestMeasurementError() const = 0;
     virtual SensorId getSensorId() const = 0;
+    virtual size_t getNumberOfDataPoints() const = 0;
 };
 
 #endif /* _I_SENSOR_H_ */

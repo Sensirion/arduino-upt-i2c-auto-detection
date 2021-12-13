@@ -40,10 +40,11 @@ class Scd4x : public ISensor {
     static const uint16_t I2C_ADDRESS = 0x62;
     explicit Scd4x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measure() override;
+    uint16_t measure(DataPoint dataPoints[]) override;
     void setLatestMeasurementError(uint16_t& error) override;
     uint16_t getLatestMeasurementError() const override;
     SensorId getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
 
   private:
     TwoWire& _wire;

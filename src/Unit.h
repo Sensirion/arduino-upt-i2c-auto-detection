@@ -31,7 +31,12 @@
 #ifndef _UNIT_H_
 #define _UNIT_H_
 
-enum Unit { TEMPERATURE_CELSIUS, RELATIVE_HUMIDITY_PERCENTAGE };
-static const char* unitStr[] = {"C", "%RH"};
+enum class Unit {
+    UNDEFINED,
+    TEMPERATURE_CELSIUS,
+    RELATIVE_HUMIDITY_PERCENTAGE,
+    PARTS_PER_MILLION
+};
+static const char* unitStr[] = {"UNDEFINED", "C", "%RH", "ppm"};
 
 #endif /* _UNIT_H_ */

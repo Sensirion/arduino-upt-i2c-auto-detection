@@ -28,15 +28,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _AUTO_DETECTOR_ERRORS_H_
-#define _AUTO_DETECTOR_ERRORS_H_
+#ifndef _SENSOR_ID_H_
+#define _SENSOR_ID_H_
 
-#include <stdint.h>
+enum class SensorId { UNDEFINED, SCD4X };
+static const char* sensorIdStr[] = {"UNDEFINED", "Scd4x"};
 
-enum AutoDetectorError : uint16_t {
-    NO_ERROR = 0,
-    FULL_SENSOR_LIST_ERROR = 1,
-    DATAPOINTS_OVERFLOW_ERROR = 2
-};
-
-#endif /* _AUTO_DETECTOR_ERRORS_H_ */
+#endif /* _SENSOR_ID_H_ */
