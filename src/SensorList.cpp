@@ -68,5 +68,7 @@ void SensorList::reset() {
         latestMeasurementErrors[i] = 0;
         latestMeasurementTimeStamps[i] = 0;
         intervals[i] = 0;
+        errorCounter[i] = 0;
+        sensorsLost[i] = 0;
     }
 }

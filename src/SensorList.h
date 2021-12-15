@@ -40,6 +40,8 @@ struct SensorList {
     uint16_t latestMeasurementErrors[LENGTH] = {};
     unsigned long latestMeasurementTimeStamps[LENGTH] = {};
     unsigned long intervals[LENGTH] = {};
+    uint16_t errorCounter[LENGTH] = {};
+    bool sensorsLost[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
     void reset();
     size_t countSensors();

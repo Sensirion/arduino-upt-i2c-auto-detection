@@ -43,6 +43,9 @@ AutoDetectorError SensorManager::updateData() {
         if (_sensorList.sensors[i] == nullptr) {
             continue;
         }
+        if (_sensorList.sensorsLost[i]) {
+            continue;
+        }
         if (position + _sensorList.sensors[i]->getNumberOfDataPoints() >
             _data.getLength()) {
             return DATAPOINTS_OVERFLOW_ERROR;
@@ -57,6 +60,15 @@ AutoDetectorError SensorManager::updateData() {
         uint16_t error = _sensorList.sensors[i]->measure(
             _data.dataPoints + position, currentTimeStamp);
         _sensorList.latestMeasurementErrors[i] = error;
+        if (error) {
+            ++_sensorList.errorCounter[i];
+        } else {
+            _sensorList.errorCounter[i] = 0;
+        }
+        if (_sensorList.errorCounter[i] > 3) {
+            _sensorList.sensorsLost[i] = true;
+            return AutoDetectorError::LOST_SENSOR;
+        }
         _sensorList.latestMeasurementTimeStamps[i] = currentTimeStamp;
         position += _sensorList.sensors[i]->getNumberOfDataPoints();
     }
