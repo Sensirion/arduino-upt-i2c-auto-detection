@@ -28,54 +28,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "I2CAutoDetector.h"
-#include "AutoDetectorErrors.h"
-#include "Scd4x.h"
-#include "Sen44.h"
-#include "SensirionCore.h"
+#ifndef _SEN44_H_
+#define _SEN44_H_
 
-byte I2CAutoDetector::probeAddress(const byte& address) {
-    _wire.beginTransmission(address);
-    byte error = _wire.endTransmission();
-    return error;
-}
+#include "ISensor.h"
+#include <SensirionI2CSen44.h>
+#include <Wire.h>
 
-ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
-    switch (address) {
-        case (Scd4x::I2C_ADDRESS): {
-            return new Scd4x(_wire);
-        }
-        case (Sen44::I2C_ADDRESS): {
-            return new Sen44(_wire);
-        }
-        default: { return nullptr; }
-    }
-}
+class Sen44 : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x69;
+    explicit Sen44(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measure(DataPoint dataPoints[],
+                     const unsigned long timeStamp) override;
+    SensorId getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementInterval() const override;
 
-void I2CAutoDetector::findSensors(SensorList& sensorList) {
-    for (byte address = 1; address < 127; address++) {
-        byte probeFailed = probeAddress(address);
-        if (probeFailed) {
-            continue;
-        }
-        ISensor* pSensor = createSensorFromAddress(address);
-        if (!pSensor) {
-            continue;
-        }
-        uint16_t startFailed = pSensor->start();
-        if (startFailed) {
-            char errorMessage[256];
-            Serial.print("Error trying to start() sensor instance: ");
-            errorToString(startFailed, errorMessage, 256);
-            Serial.println(errorMessage);
-            delete pSensor;
-            continue;
-        }
-        AutoDetectorError addFailed = sensorList.addSensor(pSensor);
-        if (addFailed) {
-            Serial.println("Error trying to add sensor instance "
-                           "to sensorList.");
-            delete pSensor;
-        }
-    }
-}
+  private:
+    TwoWire& _wire;
+    SensirionI2CSen44 _driver;
+};
+
+#endif /* _SEN44_H_ */

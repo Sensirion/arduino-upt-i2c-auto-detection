@@ -35,8 +35,16 @@ enum class Unit {
     UNDEFINED,
     TEMPERATURE_CELSIUS,
     RELATIVE_HUMIDITY_PERCENTAGE,
-    PARTS_PER_MILLION
+    PARTS_PER_MILLION,
+    MASS_CONCENTRATION_PM1P0,
+    MASS_CONCENTRATION_PM2P5,
+    MASS_CONCENTRATION_PM4P0,
+    MASS_CONCENTRATION_PM10P0,
+    VOC_INDEX
+
 };
-static const char* unitStr[] = {"UNDEFINED", "C", "%RH", "ppm"};
+static const char* unitStr[] = {
+    "UNDEFINED",   "C",           "%RH",          "ppm",      "PM1.0 μg/m3",
+    "PM2.5 μg/m3", "PM4.0 μg/m3", "PM10.0 μg/m3", "VOC index"};
 
 #endif /* _UNIT_H_ */
