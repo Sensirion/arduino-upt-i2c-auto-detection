@@ -41,6 +41,7 @@ struct SensorList {
     unsigned long latestMeasurementTimeStamps[LENGTH] = {};
     unsigned long intervals[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
+    void reset();
     size_t countSensors();
     size_t getTotalNumberOfDataPoints();
 };

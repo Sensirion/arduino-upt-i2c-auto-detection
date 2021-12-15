@@ -60,3 +60,13 @@ size_t SensorList::getTotalNumberOfDataPoints() {
     }
     return totalNumberOfDataPoints;
 }
+
+void SensorList::reset() {
+    for (int i = 0; i < LENGTH; ++i) {
+        delete sensors[i];
+        sensors[i] = nullptr;
+        latestMeasurementErrors[i] = 0;
+        latestMeasurementTimeStamps[i] = 0;
+        intervals[i] = 0;
+    }
+}
