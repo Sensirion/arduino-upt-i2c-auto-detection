@@ -51,7 +51,7 @@ uint16_t Scd4x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SensorId::SCD4X, Unit::PARTS_PER_MILLION,
+    dataPoints[0] = DataPoint(SensorId::SCD4X, Unit::PARTS_PER_MILLION_CO2,
                               static_cast<float>(co2), timeStamp);
     dataPoints[1] =
         DataPoint(SensorId::SCD4X, Unit::TEMPERATURE_CELSIUS, temp, timeStamp);
