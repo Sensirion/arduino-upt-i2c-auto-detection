@@ -37,42 +37,53 @@ void SensorManager::init() {
     _data.init(length);
 }
 
+AutoDetectorError
+SensorManager::processSensor(const int index,
+                             const unsigned long currentTimeStamp,
+                             const size_t position) {
+    if (_sensorList.sensorsLost[index]) {
+        return NO_ERROR;
+    }
+    unsigned long elapsedTime =
+        currentTimeStamp - _sensorList.latestMeasurementTimeStamps[index];
+    if (elapsedTime < _sensorList.intervals[index]) {
+        return NO_ERROR;
+    }
+    uint16_t error = _sensorList.sensors[index]->measure(
+        _data.dataPoints + position, currentTimeStamp);
+    _sensorList.latestMeasurementErrors[index] = error;
+    _sensorList.latestMeasurementTimeStamps[index] = currentTimeStamp;
+    if (error) {
+        ++_sensorList.errorCounter[index];
+    } else {
+        _sensorList.errorCounter[index] = 0;
+    }
+    if (_sensorList.errorCounter[index] > 3) {
+        _sensorList.sensorsLost[index] = true;
+        return LOST_SENSOR_ERROR;
+    }
+    return NO_ERROR;
+}
+
 AutoDetectorError SensorManager::updateData() {
     size_t position = 0;
+    bool sensorWasLost = false;
     for (int i = 0; i < SensorList::LENGTH; ++i) {
         if (_sensorList.sensors[i] == nullptr) {
             continue;
         }
-        if (_sensorList.sensorsLost[i]) {
-            continue;
-        }
-        if (position + _sensorList.sensors[i]->getNumberOfDataPoints() >
-            _data.getLength()) {
-            return DATAPOINTS_OVERFLOW_ERROR;
-        }
         unsigned long currentTimeStamp = millis();
-        unsigned long elapsedTime =
-            currentTimeStamp - _sensorList.latestMeasurementTimeStamps[i];
-        if (elapsedTime < _sensorList.intervals[i]) {
-            position += _sensorList.sensors[i]->getNumberOfDataPoints();
-            continue;
+        AutoDetectorError error = processSensor(i, currentTimeStamp, position);
+        if (error == AutoDetectorError::LOST_SENSOR_ERROR) {
+            sensorWasLost = true;
         }
-        uint16_t error = _sensorList.sensors[i]->measure(
-            _data.dataPoints + position, currentTimeStamp);
-        _sensorList.latestMeasurementErrors[i] = error;
-        if (error) {
-            ++_sensorList.errorCounter[i];
-        } else {
-            _sensorList.errorCounter[i] = 0;
-        }
-        if (_sensorList.errorCounter[i] > 3) {
-            _sensorList.sensorsLost[i] = true;
-            return AutoDetectorError::LOST_SENSOR;
-        }
-        _sensorList.latestMeasurementTimeStamps[i] = currentTimeStamp;
         position += _sensorList.sensors[i]->getNumberOfDataPoints();
     }
-    return NO_ERROR;
+    if (sensorWasLost) {
+        return LOST_SENSOR_ERROR;
+    } else {
+        return NO_ERROR;
+    }
 }
 
 const Data& SensorManager::getData() const {

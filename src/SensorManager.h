@@ -40,6 +40,9 @@ class SensorManager {
   public:
     void init();
     AutoDetectorError updateData();
+    AutoDetectorError processSensor(int index,
+                                    const unsigned long currentTimeStamp,
+                                    const size_t position);
     const Data& getData() const;
     void setInterval(unsigned long interval, SensorId sensorId);
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
