@@ -28,11 +28,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSOR_ID_H_
-#define _SENSOR_ID_H_
+#ifndef _SVM40_H_
+#define _SVM40_H_
 
-enum class SensorId { UNDEFINED, SCD4X, SEN44, SFA3X, SVM40 };
-static const char* sensorIdStr[] = {"UNDEFINED", "Scd4x", "Sen44", "Sfa3x",
-                                    "Svm40"};
+#include "ISensor.h"
+#include "SensirionI2CSvm40.h"
+#include <Wire.h>
 
-#endif /* _SENSOR_ID_H_ */
+class Svm40 : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x6A;
+    explicit Svm40(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measure(DataPoint dataPoints[],
+                     const unsigned long timeStamp) override;
+    SensorId getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementInterval() const override;
+
+  private:
+    TwoWire& _wire;
+    SensirionI2CSvm40 _driver;
+};
+
+#endif /* _SVM40_H_ */

@@ -34,6 +34,7 @@
 #include "Sen44.h"
 #include "SensirionCore.h"
 #include "Sfa3x.h"
+#include "Svm40.h"
 
 byte I2CAutoDetector::probeAddress(const byte& address) {
     _wire.beginTransmission(address);
@@ -51,6 +52,9 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
         }
         case (Sfa3x::I2C_ADDRESS): {
             return new Sfa3x(_wire);
+        }
+        case (Svm40::I2C_ADDRESS): {
+            return new Svm40(_wire);
         }
         default: { return nullptr; }
     }

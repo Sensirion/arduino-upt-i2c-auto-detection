@@ -28,11 +28,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSOR_ID_H_
-#define _SENSOR_ID_H_
+#include "Svm40.h"
+#include "SensirionCore.h"
 
-enum class SensorId { UNDEFINED, SCD4X, SEN44, SFA3X, SVM40 };
-static const char* sensorIdStr[] = {"UNDEFINED", "Scd4x", "Sen44", "Sfa3x",
-                                    "Svm40"};
+uint16_t Svm40::start() {
+    _driver.begin(_wire);
+    // Start Measurement
+    return _driver.startContinuousMeasurement();
+}
 
-#endif /* _SENSOR_ID_H_ */
+uint16_t Svm40::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+    int16_t vocIndex;
+    int16_t humidity;
+    int16_t temperature;
+    uint16_t error =
+        _driver.readMeasuredValuesAsIntegers(vocIndex, humidity, temperature);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] = DataPoint(SensorId::SVM40, Unit::VOC_INDEX,
+                              static_cast<float>(vocIndex) / 10.0f, timeStamp);
+    dataPoints[1] =
+        DataPoint(SensorId::SVM40, Unit::RELATIVE_HUMIDITY_PERCENTAGE,
+                  static_cast<float>(humidity) / 100.0f, timeStamp);
+    dataPoints[2] =
+        DataPoint(SensorId::SVM40, Unit::TEMPERATURE_CELSIUS,
+                  static_cast<float>(temperature) / 200.0f, timeStamp);
+    return HighLevelError::NoError;
+}
+
+SensorId Svm40::getSensorId() const {
+    return SensorId::SVM40;
+}
+
+size_t Svm40::getNumberOfDataPoints() const {
+    return 3;
+}
+
+unsigned long Svm40::getMinimumMeasurementInterval() const {
+    return 1000;
+}
