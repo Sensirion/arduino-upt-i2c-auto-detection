@@ -37,7 +37,8 @@ enum AutoDetectorError : uint16_t {
     NO_ERROR = 0,
     FULL_SENSOR_LIST_ERROR = 1,
     DATAPOINTS_OVERFLOW_ERROR = 2,
-    DRIVER_NOT_FOUND_ERROR = 3
+    DRIVER_NOT_FOUND_ERROR = 3,
+    LOST_SENSOR_ERROR = 4
 };
 
 #endif /* _AUTO_DETECTOR_ERRORS_H_ */
