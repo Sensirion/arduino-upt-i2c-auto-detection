@@ -28,24 +28,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _UNIT_H_
-#define _UNIT_H_
+#ifndef _SFA3X_H_
+#define _SFA3X_H_
 
-enum class Unit {
-    UNDEFINED,
-    TEMPERATURE_CELSIUS,
-    RELATIVE_HUMIDITY_PERCENTAGE,
-    PARTS_PER_MILLION_CO2,
-    PARTS_PER_BILLION_HCHO,
-    MASS_CONCENTRATION_PM1P0,
-    MASS_CONCENTRATION_PM2P5,
-    MASS_CONCENTRATION_PM4P0,
-    MASS_CONCENTRATION_PM10P0,
-    VOC_INDEX
+#include "ISensor.h"
+#include <SensirionI2CSfa3x.h>
+#include <Wire.h>
 
+class Sfa3x : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x5D;
+    explicit Sfa3x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measure(DataPoint dataPoints[],
+                     const unsigned long timeStamp) override;
+    SensorId getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementInterval() const override;
+
+  private:
+    TwoWire& _wire;
+    SensirionI2CSfa3x _driver;
 };
-static const char* unitStr[] = {
-    "UNDEFINED",   "C",           "%RH",         "ppm CO2",      "ppb HCHO",
-    "PM1.0 μg/m3", "PM2.5 μg/m3", "PM4.0 μg/m3", "PM10.0 μg/m3", "VOC index"};
 
-#endif /* _UNIT_H_ */
+#endif /* _SFA3X_H_ */

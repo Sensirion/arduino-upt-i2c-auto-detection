@@ -28,24 +28,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _UNIT_H_
-#define _UNIT_H_
+#include "Sfa3x.h"
+#include "SensirionCore.h"
 
-enum class Unit {
-    UNDEFINED,
-    TEMPERATURE_CELSIUS,
-    RELATIVE_HUMIDITY_PERCENTAGE,
-    PARTS_PER_MILLION_CO2,
-    PARTS_PER_BILLION_HCHO,
-    MASS_CONCENTRATION_PM1P0,
-    MASS_CONCENTRATION_PM2P5,
-    MASS_CONCENTRATION_PM4P0,
-    MASS_CONCENTRATION_PM10P0,
-    VOC_INDEX
+uint16_t Sfa3x::start() {
+    _driver.begin(_wire);
+    return _driver.startContinuousMeasurement();
+}
 
-};
-static const char* unitStr[] = {
-    "UNDEFINED",   "C",           "%RH",         "ppm CO2",      "ppb HCHO",
-    "PM1.0 μg/m3", "PM2.5 μg/m3", "PM4.0 μg/m3", "PM10.0 μg/m3", "VOC index"};
+uint16_t Sfa3x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+    int16_t hcho;
+    int16_t humi;
+    int16_t temp;
 
-#endif /* _UNIT_H_ */
+    uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] = DataPoint(SensorId::SFA3X, Unit::PARTS_PER_BILLION_HCHO,
+                              static_cast<float>(hcho) / 5.0f, timeStamp);
+    dataPoints[1] =
+        DataPoint(SensorId::SFA3X, Unit::RELATIVE_HUMIDITY_PERCENTAGE,
+                  static_cast<float>(humi) / 100.0f, timeStamp);
+    dataPoints[2] = DataPoint(SensorId::SFA3X, Unit::TEMPERATURE_CELSIUS,
+                              static_cast<float>(temp) / 200.0f, timeStamp);
+    return HighLevelError::NoError;
+}
+
+SensorId Sfa3x::getSensorId() const {
+    return SensorId::SFA3X;
+}
+
+size_t Sfa3x::getNumberOfDataPoints() const {
+    return 3;
+}
+
+unsigned long Sfa3x::getMinimumMeasurementInterval() const {
+    return 5000;
+}
