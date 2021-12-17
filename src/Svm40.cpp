@@ -33,6 +33,10 @@
 
 uint16_t Svm40::start() {
     _driver.begin(_wire);
+    uint16_t error = _driver.stopMeasurement();
+    if (error) {
+        return error;
+    }
     // Start Measurement
     return _driver.startContinuousMeasurement();
 }
