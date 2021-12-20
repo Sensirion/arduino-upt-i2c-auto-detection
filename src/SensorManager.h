@@ -43,6 +43,17 @@ class SensorManager {
     const Data& getData() const;
     void setInterval(unsigned long interval, SensorId sensorId);
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+    /*
+     * Retrieve specific sensor driver instance T from
+     * SensorManager::_sensorList
+     *
+     * @param pDriver nullptr initialized pointer to specific Sensirion sensor
+     * driver class T.
+     * @param id SensorId corresponding to ISensor implementation for sensor
+     * driver class T.
+     * @return AutodDetectorError::NO_ERROR = 0 on success. Only in this case
+     * may the driver methods be called. e.g.: pDriver->driverMethod()
+     */
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver, SensorId id) {
         for (int i = 0; i < SensorList::LENGTH; ++i) {
