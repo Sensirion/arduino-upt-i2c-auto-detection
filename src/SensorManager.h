@@ -43,6 +43,20 @@ class SensorManager {
     const Data& getData() const;
     void setInterval(unsigned long interval, SensorId sensorId);
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+    template <class T>
+    AutoDetectorError getSensorDriver(T*& pDriver, SensorId id) {
+        for (int i = 0; i < SensorList::LENGTH; ++i) {
+            if (_sensorList.sensors[i] == nullptr) {
+                continue;
+            }
+            if (_sensorList.sensors[i]->getSensorId() == id) {
+                pDriver =
+                    reinterpret_cast<T*>(_sensorList.sensors[i]->getDriver());
+                return NO_ERROR;
+            }
+        }
+        return DRIVER_NOT_FOUND_ERROR;
+    };
 
   private:
     Data _data;

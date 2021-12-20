@@ -48,6 +48,7 @@ class ISensor {
     virtual SensorId getSensorId() const = 0;
     virtual size_t getNumberOfDataPoints() const = 0;
     virtual unsigned long getMinimumMeasurementInterval() const = 0;
+    virtual void* getDriver() = 0;
 };
 
 #endif /* _I_SENSOR_H_ */
