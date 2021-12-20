@@ -38,7 +38,7 @@ void setup() {
 }
 
 void loop() {
-    delay(1000);
+    delay(500);
     // Get data directly from sensor Driver
     if (pScd4xDriver != nullptr) {
         uint16_t co2;
@@ -54,6 +54,7 @@ void loop() {
         Serial.println(humidity);
         Serial.println();
     }
+    delay(500);
     // Get data via sensorManager
     AutoDetectorError error = sensorManager.updateData();
     if (error) {
