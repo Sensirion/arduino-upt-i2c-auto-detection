@@ -45,6 +45,7 @@ class Svm40 : public ISensor {
     SensorId getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementInterval() const override;
+    void* getDriver() override;
 
   private:
     TwoWire& _wire;

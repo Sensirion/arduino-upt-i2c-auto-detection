@@ -72,3 +72,7 @@ size_t Svm40::getNumberOfDataPoints() const {
 unsigned long Svm40::getMinimumMeasurementInterval() const {
     return 1000;
 }
+
+void* Svm40::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

@@ -71,3 +71,7 @@ size_t Scd4x::getNumberOfDataPoints() const {
 unsigned long Scd4x::getMinimumMeasurementInterval() const {
     return 5000;
 }
+
+void* Scd4x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}
