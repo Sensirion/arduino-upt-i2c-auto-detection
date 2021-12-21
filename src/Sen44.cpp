@@ -91,3 +91,7 @@ size_t Sen44::getNumberOfDataPoints() const {
 unsigned long Sen44::getMinimumMeasurementInterval() const {
     return 1000;
 }
+
+void* Sen44::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

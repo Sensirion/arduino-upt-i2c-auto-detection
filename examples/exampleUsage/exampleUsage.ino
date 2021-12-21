@@ -19,22 +19,43 @@ void printData(const Data& data) {
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
+SensirionI2CScd4x* pScd4xDriver = nullptr;
 
 void setup() {
     Serial.begin(115200);
     Serial.println();
     Wire.begin();
     sensorManager.init();
-    /** interval = 2 x loop delay
-     *  Thus the data will only be updated every 2nd loop
-     *  while being printed every loop.
-     */
-    sensorManager.setInterval(10000, SensorId::SCD4X);
-    delay(100);
+
+    AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
+        pScd4xDriver, SensorId::SCD4X);
+    if (error) {
+        Serial.println("Scd4x driver retrieval failed!");
+    } else {
+        Serial.println("Scd4x driver retrieval succeeded!");
+    }
+    delay(5000);
 }
 
 void loop() {
-    delay(5000);
+    delay(500);
+    // Get data directly from sensor Driver
+    if (pScd4xDriver != nullptr) {
+        uint16_t co2;
+        float temperature;
+        float humidity;
+        pScd4xDriver->readMeasurement(co2, temperature, humidity);
+        Serial.println("Data retrieved directly from sensor driver:");
+        Serial.print("co2: ");
+        Serial.println(co2);
+        Serial.print("temperature: ");
+        Serial.println(temperature);
+        Serial.print("humidity: ");
+        Serial.println(humidity);
+        Serial.println();
+    }
+    delay(500);
+    // Get data via sensorManager
     AutoDetectorError error = sensorManager.updateData();
     if (error) {
         return;

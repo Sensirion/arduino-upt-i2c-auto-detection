@@ -66,3 +66,7 @@ size_t Sfa3x::getNumberOfDataPoints() const {
 unsigned long Sfa3x::getMinimumMeasurementInterval() const {
     return 5000;
 }
+
+void* Sfa3x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}
