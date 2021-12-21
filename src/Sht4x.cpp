@@ -61,3 +61,7 @@ size_t Sht4x::getNumberOfDataPoints() const {
 unsigned long Sht4x::getMinimumMeasurementInterval() const {
     return 1000;  // This value has not been verified!
 }
+
+void* Sht4x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}
