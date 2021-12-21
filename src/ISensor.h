@@ -37,17 +37,50 @@
 class ISensor {
   public:
     virtual ~ISensor() = default;
+    /**
+     * @brief Call appropriate driver methods to
+     *
+     * @return A uint16_t error corresponding to SensirionErrors.h of
+     * SensirionCore, where 0 value corresponds to no error.
+     */
     virtual uint16_t start() = 0;
     /**
-     * Call appropriate driver methods to perform measurement
+     * @brief Call driver methods to perform measurement and update DataPoints
      *
-     * dataPoints[] argument must be at least getNumberOfDataPoints() long
+     * @param dataPoints argument must be at least getNumberOfDataPoints()
+     * long
+     *
+     * @return A uint16_t error corresponding to SensirionErrors.h of
+     * SensirionCore, where 0 value corresponds to no error.
      */
     virtual uint16_t measure(DataPoint dataPoints[],
                              const unsigned long timeStamp) = 0;
+    /**
+     * @brief Get the specific SensorId of the ISensor realization
+     *
+     * @return SensorId
+     */
     virtual SensorId getSensorId() const = 0;
+    /**
+     * @brief Get the number of DataPoints this sensor occupies in the Data
+     * object.
+     *
+     * @return size_t
+     */
     virtual size_t getNumberOfDataPoints() const = 0;
+    /**
+     * @brief Get the minimum measurement interval of the sensor. This must be
+     * larger than the longest possible measurement duration.
+     *
+     * @return unsigned long
+     */
     virtual unsigned long getMinimumMeasurementInterval() const = 0;
+    /**
+     * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
+     * pointer
+     *
+     * @return void*
+     */
     virtual void* getDriver() = 0;
 };
 
