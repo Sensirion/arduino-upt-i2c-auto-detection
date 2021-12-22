@@ -35,6 +35,13 @@
 
 class IAutoDetector {
   public:
+    /**
+     * @brief Scans bus for Sensirion sensors, instantiates and initializes
+     * them and adds them
+     *
+     * @param sensorList has a fixed LENGTH which represents the maximal number
+     * of sensors that can be handled simultaneously. May be changed on demand
+     */
     virtual void findSensors(SensorList& sensorList) = 0;
 };
 
