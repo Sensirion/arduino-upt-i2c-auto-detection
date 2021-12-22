@@ -38,6 +38,7 @@
 
 class SensorManager {
   public:
+    static constexpr int NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
     void init();
     AutoDetectorError updateData();
     const Data& getData() const;
@@ -73,9 +74,11 @@ class SensorManager {
     Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
-    AutoDetectorError processSensor(int index,
-                                    const unsigned long currentTimeStamp,
-                                    const size_t position);
+    void measure(const int index, const size_t position);
+    bool timeIntervalPassed(const int index,
+                            const unsigned long currentTimeStamp);
+
+    void updateSensorStatus(const int index);
 };
 
 #endif /* _SENSOR_MANAGER_H_ */
