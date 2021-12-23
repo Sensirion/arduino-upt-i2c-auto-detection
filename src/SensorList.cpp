@@ -72,3 +72,13 @@ void SensorList::reset() {
         sensorsLost[i] = 0;
     }
 }
+
+uint16_t SensorList::getNumberOfSensorsLost() {
+    uint16_t count = 0;
+    for (int i = 0; i < LENGTH; ++i) {
+        if (sensorsLost[i]) {
+            ++count;
+        }
+    }
+    return count;
+}
