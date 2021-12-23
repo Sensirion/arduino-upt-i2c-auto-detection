@@ -49,14 +49,13 @@ bool SensorManager::timeIntervalPassed(const int index,
 }
 
 void SensorManager::updateSensorStatus(const int index) {
-    if (_sensorList.latestMeasurementErrors[index]) {
-        ++_sensorList.errorCounter[index];
-    } else {
+    if(!_sensorList.latestMeasurementErrors[index]) {
         _sensorList.errorCounter[index] = 0;
+        return;
     }
-    if (_sensorList.errorCounter[index] >
-        NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS) {
-        _sensorList.sensorsLost[index] = true;
+
+    if(!_sensorList.sensorIsLost(index)) {
+        ++_sensorList.errorCounter[index];
     }
 }
 
