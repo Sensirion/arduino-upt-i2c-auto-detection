@@ -34,26 +34,10 @@ void setup() {
     } else {
         Serial.println("Scd4x driver retrieval succeeded!");
     }
-    delay(5000);
+    // delay(5000);
 }
 
 void loop() {
-    delay(500);
-    // Get data directly from sensor Driver
-    if (pScd4xDriver != nullptr) {
-        uint16_t co2;
-        float temperature;
-        float humidity;
-        pScd4xDriver->readMeasurement(co2, temperature, humidity);
-        Serial.println("Data retrieved directly from sensor driver:");
-        Serial.print("co2: ");
-        Serial.println(co2);
-        Serial.print("temperature: ");
-        Serial.println(temperature);
-        Serial.print("humidity: ");
-        Serial.println(humidity);
-        Serial.println();
-    }
     delay(500);
     // Get data via sensorManager
     AutoDetectorError error = sensorManager.updateData();

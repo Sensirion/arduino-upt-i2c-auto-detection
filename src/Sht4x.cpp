@@ -28,11 +28,40 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSOR_ID_H_
-#define _SENSOR_ID_H_
+#include "Sht4x.h"
+#include "SensirionCore.h"
 
-enum class SensorId { UNDEFINED, SCD4X, SEN44, SFA3X, SVM40, SHT4X };
-static const char* sensorIdStr[] = {"UNDEFINED", "Scd4x", "Sen44",
-                                    "Sfa3x",     "Svm40", "Sht4x"};
+uint16_t Sht4x::start() {
+    _driver.begin(_wire);
+    return HighLevelError::NoError;
+}
 
-#endif /* _SENSOR_ID_H_ */
+uint16_t Sht4x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+    float temp;
+    float humi;
+    uint16_t error = _driver.measureHighPrecision(temp, humi);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] =
+        DataPoint(SensorId::SHT4X, Unit::TEMPERATURE_CELSIUS, temp, timeStamp);
+    dataPoints[1] = DataPoint(
+        SensorId::SHT4X, Unit::RELATIVE_HUMIDITY_PERCENTAGE, humi, timeStamp);
+    return HighLevelError::NoError;
+}
+
+SensorId Sht4x::getSensorId() const {
+    return SensorId::SHT4X;
+}
+
+size_t Sht4x::getNumberOfDataPoints() const {
+    return 2;
+}
+
+unsigned long Sht4x::getMinimumMeasurementInterval() const {
+    return 9;
+}
+
+void* Sht4x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

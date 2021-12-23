@@ -28,11 +28,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SENSOR_ID_H_
-#define _SENSOR_ID_H_
+#ifndef _SHT4X_H_
+#define _SHT4X_H_
 
-enum class SensorId { UNDEFINED, SCD4X, SEN44, SFA3X, SVM40, SHT4X };
-static const char* sensorIdStr[] = {"UNDEFINED", "Scd4x", "Sen44",
-                                    "Sfa3x",     "Svm40", "Sht4x"};
+#include "ISensor.h"
+#include "SensirionI2CSht4x.h"
+#include <Wire.h>
 
-#endif /* _SENSOR_ID_H_ */
+class Sht4x : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x44;
+    explicit Sht4x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measure(DataPoint dataPoints[],
+                     const unsigned long timeStamp) override;
+    SensorId getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementInterval() const override;
+    void* getDriver() override;
+
+  private:
+    TwoWire& _wire;
+    SensirionI2CSht4x _driver;
+};
+
+#endif /* _SHT4X_H_ */
