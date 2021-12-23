@@ -44,7 +44,7 @@ struct SensorList {
     bool sensorsLost[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
     void reset();
-    size_t countSensors();
+    size_t count();
     size_t getTotalNumberOfDataPoints();
     uint16_t getNumberOfSensorsLost();
 };

@@ -41,7 +41,7 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     return FULL_SENSOR_LIST_ERROR;
 }
 
-size_t SensorList::countSensors() {
+size_t SensorList::count() {
     size_t numberOfSensors = 0;
     for (int i = 0; i < LENGTH; ++i) {
         if (sensors[i]) {
