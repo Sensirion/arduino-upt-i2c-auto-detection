@@ -99,14 +99,12 @@ const Data& SensorManager::getData() const {
 
 void SensorManager::setInterval(unsigned long interval, SensorId sensorId) {
     for (int i = 0; i < SensorList::LENGTH; ++i) {
-        if (_sensorList.sensors[i] == nullptr)
+        ISensor *sensor = _sensorList.sensors[i];
+        if (sensor == nullptr)
             continue;
-        if (_sensorList.sensors[i]->getSensorId() == sensorId) {
-            if (interval <
-                _sensorList.sensors[i]->getMinimumMeasurementInterval()) {
-                continue;
-            }
-            _sensorList.intervals[i] = interval;
+        if (sensor->getSensorId() != sensorId && interval < sensor->getMinimumMeasurementInterval()) {
+            continue;
         }
+        _sensorList.intervals[i] = interval;
     }
 }
