@@ -19,11 +19,12 @@ void printData(const Data& data) {
     Serial.println();
 }
 
-I2CAutoDetector i2CAutoDetector(Wire); // Instantiate I2CAutoDetector
-SensorManager sensorManager(i2CAutoDetector); // Instan
+I2CAutoDetector i2CAutoDetector(Wire);
+SensorManager sensorManager(i2CAutoDetector);
 SensirionI2CScd4x* pScd4xDriver = nullptr;
 
 void setup() {
+
     Serial.begin(115200);
     Serial.println();
     Wire.begin();
@@ -32,6 +33,7 @@ void setup() {
     // Retrieving the sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
         pScd4xDriver, SensorId::SCD4X);
+
     if (error) {
         Serial.println("Scd4x driver retrieval failed!");
     } else {
@@ -50,6 +52,7 @@ void setup() {
         Serial.println(humidity);
         Serial.println();
     }
+
     delay(5000);  // Wait for SCD4X to finish measuring
 
     // Setting the SCD4X measurement interval
@@ -57,12 +60,14 @@ void setup() {
 }
 
 void loop() {
+
     delay(1000);
-    // Get data via SensorManager
+
     AutoDetectorError error = sensorManager.updateData();
     if (error) {
-        return;
+        continue;
     }
+
     const Data& currentData = sensorManager.getData();
     printData(currentData);
 }
