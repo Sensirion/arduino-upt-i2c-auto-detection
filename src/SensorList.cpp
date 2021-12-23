@@ -69,16 +69,19 @@ void SensorList::reset() {
         latestMeasurementTimeStamps[i] = 0;
         intervals[i] = 0;
         errorCounter[i] = 0;
-        sensorsLost[i] = 0;
     }
 }
 
 uint16_t SensorList::getNumberOfSensorsLost() {
     uint16_t count = 0;
     for (int i = 0; i < LENGTH; ++i) {
-        if (sensorsLost[i]) {
+        if (sensorIsLost(i)) {
             ++count;
         }
     }
     return count;
+}
+
+bool SensorList::sensorIsLost(const int index) {
+    return errorCounter[index] > NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
 }

@@ -38,7 +38,6 @@
 
 class SensorManager {
   public:
-    static constexpr int NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
     void init();
     AutoDetectorError updateData();
     const Data& getData() const;
