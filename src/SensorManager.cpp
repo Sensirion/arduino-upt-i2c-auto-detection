@@ -49,19 +49,20 @@ bool SensorManager::timeIntervalPassed(const int index,
 }
 
 void SensorManager::updateSensorStatus(const int index) {
-    if(!_sensorList.latestMeasurementErrors[index]) {
+    if (!_sensorList.latestMeasurementErrors[index]) {
         _sensorList.errorCounter[index] = 0;
         return;
     }
 
-    if(!_sensorList.sensorIsLost(index)) {
+    if (!_sensorList.sensorIsLost(index)) {
         ++_sensorList.errorCounter[index];
     }
 }
 
 void SensorManager::measure(const int index, const size_t position) {
     unsigned long currentTimeStamp = millis();
-    if (_sensorList.sensorIsLost(index) || !timeIntervalPassed(index, currentTimeStamp)) {
+    if (_sensorList.sensorIsLost(index) ||
+        !timeIntervalPassed(index, currentTimeStamp)) {
         return;
     }
     _sensorList.latestMeasurementTimeStamps[index] = currentTimeStamp;
@@ -95,10 +96,11 @@ const Data& SensorManager::getData() const {
 
 void SensorManager::setInterval(unsigned long interval, SensorId sensorId) {
     for (int i = 0; i < SensorList::LENGTH; ++i) {
-        ISensor *sensor = _sensorList.sensors[i];
+        ISensor* sensor = _sensorList.sensors[i];
         if (sensor == nullptr)
             continue;
-        if (sensor->getSensorId() != sensorId && interval < sensor->getMinimumMeasurementInterval()) {
+        if (sensor->getSensorId() != sensorId &&
+            interval < sensor->getMinimumMeasurementInterval()) {
             continue;
         }
         _sensorList.intervals[i] = interval;
