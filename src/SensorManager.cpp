@@ -61,7 +61,7 @@ void SensorManager::updateSensorStatus(const int index) {
 
 void SensorManager::measure(const int index, const size_t position) {
     unsigned long currentTimeStamp = millis();
-    if (_sensorList.sensorsLost[index] || !timeIntervalPassed(index, currentTimeStamp)) {
+    if (_sensorList.sensorIsLost(index) || !timeIntervalPassed(index, currentTimeStamp)) {
         return;
     }
     _sensorList.latestMeasurementTimeStamps[index] = currentTimeStamp;
