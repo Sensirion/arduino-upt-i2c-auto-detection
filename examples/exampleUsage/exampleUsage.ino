@@ -1,6 +1,4 @@
-#include "Data.h"
 #include "I2CAutoDetector.h"
-#include "Scd4x.h"
 #include "SensirionSensorAutoDetection.h"
 
 void printData(const Data& data) {
@@ -60,14 +58,12 @@ void setup() {
 }
 
 void loop() {
-
-    delay(1000);
-
-    AutoDetectorError error = sensorManager.updateData();
-    if (error) {
-        continue;
-    }
-
+    delay(500);
+    // Get data via sensorManager
+    sensorManager.updateData();
+    // if (error) {
+    //     return;
+    // }
     const Data& currentData = sensorManager.getData();
     printData(currentData);
 }
