@@ -36,14 +36,18 @@
 
 struct SensorList {
     static constexpr int LENGTH = 16;
+    static constexpr int NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
     ISensor* sensors[LENGTH] = {};
     uint16_t latestMeasurementErrors[LENGTH] = {};
     unsigned long latestMeasurementTimeStamps[LENGTH] = {};
     unsigned long intervals[LENGTH] = {};
+    uint16_t errorCounter[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
     void reset();
-    size_t countSensors();
+    size_t count();
     size_t getTotalNumberOfDataPoints();
+    uint16_t getNumberOfSensorsLost();
+    bool sensorIsLost(const int index);
 };
 
 #endif /* _SENSOR_LIST_H */

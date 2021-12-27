@@ -41,7 +41,7 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     return FULL_SENSOR_LIST_ERROR;
 }
 
-size_t SensorList::countSensors() {
+size_t SensorList::count() {
     size_t numberOfSensors = 0;
     for (int i = 0; i < LENGTH; ++i) {
         if (sensors[i]) {
@@ -68,5 +68,20 @@ void SensorList::reset() {
         latestMeasurementErrors[i] = 0;
         latestMeasurementTimeStamps[i] = 0;
         intervals[i] = 0;
+        errorCounter[i] = 0;
     }
+}
+
+uint16_t SensorList::getNumberOfSensorsLost() {
+    uint16_t count = 0;
+    for (int i = 0; i < LENGTH; ++i) {
+        if (sensorIsLost(i)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+bool SensorList::sensorIsLost(const int index) {
+    return errorCounter[index] > NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
 }

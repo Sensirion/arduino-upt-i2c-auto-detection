@@ -26,19 +26,11 @@ void setup() {
     Serial.println();
     Wire.begin();
     sensorManager.init();
-
-    AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
-        pScd4xDriver, SensorId::SCD4X);
-    if (error) {
-        Serial.println("Scd4x driver retrieval failed!");
-    } else {
-        Serial.println("Scd4x driver retrieval succeeded!");
-    }
-    // delay(5000);
+    delay(5000);
 }
 
 void loop() {
-    delay(500);
+    delay(1000);
     // Get data via sensorManager
     AutoDetectorError error = sensorManager.updateData();
     if (error) {

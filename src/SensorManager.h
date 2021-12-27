@@ -73,6 +73,11 @@ class SensorManager {
     Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
+    void measure(const int index, const size_t position);
+    bool timeIntervalPassed(const int index,
+                            const unsigned long currentTimeStamp);
+
+    void updateSensorStatus(const int index);
 };
 
 #endif /* _SENSOR_MANAGER_H_ */
