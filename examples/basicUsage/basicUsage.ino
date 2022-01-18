@@ -1,3 +1,13 @@
+/*
+    Basic Usage
+
+    This sketch shows the minimum required code to be able to
+    access sensor readings.
+
+    The circuit:
+    A single Sensirion sensor should (at least) be connected
+    for this sketch to give sensible output.
+    */
 
 #include "I2CAutoDetector.h"
 #include "SensirionSensorAutoDetection.h"
@@ -17,8 +27,7 @@ void loop() {
     // Get Data object contatining DataPoints
     const Data& currentData = sensorManager.getData();
     // Access first dataPoint
-    DataPoint dp;
-    if(currentData.dataPoints[0]) {
-        dp = currentData.dataPoints[0];
-    }
+    DataPoint dp = currentData.dataPoints[0];
+    // Print DataPoint value
+    Serial.println(dp.value);
 }
