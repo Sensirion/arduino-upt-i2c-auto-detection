@@ -19,6 +19,7 @@ void printData(const Data& data) {
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
+
 SensirionI2CScd4x* pScd4xDriver = nullptr;
 
 void setup() {
@@ -26,7 +27,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println();
     Wire.begin();
-    sensorManager.init();
+    sensorManager.begin();
 
     // Retrieving the sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
@@ -59,11 +60,7 @@ void setup() {
 
 void loop() {
     delay(500);
-    // Get data via sensorManager
     sensorManager.updateData();
-    // if (error) {
-    //     return;
-    // }
     const Data& currentData = sensorManager.getData();
     printData(currentData);
 }
