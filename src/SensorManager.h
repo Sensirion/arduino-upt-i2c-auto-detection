@@ -38,7 +38,7 @@
 
 class SensorManager {
   public:
-    void init();
+    void begin();
     AutoDetectorError updateData();
     const Data& getData() const;
     void setInterval(unsigned long interval, SensorId sensorId);
