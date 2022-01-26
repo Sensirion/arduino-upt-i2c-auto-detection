@@ -75,7 +75,7 @@ Update and retrieve Data object in void loop():
     sensorManager.updateData();
     const Data& currentData = sensorManager.getData();
 
-# Pitfalls
+# Restrictions
 
 - This library does not support more than one sensor of the same type at a time.
 - Instances of the class Data may only be handled by reference, copy consturctor and assignment operator are deleted. Of course one may copy out the DataPoints manually from the reference.
