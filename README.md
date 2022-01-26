@@ -64,11 +64,11 @@ Instantiate I2CAutoDetector and SensorManager globally (before void setup()):
     I2CAutoDetector i2CAutoDetector(Wire);
     SensorManager sensorManager(i2CAutoDetector);
 
-Initialize Serial, Wire and SensorManager in void setup():
+Begin Serial, Wire and SensorManager in void setup():
 
     Serial.begin(115200);
     Wire.begin();
-    sensorManager.init();
+    sensorManager.begin();
 
 Update and retrieve Data object in void loop():
 
