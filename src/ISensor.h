@@ -38,7 +38,7 @@ class ISensor {
   public:
     virtual ~ISensor() = default;
     /**
-     * @brief Call appropriate driver methods to
+     * @brief Initialize sensor driver such that data may be read out
      *
      * @return A uint16_t error corresponding to SensirionErrors.h of
      * SensirionCore, where 0 value corresponds to no error.
