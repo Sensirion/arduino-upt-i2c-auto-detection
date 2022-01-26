@@ -36,9 +36,15 @@ compile_test:
         - arduino-cli lib install "Sensirion I2C SEN44@0.1.0"
         - arduino-cli lib install "Sensirion I2C SHT4x@0.1.0"
         - ln -s $PWD ~/Arduino/libraries/
-        - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/exampleUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/exampleUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/exampleUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/exampleUsage
-        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/exampleUsage
-        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/exampleUsage
+        - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/basicUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/basicUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/basicUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/basicUsage
+        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/basicUsage
+        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/basicUsage
+        - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/extendedUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/extendedUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/extendedUsage
+        - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/extendedUsage
+        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/extendedUsage
+        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/extendedUsage

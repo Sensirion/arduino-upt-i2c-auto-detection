@@ -30,7 +30,7 @@
  */
 #include "SensorManager.h"
 
-void SensorManager::init() {
+void SensorManager::begin() {
     _sensorList.reset();
     _detector.findSensors(_sensorList);
     size_t length = _sensorList.getTotalNumberOfDataPoints();
