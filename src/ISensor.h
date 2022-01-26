@@ -50,6 +50,9 @@ class ISensor {
      * @param dataPoints argument must be at least getNumberOfDataPoints()
      * long
      *
+     * @param timeStamp at time of function call, represents milliseconds
+     * passed since program startup.
+     *
      * @return A uint16_t error corresponding to SensirionErrors.h of
      * SensirionCore, where 0 value corresponds to no error.
      */
