@@ -38,12 +38,21 @@
 
 class SensorManager {
   public:
+    /**
+     * @brief Must be called before any other method
+     */
     void begin();
+    /**
+     * @brief Calls measure methods on all available sensors, while respecting
+     * status and interval conditions
+     *
+     * @return AutoDetectorError, NO_ERROR = 0 on success
+     */
     AutoDetectorError updateData();
     const Data& getData() const;
     void setInterval(unsigned long interval, SensorId sensorId);
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
-    /*
+    /**
      * Retrieve specific sensor driver instance T from
      * SensorManager::_sensorList
      *
