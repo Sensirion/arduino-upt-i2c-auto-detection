@@ -78,4 +78,4 @@ Update and retrieve Data object in void loop():
 # Restrictions
 
 - This library does not support more than one sensor of the same type at a time.
-- Instances of the class Data may only be handled by reference, copy consturctor and assignment operator are deleted. Of course one may copy out the DataPoints manually from the reference.
+- Only one instance of the Data object is allowed, copies may not be made. In order to further process the DataPoints contained in the Data object, they should be copied out manually.
