@@ -9,8 +9,7 @@
     for this sketch to give sensible output.
     */
 
-#include "I2CAutoDetector.h"
-#include "SensirionSensorAutoDetection.h"
+#include "Sensirion_Sensor_Auto_Detection.h"
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
