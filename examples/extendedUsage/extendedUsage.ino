@@ -32,6 +32,8 @@ void setup() {
 
     Serial.begin(115200);
     Serial.println();
+    delay(500);  // do not remove. Required for Serial.print() to work within
+                 // setup()
     Wire.begin();
     sensorManager.begin();
 
