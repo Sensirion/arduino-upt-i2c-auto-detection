@@ -33,7 +33,6 @@
 
 // Comment out lines to remove unwanted drivers
 
-// #define _INCLUDE_UNWANTED_DRIVER_
 #define INCLUDE_SCD4X_DRIVER
 #define INCLUDE_SEN44_DRIVER
 #define INCLUDE_SFA3X_DRIVER
