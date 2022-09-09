@@ -39,6 +39,9 @@ void SensorManager::begin() {
 
 bool SensorManager::timeIntervalPassed(const int index,
                                        const unsigned long currentTimeStamp) {
+    if (currentTimeStamp < _sensorList.intervals[index]) {
+        return true;
+    }
     unsigned long elapsedTime =
         currentTimeStamp - _sensorList.latestMeasurementTimeStamps[index];
     return elapsedTime >= _sensorList.intervals[index];
