@@ -54,10 +54,9 @@ For example code showing how to use the user API, look at examples/exampleUsage/
 
 In any case, the following steps are essential.
 
-Include library and I2CAutoDetector:
+Include the library:
 
-    #include "I2CAutoDetector.h"
-    #include "SensirionSensorAutoDetection.h"
+    #include "Sensirion_Sensor_Auto_Detection.h"
 
 Instantiate I2CAutoDetector and SensorManager globally (before void setup()):
 

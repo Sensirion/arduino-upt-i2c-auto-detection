@@ -31,6 +31,7 @@
 #ifndef _SENSIRION_SENSOR_AUTO_DETECTION_H_
 #define _SENSIRION_SENSOR_AUTO_DETECTION_H_
 
+#include "I2CAutoDetector.h"
 #include "SensirionI2CScd4x.h"
 #include "SensirionI2CSen44.h"
 #include "SensirionI2CSfa3x.h"
