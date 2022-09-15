@@ -30,12 +30,24 @@
  */
 #include "I2CAutoDetector.h"
 #include "AutoDetectorErrors.h"
-#include "Scd4x.h"
-#include "Sen44.h"
+#include "DriverConfig.h"
 #include "SensirionCore.h"
+
+#ifdef INCLUDE_SCD4X_DRIVER
+#include "Scd4x.h"
+#endif
+#ifdef INCLUDE_SEN44_DRIVER
+#include "Sen44.h"
+#endif
+#ifdef INCLUDE_SFA3X_DRIVER
 #include "Sfa3x.h"
-#include "Sht4x.h"
+#endif
+#ifdef INCLUDE_SVM40_DRIVER
 #include "Svm40.h"
+#endif
+#ifdef INCLUDE_SHT4X_DRIVER
+#include "Sht4x.h"
+#endif
 
 byte I2CAutoDetector::probeAddress(const byte& address) {
     _wire.beginTransmission(address);
@@ -45,21 +57,31 @@ byte I2CAutoDetector::probeAddress(const byte& address) {
 
 ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
     switch (address) {
+#ifdef INCLUDE_SCD4X_DRIVER
         case (Scd4x::I2C_ADDRESS): {
             return new Scd4x(_wire);
         }
+#endif
+#ifdef INCLUDE_SEN44_DRIVER
         case (Sen44::I2C_ADDRESS): {
             return new Sen44(_wire);
         }
+#endif
+#ifdef INCLUDE_SFA3X_DRIVER
         case (Sfa3x::I2C_ADDRESS): {
             return new Sfa3x(_wire);
         }
+#endif
+#ifdef INCLUDE_SVM40_DRIVER
         case (Svm40::I2C_ADDRESS): {
             return new Svm40(_wire);
         }
+#endif
+#ifdef INCLUDE_SHT4X_DRIVER
         case (Sht4x::I2C_ADDRESS): {
             return new Sht4x(_wire);
         }
+#endif
         default: { return nullptr; }
     }
 }
