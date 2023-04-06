@@ -2,7 +2,7 @@
 
 Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It allows for easy read-out of the sensor data using an Arduino board.
 
-# Supported sensors:
+## Supported sensors:
 
 - SHT4X
 - SCD4X
@@ -10,7 +10,9 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 - SVM40
 - SEN44
 
-# Installation
+## Getting Started
+
+### Arduino
 
 This library can be installed easily using the Arduino Library manager:
 Start the [Arduino IDE](http://www.arduino.cc/en/main/software) and open
@@ -31,6 +33,29 @@ and add it to the [Arduino IDE](http://www.arduino.cc/en/main/software) via
     Sketch => Include Library => Add .ZIP Library...
 
 In both cases, don't forget to _install the dependencies_ listed below.
+
+### PlatformIO
+
+Install PlatformIO Core by following the [official instructions](https://docs.platformio.org/en/latest/core/installation/methods/index.html).
+
+To install this library (in `~/.platformio/lib`), execute the following command in a terminal.
+```bash
+pio lib --global install "Sensirion_Sensor_Auto_Detection"
+```
+To test an example (e.g `basicUsage`), navigate to the example directory,
+```bash
+cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/examples/basicUsage
+```
+compile and Upload
+```bash
+pio run -t upload
+```
+and start the Serial monitor.
+```bash
+pio device monitor
+```
+
+In order to use this library in your project, add it to the `lib_deps` in your `platformio.ini` file and include `Sensirion_Sensor_Auto_Detection.h`.
 
 # Dependencies
 
