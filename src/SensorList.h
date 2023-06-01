@@ -47,7 +47,7 @@ struct SensorList {
     size_t count();
     size_t getTotalNumberOfDataPoints();
     uint16_t getNumberOfSensorsLost();
-    bool sensorIsLost(const int index);
+    bool sensorIsLost(const int sensorIdx);
 };
 
 #endif /* _SENSOR_LIST_H */
