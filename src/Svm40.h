@@ -33,6 +33,7 @@
 
 #include "ISensor.h"
 #include "SensirionI2CSvm40.h"
+#include "Sensirion_UPT_Core.h"
 #include <Wire.h>
 
 class Svm40 : public ISensor {
@@ -40,16 +41,17 @@ class Svm40 : public ISensor {
     static const uint16_t I2C_ADDRESS = 0x6A;
     explicit Svm40(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measure(DataPoint dataPoints[],
-                     const unsigned long timeStamp) override;
-    SensorId getSensorId() const override;
-    size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementInterval() const override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    const SensorID getSensorId() const override;
+    const size_t getNumberOfDataPoints() const override;
+    const unsigned long getMinimumMeasurementInterval() const override;
     void* getDriver() override;
 
   private:
     TwoWire& _wire;
     SensirionI2CSvm40 _driver;
+    const SensorID _id = SensorID::SVM40;
 };
 
 #endif /* _SVM40_H_ */

@@ -41,7 +41,8 @@ uint16_t Svm40::start() {
     return _driver.startContinuousMeasurement();
 }
 
-uint16_t Svm40::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+uint16_t Svm40::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
     int16_t vocIndex;
     int16_t humidity;
     int16_t temperature;
@@ -50,26 +51,27 @@ uint16_t Svm40::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SensorId::SVM40, Unit::VOC_INDEX,
-                              static_cast<float>(vocIndex) / 10.0f, timeStamp);
-    dataPoints[1] =
-        DataPoint(SensorId::SVM40, Unit::RELATIVE_HUMIDITY_PERCENTAGE,
-                  static_cast<float>(humidity) / 100.0f, timeStamp);
-    dataPoints[2] =
-        DataPoint(SensorId::SVM40, Unit::TEMPERATURE_CELSIUS,
-                  static_cast<float>(temperature) / 200.0f, timeStamp);
+    dataPoints[0] =
+        DataPoint(SignalType::VOC_INDEX, static_cast<float>(vocIndex) / 10.0f,
+                  timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              static_cast<float>(humidity) / 100.0f, timeStamp,
+                              sensorName(_id));
+    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              static_cast<float>(temperature) / 200.0f,
+                              timeStamp, sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorId Svm40::getSensorId() const {
-    return SensorId::SVM40;
+const SensorID Svm40::getSensorId() const {
+    return _id;
 }
 
-size_t Svm40::getNumberOfDataPoints() const {
+const size_t Svm40::getNumberOfDataPoints() const {
     return 3;
 }
 
-unsigned long Svm40::getMinimumMeasurementInterval() const {
+const unsigned long Svm40::getMinimumMeasurementInterval() const {
     return 1000;
 }
 

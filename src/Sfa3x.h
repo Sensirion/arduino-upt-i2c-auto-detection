@@ -32,6 +32,7 @@
 #define _SFA3X_H_
 
 #include "ISensor.h"
+#include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSfa3x.h>
 #include <Wire.h>
 
@@ -40,16 +41,17 @@ class Sfa3x : public ISensor {
     static const uint16_t I2C_ADDRESS = 0x5D;
     explicit Sfa3x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measure(DataPoint dataPoints[],
-                     const unsigned long timeStamp) override;
-    SensorId getSensorId() const override;
-    size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementInterval() const override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    const SensorID getSensorId() const override;
+    const size_t getNumberOfDataPoints() const override;
+    const unsigned long getMinimumMeasurementInterval() const override;
     void* getDriver() override;
 
   private:
     TwoWire& _wire;
     SensirionI2CSfa3x _driver;
+    const SensorID _id = SensorID::SFA3X;
 };
 
 #endif /* _SFA3X_H_ */

@@ -31,7 +31,8 @@
 #ifndef _I_SENSOR_H_
 #define _I_SENSOR_H_
 
-#include "DataPoint.h"
+// #include "DataPoint.h"
+#include "Sensirion_UPT_Core.h"
 #include <Arduino.h>
 
 class ISensor {
@@ -56,28 +57,28 @@ class ISensor {
      * @return A uint16_t error corresponding to SensirionErrors.h of
      * SensirionCore, where 0 value corresponds to no error.
      */
-    virtual uint16_t measure(DataPoint dataPoints[],
-                             const unsigned long timeStamp) = 0;
+    virtual uint16_t measureAndWrite(DataPoint dataPoints[],
+                                     const unsigned long timeStamp) = 0;
     /**
      * @brief Get the specific SensorId of the ISensor realization
      *
      * @return SensorId
      */
-    virtual SensorId getSensorId() const = 0;
+    virtual const SensorID getSensorId() const = 0;
     /**
      * @brief Get the number of DataPoints this sensor occupies in the Data
      * object.
      *
      * @return size_t
      */
-    virtual size_t getNumberOfDataPoints() const = 0;
+    virtual const size_t getNumberOfDataPoints() const = 0;
     /**
      * @brief Get the minimum measurement interval of the sensor. This must be
      * larger than the longest possible measurement duration.
      *
      * @return unsigned long
      */
-    virtual unsigned long getMinimumMeasurementInterval() const = 0;
+    virtual const unsigned long getMinimumMeasurementInterval() const = 0;
     /**
      * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
      * pointer

@@ -93,7 +93,7 @@ const Data& SensorManager::getData() const {
     return _data;
 }
 
-void SensorManager::setInterval(unsigned long interval, SensorId sensorId) {
+void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
     for (int i = 0; i < SensorList::LENGTH; ++i) {
         ISensor* sensor = _sensorList.sensors[i];
         if (sensor == nullptr)

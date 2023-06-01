@@ -30,35 +30,37 @@
  */
 #include "Sht4x.h"
 #include "SensirionCore.h"
+#include "Sensirion_UPT_Core.h"
 
 uint16_t Sht4x::start() {
     _driver.begin(_wire);
     return HighLevelError::NoError;
 }
 
-uint16_t Sht4x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+uint16_t Sht4x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
     float temp;
     float humi;
     uint16_t error = _driver.measureHighPrecision(temp, humi);
     if (error) {
         return error;
     }
-    dataPoints[0] =
-        DataPoint(SensorId::SHT4X, Unit::TEMPERATURE_CELSIUS, temp, timeStamp);
-    dataPoints[1] = DataPoint(
-        SensorId::SHT4X, Unit::RELATIVE_HUMIDITY_PERCENTAGE, humi, timeStamp);
+    dataPoints[0] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
+                              timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
+                              timeStamp, sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorId Sht4x::getSensorId() const {
-    return SensorId::SHT4X;
+const SensorID Sht4x::getSensorId() const {
+    return _id;
 }
 
-size_t Sht4x::getNumberOfDataPoints() const {
+const size_t Sht4x::getNumberOfDataPoints() const {
     return 2;
 }
 
-unsigned long Sht4x::getMinimumMeasurementInterval() const {
+const unsigned long Sht4x::getMinimumMeasurementInterval() const {
     return 9;
 }
 

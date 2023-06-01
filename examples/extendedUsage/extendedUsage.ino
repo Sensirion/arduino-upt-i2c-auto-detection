@@ -15,6 +15,7 @@
     */
 
 #include "Sensirion_Sensor_Auto_Detection.h"
+#include "Sensirion_UPT_Core.h"
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
@@ -38,7 +39,7 @@ void setup() {
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
-        pScd4xDriver, SensorId::SCD4X);
+        pScd4xDriver, SensorID::SCD4X);
     if (error) {
         Serial.println("Scd4x driver retrieval failed!");
     } else {
@@ -61,7 +62,7 @@ void setup() {
     delay(5000);  // Wait for SCD4X to finish measuring
 
     // Setting the SCD4X measurement interval
-    sensorManager.setInterval(10000, SensorId::SCD4X);
+    sensorManager.setInterval(10000, SensorID::SCD4X);
 }
 
 void loop() {
@@ -75,12 +76,12 @@ void printData(const Data& data) {
     for (size_t i = 0; i < data.getLength(); ++i) {
         const DataPoint& dp = data.dataPoints[i];
         // Get SensorId string using SensorId enum as index
-        Serial.print(sensorIdStr[static_cast<int>(dp.id)]);
+        Serial.print(dp.sourceDevice.c_str());
         Serial.print(": ");
         Serial.print(dp.value);
         Serial.print(" ");
         // Get Unit string using Unit enum as index
-        Serial.print(unitStr[static_cast<int>(dp.unit)]);
+        Serial.print(unitOf(dp.signalType).c_str());
         Serial.print(" @");
         Serial.println(dp.timeStamp);
     }
