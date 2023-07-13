@@ -28,42 +28,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Sht4x.h"
+#include "SensorWrappers/Scd4x.h"
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-uint16_t Sht4x::start() {
+uint16_t Scd4x::start() {
     _driver.begin(_wire);
-    return HighLevelError::NoError;
-}
-
-uint16_t Sht4x::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    float temp;
-    float humi;
-    uint16_t error = _driver.measureHighPrecision(temp, humi);
+    // stop potentially previously started measurement
+    uint16_t error = _driver.stopPeriodicMeasurement();
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
+    // Start Measurement
+    error = _driver.startPeriodicMeasurement();
+    return error;
+}
+
+uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    uint16_t co2;
+    float temp;
+    float humi;
+    uint16_t error = _driver.readMeasurement(co2, temp, humi);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] =
+        DataPoint(SignalType::CO2_PARTS_PER_MILLION, static_cast<float>(co2),
+                  timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
                               timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
+    dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
                               timeStamp, sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorID Sht4x::getSensorId() const {
+SensorID Scd4x::getSensorId() const {
     return _id;
 }
 
-size_t Sht4x::getNumberOfDataPoints() const {
-    return 2;
+size_t Scd4x::getNumberOfDataPoints() const {
+    return 3;
 }
 
-unsigned long Sht4x::getMinimumMeasurementInterval() const {
-    return 9;
+unsigned long Scd4x::getMinimumMeasurementInterval() const {
+    return 5000;
 }
 
-void* Sht4x::getDriver() {
+void* Scd4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

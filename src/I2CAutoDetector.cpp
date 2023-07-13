@@ -34,19 +34,19 @@
 #include "SensirionCore.h"
 
 #ifdef INCLUDE_SCD4X_DRIVER
-#include "Scd4x.h"
+#include "SensorWrappers/Scd4x.h"
 #endif
 #ifdef INCLUDE_SEN44_DRIVER
-#include "Sen44.h"
+#include "SensorWrappers/Sen44.h"
 #endif
 #ifdef INCLUDE_SFA3X_DRIVER
-#include "Sfa3x.h"
+#include "SensorWrappers/Sfa3x.h"
 #endif
-#ifdef INCLUDE_SVM4X_DRIVER
-#include "Svm4x.h"
+#ifdef INCLUDE_SVM40_DRIVER
+#include "SensorWrappers/Svm4x.h"
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
-#include "Sht4x.h"
+#include "SensorWrappers/Sht4x.h"
 #endif
 
 byte I2CAutoDetector::probeAddress(const byte& address) {

@@ -28,54 +28,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Svm4x.h"
+#include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
-uint16_t Svm4x::start() {
+uint16_t Sfa3x::start() {
     _driver.begin(_wire);
-    uint16_t error = _driver.deviceReset();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    return _driver.startMeasurement();
+    return _driver.startContinuousMeasurement();
 }
 
-uint16_t Svm4x::measureAndWrite(DataPoint dataPoints[],
+uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
-    float humidity;
-    float temperature;
-    float vocIndex;
-    float noxIndex;
-    uint16_t error =
-        _driver.readMeasuredValues(humidity, temperature, vocIndex, noxIndex);
+    int16_t hcho;
+    int16_t humi;
+    int16_t temp;
+
+    uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              humidity, timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              temperature, timeStamp, sensorName(_id));
-    dataPoints[2] =
-        DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp, sensorName(_id));
-    dataPoints[3] =
-        DataPoint(SignalType::NOX_INDEX, noxIndex, timeStamp, sensorName(_id));
-
+    dataPoints[0] =
+        DataPoint(SignalType::HCHO_PARTS_PER_BILLION,
+                  static_cast<float>(hcho) / 5.0f, timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              static_cast<float>(humi) / 100.0f, timeStamp,
+                              sensorName(_id));
+    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              static_cast<float>(temp) / 200.0f, timeStamp,
+                              sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorID Svm4x::getSensorId() const {
+SensorID Sfa3x::getSensorId() const {
     return _id;
 }
 
-size_t Svm4x::getNumberOfDataPoints() const {
-    return 4;
+size_t Sfa3x::getNumberOfDataPoints() const {
+    return 3;
 }
 
-unsigned long Svm4x::getMinimumMeasurementInterval() const {
-    return 1000;
+unsigned long Sfa3x::getMinimumMeasurementInterval() const {
+    return 5000;
 }
 
-void* Svm4x::getDriver() {
+void* Sfa3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

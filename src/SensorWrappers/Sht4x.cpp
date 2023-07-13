@@ -28,48 +28,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Sfa3x.h"
+#include "SensorWrappers/Sht4x.h"
 #include "SensirionCore.h"
+#include "Sensirion_UPT_Core.h"
 
-uint16_t Sfa3x::start() {
+uint16_t Sht4x::start() {
     _driver.begin(_wire);
-    return _driver.startContinuousMeasurement();
-}
-
-uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    int16_t hcho;
-    int16_t humi;
-    int16_t temp;
-
-    uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
-    if (error) {
-        return error;
-    }
-    dataPoints[0] =
-        DataPoint(SignalType::HCHO_PARTS_PER_BILLION,
-                  static_cast<float>(hcho) / 5.0f, timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              static_cast<float>(humi) / 100.0f, timeStamp,
-                              sensorName(_id));
-    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              static_cast<float>(temp) / 200.0f, timeStamp,
-                              sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorID Sfa3x::getSensorId() const {
+uint16_t Sht4x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    float temp;
+    float humi;
+    uint16_t error = _driver.measureHighPrecision(temp, humi);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
+                              timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
+                              timeStamp, sensorName(_id));
+    return HighLevelError::NoError;
+}
+
+SensorID Sht4x::getSensorId() const {
     return _id;
 }
 
-size_t Sfa3x::getNumberOfDataPoints() const {
-    return 3;
+size_t Sht4x::getNumberOfDataPoints() const {
+    return 2;
 }
 
-unsigned long Sfa3x::getMinimumMeasurementInterval() const {
-    return 5000;
+unsigned long Sht4x::getMinimumMeasurementInterval() const {
+    return 9;
 }
 
-void* Sfa3x::getDriver() {
+void* Sht4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
