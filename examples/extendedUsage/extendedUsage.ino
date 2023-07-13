@@ -77,12 +77,14 @@ void printData(const Data& data) {
         const DataPoint& dp = data.dataPoints[i];
         // Get SensorId string using SensorId enum as index
         Serial.print(dp.sourceDevice.c_str());
-        Serial.print(": ");
+        Serial.print("-");
+        Serial.print(quantityOf(dp.signalType).c_str());
+        Serial.print(":\t ");
         Serial.print(dp.value);
         Serial.print(" ");
         // Get Unit string using Unit enum as index
         Serial.print(unitOf(dp.signalType).c_str());
-        Serial.print(" @");
+        Serial.print(" \t@");
         Serial.println(dp.timeStamp);
     }
     Serial.println();
