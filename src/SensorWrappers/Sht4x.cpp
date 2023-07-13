@@ -60,7 +60,7 @@ size_t Sht4x::getNumberOfDataPoints() const {
     return 2;
 }
 
-unsigned long Sht4x::getMinimumMeasurementInterval() const {
+unsigned long Sht4x::getMinimumMeasurementIntervalMs() const {
     return 9;
 }
 

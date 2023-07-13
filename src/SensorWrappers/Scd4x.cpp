@@ -71,7 +71,7 @@ size_t Scd4x::getNumberOfDataPoints() const {
     return 3;
 }
 
-unsigned long Scd4x::getMinimumMeasurementInterval() const {
+unsigned long Scd4x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 

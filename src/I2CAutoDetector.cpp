@@ -39,14 +39,26 @@
 #ifdef INCLUDE_SEN44_DRIVER
 #include "SensorWrappers/Sen44.h"
 #endif
+#ifdef INCLUDE_SEN5X_DRIVER
+#include "SensorWrappers/Sen5x.h"
+#endif
 #ifdef INCLUDE_SFA3X_DRIVER
 #include "SensorWrappers/Sfa3x.h"
 #endif
-#ifdef INCLUDE_SVM40_DRIVER
+#ifdef INCLUDE_SVM4X_DRIVER
 #include "SensorWrappers/Svm4x.h"
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
 #include "SensorWrappers/Sht4x.h"
+#endif
+#ifdef INCLUDE_SCD30_DRIVER
+#include "SensorWrappers/Scd30.h"
+#endif
+#ifdef INCLUDE_STC3X_DRIVER
+#include "SensorWrappers/Stc3x.h"
+#endif
+#ifdef INCLUDE_SGP41_DRIVER
+#include "SensorWrappers/Sgp41.h"
 #endif
 
 byte I2CAutoDetector::probeAddress(const byte& address) {
@@ -67,6 +79,11 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sen44(_wire);
         }
 #endif
+#ifdef INCLUDE_SEN5X_DRIVER
+        case (Sen5x::I2C_ADDRESS): {
+            return new Sen5x(_wire);
+        }
+#endif
 #ifdef INCLUDE_SFA3X_DRIVER
         case (Sfa3x::I2C_ADDRESS): {
             return new Sfa3x(_wire);
@@ -80,6 +97,22 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
 #ifdef INCLUDE_SHT4X_DRIVER
         case (Sht4x::I2C_ADDRESS): {
             return new Sht4x(_wire);
+        }
+#endif
+// #ifdef INCLUDE_SCD30_DRIVER
+//         case (Scd30::I2C_ADDRESS): {
+//             return new Scd30(_wire);
+//         }
+// #endif
+#ifdef INCLUDE_STC3X_DRIVER
+        case (Stc3x::I2C_ADDRESS): {
+            return new Stc3x(_wire);
+        }
+        // #error STC3X included!
+#endif
+#ifdef INCLUDE_SGP41_DRIVER
+        case (Sgp41::I2C_ADDRESS): {
+            return new Sgp41(_wire);
         }
 #endif
         default: { return nullptr; }

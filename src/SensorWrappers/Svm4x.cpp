@@ -72,7 +72,7 @@ size_t Svm4x::getNumberOfDataPoints() const {
     return 4;
 }
 
-unsigned long Svm4x::getMinimumMeasurementInterval() const {
+unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 

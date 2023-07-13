@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "SensorWrappers/Sfa3x.h"
+#include "SensorWrappers/Stc3x.h"
 #include "SensirionCore.h"
+#include "Sensirion_UPT_Core.h"
 
-uint16_t Sfa3x::start() {
+uint16_t Stc3x::start() {
     _driver.begin(_wire);
-    return _driver.startContinuousMeasurement();
+    uint16_t error = _driver.setBinaryGas(0x0001);
+    return error;
 }
 
-uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
+uint16_t Stc3x::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
-    int16_t hcho;
-    int16_t humi;
-    int16_t temp;
+    uint16_t gasTicks;
+    uint16_t temperatureTicks;
 
-    uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
+    uint16_t error =
+        _driver.measureGasConcentration(gasTicks, temperatureTicks);
     if (error) {
         return error;
     }
     dataPoints[0] =
-        DataPoint(SignalType::HCHO_PARTS_PER_BILLION,
-                  static_cast<float>(hcho) / 5.0f, timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              static_cast<float>(humi) / 100.0f, timeStamp,
-                              sensorName(_id));
-    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              static_cast<float>(temp) / 200.0f, timeStamp,
-                              sensorName(_id));
+        DataPoint(SignalType::GAS_CONCENTRATION,
+                  100 * (static_cast<float>(gasTicks) - 16384.0) / 32768.0,
+                  timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              static_cast<float>(temperatureTicks) / 200.0,
+                              timeStamp, sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorID Sfa3x::getSensorId() const {
+SensorID Stc3x::getSensorId() const {
     return _id;
 }
 
-size_t Sfa3x::getNumberOfDataPoints() const {
-    return 3;
+size_t Stc3x::getNumberOfDataPoints() const {
+    return 2;
 }
 
-unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
-    return 5000;
+unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
+    return 1000;
 }
 
-void* Sfa3x::getDriver() {
+void* Stc3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

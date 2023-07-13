@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2022, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "SensorWrappers/Sfa3x.h"
-#include "SensirionCore.h"
+#ifndef _SCD30_H_
+#define _SCD30_H_
 
-uint16_t Sfa3x::start() {
-    _driver.begin(_wire);
-    return _driver.startContinuousMeasurement();
-}
+#include "ISensor.h"
+#include "SensirionI2cScd30.h"
+#include "Sensirion_UPT_Core.h"
+#include <Wire.h>
 
-uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    int16_t hcho;
-    int16_t humi;
-    int16_t temp;
+class Scd30 : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x61;
+    explicit Scd30(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    SensorID getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
+    void* getDriver() override;
 
-    uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
-    if (error) {
-        return error;
-    }
-    dataPoints[0] =
-        DataPoint(SignalType::HCHO_PARTS_PER_BILLION,
-                  static_cast<float>(hcho) / 5.0f, timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              static_cast<float>(humi) / 100.0f, timeStamp,
-                              sensorName(_id));
-    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              static_cast<float>(temp) / 200.0f, timeStamp,
-                              sensorName(_id));
-    return HighLevelError::NoError;
-}
+  private:
+    TwoWire& _wire;
+    SensirionI2cScd30 _driver;
+    SensorID _id = SensorID::SCD30;
+};
 
-SensorID Sfa3x::getSensorId() const {
-    return _id;
-}
-
-size_t Sfa3x::getNumberOfDataPoints() const {
-    return 3;
-}
-
-unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
-    return 5000;
-}
-
-void* Sfa3x::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
-}
+#endif /* _SCD30_H_ */

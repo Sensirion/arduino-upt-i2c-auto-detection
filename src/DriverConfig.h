@@ -34,9 +34,18 @@
 // Comment out lines to remove unwanted drivers
 
 #define INCLUDE_SCD4X_DRIVER
-#define INCLUDE_SEN44_DRIVER
+// #define INCLUDE_SEN44_DRIVER
+#define INCLUDE_SEN5X_DRIVER
 #define INCLUDE_SFA3X_DRIVER
 #define INCLUDE_SVM4X_DRIVER
 #define INCLUDE_SHT4X_DRIVER
+#define INCLUDE_SCD30_DRIVER
+#define INCLUDE_STC3X_DRIVER
+#define INCLUDE_SGP41_DRIVER
 
+#ifdef INCLUDE_SEN44_DRIVER
+#ifdef INCLUDE_SEN5X_DRIVER
+#error SEN44 and SEN5X cannot be used at the same time as they share the same I2C address (0x69). Please disable one of them in the DriverConfig.h file.
+#endif
+#endif
 #endif /* _DRIVER_CONFIG_H_ */
