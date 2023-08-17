@@ -28,53 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Svm40.h"
-#include "SensirionCore.h"
+#ifndef _SVM40_H_
+#define _SVM40_H_
 
-uint16_t Svm40::start() {
-    _driver.begin(_wire);
-    uint16_t error = _driver.stopMeasurement();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    return _driver.startContinuousMeasurement();
-}
+#include "ISensor.h"
+#include "SensirionI2CSvm41.h"
+#include "Sensirion_UPT_Core.h"
+#include <Wire.h>
 
-uint16_t Svm40::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    int16_t vocIndex;
-    int16_t humidity;
-    int16_t temperature;
-    uint16_t error =
-        _driver.readMeasuredValuesAsIntegers(vocIndex, humidity, temperature);
-    if (error) {
-        return error;
-    }
-    dataPoints[0] =
-        DataPoint(SignalType::VOC_INDEX, static_cast<float>(vocIndex) / 10.0f,
-                  timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              static_cast<float>(humidity) / 100.0f, timeStamp,
-                              sensorName(_id));
-    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              static_cast<float>(temperature) / 200.0f,
-                              timeStamp, sensorName(_id));
-    return HighLevelError::NoError;
-}
+class Svm4x : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x6A;
+    explicit Svm4x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    const SensorID getSensorId() const override;
+    const size_t getNumberOfDataPoints() const override;
+    const unsigned long getMinimumMeasurementInterval() const override;
+    void* getDriver() override;
 
-const SensorID Svm40::getSensorId() const {
-    return _id;
-}
+  private:
+    TwoWire& _wire;
+    SensirionI2CSvm41 _driver;
+    const SensorID _id = SensorID::SVM4X;
+};
 
-const size_t Svm40::getNumberOfDataPoints() const {
-    return 3;
-}
-
-const unsigned long Svm40::getMinimumMeasurementInterval() const {
-    return 1000;
-}
-
-void* Svm40::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
-}
+#endif /* _SVM40_H_ */

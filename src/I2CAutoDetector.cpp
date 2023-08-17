@@ -42,8 +42,8 @@
 #ifdef INCLUDE_SFA3X_DRIVER
 #include "Sfa3x.h"
 #endif
-#ifdef INCLUDE_SVM40_DRIVER
-#include "Svm40.h"
+#ifdef INCLUDE_SVM4X_DRIVER
+#include "Svm4x.h"
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
 #include "Sht4x.h"
@@ -72,9 +72,9 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sfa3x(_wire);
         }
 #endif
-#ifdef INCLUDE_SVM40_DRIVER
-        case (Svm40::I2C_ADDRESS): {
-            return new Svm40(_wire);
+#ifdef INCLUDE_SVM4X_DRIVER
+        case (Svm4x::I2C_ADDRESS): {
+            return new Svm4x(_wire);
         }
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
