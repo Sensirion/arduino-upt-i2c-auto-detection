@@ -33,12 +33,12 @@
 
 uint16_t Svm4x::start() {
     _driver.begin(_wire);
-    uint16_t error = _driver.stopMeasurement();
+    uint16_t error = _driver.deviceReset();
     if (error) {
         return error;
     }
     // Start Measurement
-    return _driver.startContinuousMeasurement();
+    return _driver.startMeasurement();
 }
 
 uint16_t Svm4x::measureAndWrite(DataPoint dataPoints[],
@@ -64,7 +64,7 @@ uint16_t Svm4x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
-const SensorID Svm4x::getSensorId() const {
+SensorID Svm4x::getSensorId() const {
     return _id;
 }
 
@@ -72,7 +72,7 @@ size_t Svm4x::getNumberOfDataPoints() const {
     return 4;
 }
 
-const unsigned long Svm4x::getMinimumMeasurementInterval() const {
+unsigned long Svm4x::getMinimumMeasurementInterval() const {
     return 1000;
 }
 

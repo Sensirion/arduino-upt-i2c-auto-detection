@@ -63,15 +63,15 @@ uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
-const SensorID Scd4x::getSensorId() const {
+SensorID Scd4x::getSensorId() const {
     return _id;
 }
 
-const size_t Scd4x::getNumberOfDataPoints() const {
+size_t Scd4x::getNumberOfDataPoints() const {
     return 3;
 }
 
-const unsigned long Scd4x::getMinimumMeasurementInterval() const {
+unsigned long Scd4x::getMinimumMeasurementInterval() const {
     return 5000;
 }
 

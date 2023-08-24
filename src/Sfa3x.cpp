@@ -58,15 +58,15 @@ uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
-const SensorID Sfa3x::getSensorId() const {
+SensorID Sfa3x::getSensorId() const {
     return _id;
 }
 
-const size_t Sfa3x::getNumberOfDataPoints() const {
+size_t Sfa3x::getNumberOfDataPoints() const {
     return 3;
 }
 
-const unsigned long Sfa3x::getMinimumMeasurementInterval() const {
+unsigned long Sfa3x::getMinimumMeasurementInterval() const {
     return 5000;
 }
 

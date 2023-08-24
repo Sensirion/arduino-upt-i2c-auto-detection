@@ -64,21 +64,21 @@ class ISensor {
      *
      * @return SensorId
      */
-    virtual const SensorID getSensorId() const = 0;
+    virtual SensorID getSensorId() const = 0;
     /**
      * @brief Get the number of DataPoints this sensor occupies in the Data
      * object.
      *
      * @return size_t
      */
-    virtual const size_t getNumberOfDataPoints() const = 0;
+    virtual size_t getNumberOfDataPoints() const = 0;
     /**
      * @brief Get the minimum measurement interval of the sensor. This must be
      * larger than the longest possible measurement duration.
      *
      * @return unsigned long
      */
-    virtual const unsigned long getMinimumMeasurementInterval() const = 0;
+    virtual unsigned long getMinimumMeasurementInterval() const = 0;
     /**
      * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
      * pointer

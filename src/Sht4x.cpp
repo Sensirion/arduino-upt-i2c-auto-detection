@@ -52,15 +52,15 @@ uint16_t Sht4x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
-const SensorID Sht4x::getSensorId() const {
+SensorID Sht4x::getSensorId() const {
     return _id;
 }
 
-const size_t Sht4x::getNumberOfDataPoints() const {
+size_t Sht4x::getNumberOfDataPoints() const {
     return 2;
 }
 
-const unsigned long Sht4x::getMinimumMeasurementInterval() const {
+unsigned long Sht4x::getMinimumMeasurementInterval() const {
     return 9;
 }
 

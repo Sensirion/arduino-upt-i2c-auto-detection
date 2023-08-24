@@ -80,15 +80,15 @@ uint16_t Sen44::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
-const SensorID Sen44::getSensorId() const {
+SensorID Sen44::getSensorId() const {
     return _id;
 }
 
-const size_t Sen44::getNumberOfDataPoints() const {
+size_t Sen44::getNumberOfDataPoints() const {
     return 7;
 }
 
-const unsigned long Sen44::getMinimumMeasurementInterval() const {
+unsigned long Sen44::getMinimumMeasurementInterval() const {
     return 1000;
 }
 
