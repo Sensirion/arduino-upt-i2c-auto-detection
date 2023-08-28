@@ -50,7 +50,7 @@ class SensorManager {
      */
     AutoDetectorError updateData();
     const Data& getData() const;
-    void setInterval(unsigned long interval, SensorId sensorId);
+    void setInterval(unsigned long interval, SensorID sensorId);
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
     /**
      * Retrieve specific sensor driver instance T from
@@ -64,7 +64,7 @@ class SensorManager {
      * may the driver methods be called. e.g.: pDriver->driverMethod()
      */
     template <class T>
-    AutoDetectorError getSensorDriver(T*& pDriver, SensorId id) {
+    AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
         for (int i = 0; i < SensorList::LENGTH; ++i) {
             if (_sensorList.sensors[i] == nullptr) {
                 continue;
@@ -82,11 +82,9 @@ class SensorManager {
     Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
-    void measure(const int index, const size_t position);
-    bool timeIntervalPassed(const int index,
-                            const unsigned long currentTimeStamp);
-
-    void updateSensorStatus(const int index);
+    bool _timeIntervalPassed(const int sensorIdx,
+                             const unsigned long currentTimeStamp);
+    void _updateSensorStatus(const int sensorIdx);
 };
 
 #endif /* _SENSOR_MANAGER_H_ */

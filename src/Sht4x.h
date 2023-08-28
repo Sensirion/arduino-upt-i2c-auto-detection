@@ -33,6 +33,7 @@
 
 #include "ISensor.h"
 #include "SensirionI2CSht4x.h"
+#include "Sensirion_UPT_Core.h"
 #include <Wire.h>
 
 class Sht4x : public ISensor {
@@ -40,9 +41,9 @@ class Sht4x : public ISensor {
     static const uint16_t I2C_ADDRESS = 0x44;
     explicit Sht4x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measure(DataPoint dataPoints[],
-                     const unsigned long timeStamp) override;
-    SensorId getSensorId() const override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementInterval() const override;
     void* getDriver() override;
@@ -50,6 +51,7 @@ class Sht4x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSht4x _driver;
+    const SensorID _id = SensorID::SHT4X;
 };
 
 #endif /* _SHT4X_H_ */

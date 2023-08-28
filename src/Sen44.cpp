@@ -43,7 +43,8 @@ uint16_t Sen44::start() {
     return error;
 }
 
-uint16_t Sen44::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+uint16_t Sen44::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
     uint16_t massConcentrationPm1p0;
     uint16_t massConcentrationPm2p5;
     uint16_t massConcentrationPm4p0;
@@ -57,31 +58,30 @@ uint16_t Sen44::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
     if (error) {
         return error;
     }
-    dataPoints[0] =
-        DataPoint(SensorId::SEN44, Unit::MASS_CONCENTRATION_PM1P0,
-                  static_cast<float>(massConcentrationPm1p0), timeStamp);
-    dataPoints[1] =
-        DataPoint(SensorId::SEN44, Unit::MASS_CONCENTRATION_PM2P5,
-                  static_cast<float>(massConcentrationPm2p5), timeStamp);
-    dataPoints[2] =
-        DataPoint(SensorId::SEN44, Unit::MASS_CONCENTRATION_PM4P0,
-                  static_cast<float>(massConcentrationPm4p0), timeStamp);
-    dataPoints[3] =
-        DataPoint(SensorId::SEN44, Unit::MASS_CONCENTRATION_PM10P0,
-                  static_cast<float>(massConcentrationPm10p0), timeStamp);
+    dataPoints[0] = DataPoint(SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm1p0),
+                              timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm2p5),
+                              timeStamp, sensorName(_id));
+    dataPoints[2] = DataPoint(SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm4p0),
+                              timeStamp, sensorName(_id));
+    dataPoints[3] = DataPoint(SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm10p0),
+                              timeStamp, sensorName(_id));
     dataPoints[4] =
-        DataPoint(SensorId::SEN44, Unit::VOC_INDEX, vocIndex, timeStamp);
-    dataPoints[5] =
-        DataPoint(SensorId::SEN44, Unit::RELATIVE_HUMIDITY_PERCENTAGE,
-                  ambientHumidity, timeStamp);
-    dataPoints[6] = DataPoint(SensorId::SEN44, Unit::TEMPERATURE_CELSIUS,
-                              ambientTemperature, timeStamp);
+        DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp, sensorName(_id));
+    dataPoints[5] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              ambientHumidity, timeStamp, sensorName(_id));
+    dataPoints[6] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              ambientTemperature, timeStamp, sensorName(_id));
 
     return HighLevelError::NoError;
 }
 
-SensorId Sen44::getSensorId() const {
-    return SensorId::SEN44;
+SensorID Sen44::getSensorId() const {
+    return _id;
 }
 
 size_t Sen44::getNumberOfDataPoints() const {

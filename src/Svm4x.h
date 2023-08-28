@@ -28,51 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Svm40.h"
-#include "SensirionCore.h"
+#ifndef _SVM40_H_
+#define _SVM40_H_
 
-uint16_t Svm40::start() {
-    _driver.begin(_wire);
-    uint16_t error = _driver.stopMeasurement();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    return _driver.startContinuousMeasurement();
-}
+#include "ISensor.h"
+#include "SensirionI2CSvm41.h"
+#include "Sensirion_UPT_Core.h"
+#include <Wire.h>
 
-uint16_t Svm40::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
-    int16_t vocIndex;
-    int16_t humidity;
-    int16_t temperature;
-    uint16_t error =
-        _driver.readMeasuredValuesAsIntegers(vocIndex, humidity, temperature);
-    if (error) {
-        return error;
-    }
-    dataPoints[0] = DataPoint(SensorId::SVM40, Unit::VOC_INDEX,
-                              static_cast<float>(vocIndex) / 10.0f, timeStamp);
-    dataPoints[1] =
-        DataPoint(SensorId::SVM40, Unit::RELATIVE_HUMIDITY_PERCENTAGE,
-                  static_cast<float>(humidity) / 100.0f, timeStamp);
-    dataPoints[2] =
-        DataPoint(SensorId::SVM40, Unit::TEMPERATURE_CELSIUS,
-                  static_cast<float>(temperature) / 200.0f, timeStamp);
-    return HighLevelError::NoError;
-}
+class Svm4x : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x6A;
+    explicit Svm4x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    SensorID getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementInterval() const override;
+    void* getDriver() override;
 
-SensorId Svm40::getSensorId() const {
-    return SensorId::SVM40;
-}
+  private:
+    TwoWire& _wire;
+    SensirionI2CSvm41 _driver;
+    const SensorID _id = SensorID::SVM4X;
+};
 
-size_t Svm40::getNumberOfDataPoints() const {
-    return 3;
-}
-
-unsigned long Svm40::getMinimumMeasurementInterval() const {
-    return 1000;
-}
-
-void* Svm40::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
-}
+#endif /* _SVM40_H_ */

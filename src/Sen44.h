@@ -32,6 +32,7 @@
 #define _SEN44_H_
 
 #include "ISensor.h"
+#include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSen44.h>
 #include <Wire.h>
 
@@ -40,9 +41,9 @@ class Sen44 : public ISensor {
     static const uint16_t I2C_ADDRESS = 0x69;
     explicit Sen44(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measure(DataPoint dataPoints[],
-                     const unsigned long timeStamp) override;
-    SensorId getSensorId() const override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementInterval() const override;
     void* getDriver() override;
@@ -50,6 +51,7 @@ class Sen44 : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSen44 _driver;
+    SensorID _id = SensorID::SEN44;
 };
 
 #endif /* _SEN44_H_ */

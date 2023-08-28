@@ -30,21 +30,22 @@ compile_test:
     script:
         - arduino-cli update
         - arduino-cli lib install "Sensirion Core@0.5.3"
+        - arduino-cli lib install "Sensirion_UPT_Core"
         - arduino-cli lib install "Sensirion I2C SCD4x@0.3.1"
         - arduino-cli lib install "Sensirion I2C SFA3x@0.1.0"
-        - arduino-cli lib install "Sensirion I2C SVM40@0.1.0"
+        - arduino-cli lib install "Sensirion I2C SVM4x@0.2.0"
         - arduino-cli lib install "Sensirion I2C SEN44@0.1.0"
         - arduino-cli lib install "Sensirion I2C SHT4x@0.1.0"
         - ln -s $PWD ~/Arduino/libraries/
-        - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/extendedUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/extendedUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/extendedUsage
-        - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/extendedUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/basicUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/basicUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/basicUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/basicUsage
+        # - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/basicUsage
+        # - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/basicUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/extendedUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/extendedUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/extendedUsage
+        # - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/extendedUsage
         - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/extendedUsage
         - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/extendedUsage

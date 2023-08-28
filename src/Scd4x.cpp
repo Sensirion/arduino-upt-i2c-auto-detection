@@ -30,6 +30,7 @@
  */
 #include "Scd4x.h"
 #include "SensirionCore.h"
+#include "Sensirion_UPT_Core.h"
 
 uint16_t Scd4x::start() {
     _driver.begin(_wire);
@@ -43,7 +44,8 @@ uint16_t Scd4x::start() {
     return error;
 }
 
-uint16_t Scd4x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
     uint16_t co2;
     float temp;
     float humi;
@@ -51,17 +53,18 @@ uint16_t Scd4x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SensorId::SCD4X, Unit::PARTS_PER_MILLION_CO2,
-                              static_cast<float>(co2), timeStamp);
-    dataPoints[1] =
-        DataPoint(SensorId::SCD4X, Unit::TEMPERATURE_CELSIUS, temp, timeStamp);
-    dataPoints[2] = DataPoint(
-        SensorId::SCD4X, Unit::RELATIVE_HUMIDITY_PERCENTAGE, humi, timeStamp);
+    dataPoints[0] =
+        DataPoint(SignalType::CO2_PARTS_PER_MILLION, static_cast<float>(co2),
+                  timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
+                              timeStamp, sensorName(_id));
+    dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
+                              timeStamp, sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorId Scd4x::getSensorId() const {
-    return SensorId::SCD4X;
+SensorID Scd4x::getSensorId() const {
+    return _id;
 }
 
 size_t Scd4x::getNumberOfDataPoints() const {

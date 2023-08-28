@@ -28,23 +28,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DATA_POINT_H_
-#define _DATA_POINT_H_
+#include "Svm4x.h"
+#include "SensirionCore.h"
 
-#include "SensorId.h"
-#include "Unit.h"
-#include <Arduino.h>
-
-struct DataPoint {
-    SensorId id = SensorId::UNDEFINED;
-    Unit unit = Unit::UNDEFINED;
-    float value = 0;
-    unsigned long timeStamp = 0;
-    DataPoint() = default;
-    DataPoint(const SensorId& id_, const Unit& unit_, const float& value_,
-              const unsigned long& timeStamp_)
-        : id(id_), unit(unit_), value(value_), timeStamp(timeStamp_) {
+uint16_t Svm4x::start() {
+    _driver.begin(_wire);
+    uint16_t error = _driver.deviceReset();
+    if (error) {
+        return error;
     }
-};
+    // Start Measurement
+    return _driver.startMeasurement();
+}
 
-#endif /* _DATA_POINT_H_ */
+uint16_t Svm4x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    float humidity;
+    float temperature;
+    float vocIndex;
+    float noxIndex;
+    uint16_t error =
+        _driver.readMeasuredValues(humidity, temperature, vocIndex, noxIndex);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              humidity, timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              temperature, timeStamp, sensorName(_id));
+    dataPoints[2] =
+        DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp, sensorName(_id));
+    dataPoints[3] =
+        DataPoint(SignalType::NOX_INDEX, noxIndex, timeStamp, sensorName(_id));
+
+    return HighLevelError::NoError;
+}
+
+SensorID Svm4x::getSensorId() const {
+    return _id;
+}
+
+size_t Svm4x::getNumberOfDataPoints() const {
+    return 4;
+}
+
+unsigned long Svm4x::getMinimumMeasurementInterval() const {
+    return 1000;
+}
+
+void* Svm4x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

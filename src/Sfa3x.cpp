@@ -36,7 +36,8 @@ uint16_t Sfa3x::start() {
     return _driver.startContinuousMeasurement();
 }
 
-uint16_t Sfa3x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
+uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
     int16_t hcho;
     int16_t humi;
     int16_t temp;
@@ -45,18 +46,20 @@ uint16_t Sfa3x::measure(DataPoint dataPoints[], const unsigned long timeStamp) {
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SensorId::SFA3X, Unit::PARTS_PER_BILLION_HCHO,
-                              static_cast<float>(hcho) / 5.0f, timeStamp);
-    dataPoints[1] =
-        DataPoint(SensorId::SFA3X, Unit::RELATIVE_HUMIDITY_PERCENTAGE,
-                  static_cast<float>(humi) / 100.0f, timeStamp);
-    dataPoints[2] = DataPoint(SensorId::SFA3X, Unit::TEMPERATURE_CELSIUS,
-                              static_cast<float>(temp) / 200.0f, timeStamp);
+    dataPoints[0] =
+        DataPoint(SignalType::HCHO_PARTS_PER_BILLION,
+                  static_cast<float>(hcho) / 5.0f, timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              static_cast<float>(humi) / 100.0f, timeStamp,
+                              sensorName(_id));
+    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              static_cast<float>(temp) / 200.0f, timeStamp,
+                              sensorName(_id));
     return HighLevelError::NoError;
 }
 
-SensorId Sfa3x::getSensorId() const {
-    return SensorId::SFA3X;
+SensorID Sfa3x::getSensorId() const {
+    return _id;
 }
 
 size_t Sfa3x::getNumberOfDataPoints() const {

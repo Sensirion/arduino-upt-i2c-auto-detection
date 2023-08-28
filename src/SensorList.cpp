@@ -82,6 +82,6 @@ uint16_t SensorList::getNumberOfSensorsLost() {
     return count;
 }
 
-bool SensorList::sensorIsLost(const int index) {
-    return errorCounter[index] > NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
+bool SensorList::sensorIsLost(const int sensorIdx) {
+    return errorCounter[sensorIdx] > NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
 }
