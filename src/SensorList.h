@@ -34,20 +34,24 @@
 #include "AutoDetectorErrors.h"
 #include "ISensor.h"
 
+enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
+
 struct SensorList {
     static constexpr int LENGTH = 16;
     static constexpr int NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
-    ISensor* sensors[LENGTH] = {};
+    ISensor* sensors[LENGTH] =
+        {};  // = {} initializes all elements to 0, i.e. here to nullptr
     uint16_t latestMeasurementErrors[LENGTH] = {};
-    unsigned long latestMeasurementTimeStamps[LENGTH] = {};
-    unsigned long intervals[LENGTH] = {};
-    uint16_t errorCounter[LENGTH] = {};
+    uint16_t measurementErrorCounters[LENGTH] = {};
+    uint16_t initStepCounters[LENGTH] = {};
+    unsigned long latestUpdateTimeStamps[LENGTH] = {};
+    unsigned long measurementIntervals[LENGTH] = {};
+    SensorState sensorStates[LENGTH] = {};
     AutoDetectorError addSensor(ISensor* pSensor);
     void reset();
     size_t count();
     size_t getTotalNumberOfDataPoints();
     uint16_t getNumberOfSensorsLost();
-    bool sensorIsLost(const int sensorIdx);
 };
 
 #endif /* _SENSOR_LIST_H */

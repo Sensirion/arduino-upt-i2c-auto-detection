@@ -34,7 +34,13 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     for (int i = 0; i < LENGTH; ++i) {
         if (sensors[i] == nullptr) {
             sensors[i] = pSensor;
-            intervals[i] = pSensor->getMinimumMeasurementInterval();
+            measurementIntervals[i] =
+                pSensor->getMinimumMeasurementIntervalMs();
+            if (sensors[i]->getInitializationSteps() > 0) {
+                sensorStates[i] = SensorState::INITIALIZING;
+            } else {
+                sensorStates[i] = SensorState::RUNNING;
+            }
             return NO_ERROR;
         }
     }
@@ -66,22 +72,18 @@ void SensorList::reset() {
         delete sensors[i];
         sensors[i] = nullptr;
         latestMeasurementErrors[i] = 0;
-        latestMeasurementTimeStamps[i] = 0;
-        intervals[i] = 0;
-        errorCounter[i] = 0;
+        latestUpdateTimeStamps[i] = 0;
+        measurementIntervals[i] = 0;
+        measurementErrorCounters[i] = 0;
     }
 }
 
 uint16_t SensorList::getNumberOfSensorsLost() {
     uint16_t count = 0;
     for (int i = 0; i < LENGTH; ++i) {
-        if (sensorIsLost(i)) {
+        if (sensorStates[i] == SensorState::LOST) {
             ++count;
         }
     }
     return count;
-}
-
-bool SensorList::sensorIsLost(const int sensorIdx) {
-    return errorCounter[sensorIdx] > NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
 }

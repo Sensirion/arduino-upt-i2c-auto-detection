@@ -44,7 +44,7 @@ class SensorManager {
     void begin();
     /**
      * @brief Calls measure methods on all available sensors, while respecting
-     * status and interval conditions
+     * state and interval conditions
      *
      * @return AutoDetectorError, NO_ERROR = 0 on success
      */
@@ -82,9 +82,10 @@ class SensorManager {
     Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
-    bool _timeIntervalPassed(const int sensorIdx,
-                             const unsigned long currentTimeStamp);
-    void _updateSensorStatus(const int sensorIdx);
+    bool _timeIntervalPassed(const unsigned long interval,
+                             const unsigned long currentTimeStamp,
+                             const unsigned long latestUpdateTimeStamp);
+    void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
 };
 
 #endif /* _SENSOR_MANAGER_H_ */
