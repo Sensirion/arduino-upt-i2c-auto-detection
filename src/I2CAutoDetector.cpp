@@ -99,11 +99,11 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sht4x(_wire);
         }
 #endif
-// #ifdef INCLUDE_SCD30_DRIVER
-//         case (Scd30::I2C_ADDRESS): {
-//             return new Scd30(_wire);
-//         }
-// #endif
+#ifdef INCLUDE_SCD30_DRIVER
+        case (Scd30::I2C_ADDRESS): {
+            return new Scd30(_wire);
+        }
+#endif
 #ifdef INCLUDE_STC3X_DRIVER
         case (Stc3x::I2C_ADDRESS): {
             return new Stc3x(_wire);
