@@ -67,8 +67,12 @@ void setup() {
 
 void loop() {
     delay(500);
-    sensorManager.updateData();
+    AutoDetectorError error = sensorManager.updateData();
+    if (error == AutoDetectorError::LOST_SENSOR_ERROR) {
+        Serial.println("Error: Lost sensor!");
+    }
     const Data& currentData = sensorManager.getData();
+    // if sensorManager.
     printData(currentData);
 }
 
