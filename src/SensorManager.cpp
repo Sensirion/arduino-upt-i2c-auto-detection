@@ -111,6 +111,13 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             if (initStepsCounter >= initSteps) {
                 state = SensorState::RUNNING;
             }
+            // Set Sensor name of empty Datapoints for initialization period
+            if (initStepsCounter == 0) {
+                for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
+                    DataPoint* dataPoint = writePosition + i;
+                    dataPoint->sourceDevice = sensorName(sensor->getSensorId());
+                }
+            }
             // Only perform initialization every initialization interval
             if (!_timeIntervalPassed(initIntervalMs, currentTimeStamp,
                                      latestUpdateTimeStamp)) {
