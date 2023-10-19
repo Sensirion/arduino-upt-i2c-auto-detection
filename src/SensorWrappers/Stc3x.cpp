@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SVM40_H_
-#define _SVM40_H_
-
-#include "ISensor.h"
-#include "SensirionI2CSvm41.h"
+#include "SensorWrappers/Stc3x.h"
+#include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
-class Svm4x : public ISensor {
-  public:
-    static const uint16_t I2C_ADDRESS = 0x6A;
-    explicit Svm4x(TwoWire& wire) : _wire(wire){};
-    uint16_t start() override;
-    uint16_t measureAndWrite(DataPoint dataPoints[],
-                             const unsigned long timeStamp) override;
-    SensorID getSensorId() const override;
-    size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementInterval() const override;
-    void* getDriver() override;
+uint16_t Stc3x::start() {
+    _driver.begin(_wire);
+    uint16_t error = _driver.setBinaryGas(0x0001);
+    return error;
+}
 
-  private:
-    TwoWire& _wire;
-    SensirionI2CSvm41 _driver;
-    const SensorID _id = SensorID::SVM4X;
-};
+uint16_t Stc3x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    uint16_t gasTicks;
+    uint16_t temperatureTicks;
 
-#endif /* _SVM40_H_ */
+    uint16_t error =
+        _driver.measureGasConcentration(gasTicks, temperatureTicks);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] =
+        DataPoint(SignalType::GAS_CONCENTRATION,
+                  100 * (static_cast<float>(gasTicks) - 16384.0) / 32768.0,
+                  timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              static_cast<float>(temperatureTicks) / 200.0,
+                              timeStamp, sensorName(_id));
+    return HighLevelError::NoError;
+}
+
+SensorID Stc3x::getSensorId() const {
+    return _id;
+}
+
+size_t Stc3x::getNumberOfDataPoints() const {
+    return 2;
+}
+
+unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
+    return 1000;
+}
+
+void* Stc3x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Sensirion AG
+ * Copyright (c) 2021, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DRIVER_CONFIG_H_
-#define _DRIVER_CONFIG_H_
+#ifndef _SCD4X_H_
+#define _SCD4X_H_
 
-// Comment out lines to remove unwanted drivers
+#include "ISensor.h"
+#include "SensirionI2CScd4x.h"
+#include "Sensirion_UPT_Core.h"
+#include <Wire.h>
 
-#define INCLUDE_SCD4X_DRIVER
-// #define INCLUDE_SEN44_DRIVER
-#define INCLUDE_SEN5X_DRIVER
-#define INCLUDE_SFA3X_DRIVER
-#define INCLUDE_SVM4X_DRIVER
-#define INCLUDE_SHT4X_DRIVER
-#define INCLUDE_SCD30_DRIVER
-#define INCLUDE_STC3X_DRIVER
-#define INCLUDE_SGP41_DRIVER
+class Scd4x : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x62;
+    explicit Scd4x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    SensorID getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
+    void* getDriver() override;
 
-#ifdef INCLUDE_SEN44_DRIVER
-#ifdef INCLUDE_SEN5X_DRIVER
-#error SEN44 and SEN5X cannot be used at the same time as they share the same I2C address (0x69). Please disable one of them in the DriverConfig.h file.
-#endif
-#endif
-#endif /* _DRIVER_CONFIG_H_ */
+  private:
+    TwoWire& _wire;
+    SensirionI2CScd4x _driver;
+    SensorID _id = SensorID::SCD4X;
+};
+
+#endif /* _SCD4X_H_ */

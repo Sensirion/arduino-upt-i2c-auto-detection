@@ -28,10 +28,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Sen44.h"
+#include "SensorWrappers/Sen5x.h"
 #include "SensirionCore.h"
 
-uint16_t Sen44::start() {
+uint16_t Sen5x::start() {
     _driver.begin(_wire);
     // stop potentially previously started measurement
     uint16_t error = _driver.deviceReset();
@@ -40,24 +40,39 @@ uint16_t Sen44::start() {
     }
     // Start Measurement
     error = _driver.startMeasurement();
-    return error;
-}
-
-uint16_t Sen44::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    uint16_t massConcentrationPm1p0;
-    uint16_t massConcentrationPm2p5;
-    uint16_t massConcentrationPm4p0;
-    uint16_t massConcentrationPm10p0;
-    float vocIndex;
-    float ambientHumidity;
-    float ambientTemperature;
-    uint16_t error = _driver.readMeasuredMassConcentrationAndAmbientValues(
-        massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
-        massConcentrationPm10p0, vocIndex, ambientHumidity, ambientTemperature);
     if (error) {
         return error;
     }
+    delay(1000);  // Need to wait for first measurement to finish (~1s) in order
+                  // to be able to determine the sensor version.
+    // determine SEN5X version
+    error = _determineSensorVersion();
+    return error;
+}
+
+uint16_t Sen5x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    uint16_t error = 0;
+
+    // Read Measurement
+    float massConcentrationPm1p0;
+    float massConcentrationPm2p5;
+    float massConcentrationPm4p0;
+    float massConcentrationPm10p0;
+    float ambientHumidity;
+    float ambientTemperature;
+    float vocIndex;
+    float noxIndex;
+
+    error = _driver.readMeasuredValues(
+        massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
+        massConcentrationPm10p0, ambientHumidity, ambientTemperature, vocIndex,
+        noxIndex);
+
+    if (error) {
+        return error;
+    }
+    // Versions 50, 54 and 55
     dataPoints[0] = DataPoint(SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
                               static_cast<float>(massConcentrationPm1p0),
                               timeStamp, sensorName(_id));
@@ -70,28 +85,77 @@ uint16_t Sen44::measureAndWrite(DataPoint dataPoints[],
     dataPoints[3] = DataPoint(SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
                               static_cast<float>(massConcentrationPm10p0),
                               timeStamp, sensorName(_id));
-    dataPoints[4] =
-        DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp, sensorName(_id));
-    dataPoints[5] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              ambientHumidity, timeStamp, sensorName(_id));
-    dataPoints[6] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              ambientTemperature, timeStamp, sensorName(_id));
 
+    // Verions 54, 55
+    if (_version == SensorVersion::SEN54 or _version == SensorVersion::SEN55) {
+        dataPoints[4] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                                  ambientHumidity, timeStamp, sensorName(_id));
+        dataPoints[5] =
+            DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                      ambientTemperature, timeStamp, sensorName(_id));
+        dataPoints[6] = DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp,
+                                  sensorName(_id));
+    }
+    // Version 55
+    if (_version == SensorVersion::SEN55) {
+        dataPoints[7] = DataPoint(SignalType::NOX_INDEX, noxIndex, timeStamp,
+                                  sensorName(_id));
+    }
     return HighLevelError::NoError;
 }
 
-SensorID Sen44::getSensorId() const {
+SensorID Sen5x::getSensorId() const {
     return _id;
 }
 
-size_t Sen44::getNumberOfDataPoints() const {
-    return 7;
+size_t Sen5x::getNumberOfDataPoints() const {
+    switch (_version) {
+        case SensorVersion::SEN50:
+            return 4;
+        case SensorVersion::SEN54:
+            return 7;  // sure about that?
+        case SensorVersion::SEN55:
+            return 8;
+        default:
+            return 0;
+    }
 }
 
-unsigned long Sen44::getMinimumMeasurementInterval() const {
+unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-void* Sen44::getDriver() {
+void* Sen5x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
+}
+
+uint16_t Sen5x::_determineSensorVersion() {
+    uint16_t error = 0;
+    // Test measurement
+    // Read Measurement
+    float massConcentrationPm1p0;
+    float massConcentrationPm2p5;
+    float massConcentrationPm4p0;
+    float massConcentrationPm10p0;
+    float ambientHumidity;
+    float ambientTemperature;
+    float vocIndex;
+    float noxIndex;
+
+    error = _driver.readMeasuredValues(
+        massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
+        massConcentrationPm10p0, ambientHumidity, ambientTemperature, vocIndex,
+        noxIndex);
+    if (isnan(massConcentrationPm2p5)) {  // Sanity check
+        return HighLevelError::SensorSpecificError;
+    }
+    if (!isnan(noxIndex)) {  // Only SEN55 has NOX data
+        _version = SensorVersion::SEN55;
+    } else if (!isnan(vocIndex)) {
+        _version = SensorVersion::SEN54;  // Only SEN54 has VOC but no NOX
+    } else {
+        _version =
+            SensorVersion::SEN50;  // SEN50 has pm values but no VOC nor NOX
+    }
+    return error;
 }

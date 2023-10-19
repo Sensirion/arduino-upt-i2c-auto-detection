@@ -60,6 +60,13 @@ class ISensor {
     virtual uint16_t measureAndWrite(DataPoint dataPoints[],
                                      const unsigned long timeStamp) = 0;
     /**
+     * @brief Perform extended sensor initialization.
+     * As most sensors don't require this, overriding this method is optional.
+     */
+    virtual uint16_t initializationStep() {
+        return 0;
+    };
+    /**
      * @brief Get the specific SensorId of the ISensor realization
      *
      * @return SensorId
@@ -78,7 +85,25 @@ class ISensor {
      *
      * @return unsigned long
      */
-    virtual unsigned long getMinimumMeasurementInterval() const = 0;
+    virtual unsigned long getMinimumMeasurementIntervalMs() const = 0;
+    /**
+     * @brief Get the number of times the initializationStep method should be
+     * called. Note that most sensors don't require an extended initialization.
+     *
+     * @return const unsigned long
+     */
+    virtual unsigned long getInitializationSteps() const {
+        return 0;
+    };
+    /**
+     * @brief Get the interval at which the initializationStep method should be
+     * called during initialization in milliseconds.
+     *
+     * @return const unsigned long
+     */
+    virtual unsigned long getInitializationIntervalMs() const {
+        return 0;
+    };
     /**
      * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
      * pointer

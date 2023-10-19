@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DRIVER_CONFIG_H_
-#define _DRIVER_CONFIG_H_
+#ifndef _SGP41_H_
+#define _SGP41_H_
 
-// Comment out lines to remove unwanted drivers
+#include "ISensor.h"
+#include "SensirionI2CSgp41.h"
+#include "Sensirion_UPT_Core.h"
+#include <Wire.h>
 
-#define INCLUDE_SCD4X_DRIVER
-// #define INCLUDE_SEN44_DRIVER
-#define INCLUDE_SEN5X_DRIVER
-#define INCLUDE_SFA3X_DRIVER
-#define INCLUDE_SVM4X_DRIVER
-#define INCLUDE_SHT4X_DRIVER
-#define INCLUDE_SCD30_DRIVER
-#define INCLUDE_STC3X_DRIVER
-#define INCLUDE_SGP41_DRIVER
+class Sgp41 : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x59;
+    explicit Sgp41(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    uint16_t initializationStep() override;
+    SensorID getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
+    unsigned long getInitializationSteps() const override;
+    unsigned long getInitializationIntervalMs() const override;
+    void* getDriver() override;
 
-#ifdef INCLUDE_SEN44_DRIVER
-#ifdef INCLUDE_SEN5X_DRIVER
-#error SEN44 and SEN5X cannot be used at the same time as they share the same I2C address (0x69). Please disable one of them in the DriverConfig.h file.
-#endif
-#endif
-#endif /* _DRIVER_CONFIG_H_ */
+  private:
+    TwoWire& _wire;
+    SensirionI2CSgp41 _driver;
+    SensorID _id = SensorID::SGP41;
+    uint16_t _defaultRh = 0x8000;
+    uint16_t _defaultT = 0x6666;
+};
+
+#endif /* _SGP41_H_ */

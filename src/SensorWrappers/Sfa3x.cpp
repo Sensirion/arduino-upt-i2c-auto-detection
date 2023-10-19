@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Sfa3x.h"
+#include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
 uint16_t Sfa3x::start() {
@@ -66,7 +66,7 @@ size_t Sfa3x::getNumberOfDataPoints() const {
     return 3;
 }
 
-unsigned long Sfa3x::getMinimumMeasurementInterval() const {
+unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 

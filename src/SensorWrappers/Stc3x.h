@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,53 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Scd4x.h"
-#include "SensirionCore.h"
+#ifndef _STC3X_H_
+#define _STC3X_H_
+
+#include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
+#include <SensirionI2CStc3x.h>
+#include <Wire.h>
 
-uint16_t Scd4x::start() {
-    _driver.begin(_wire);
-    // stop potentially previously started measurement
-    uint16_t error = _driver.stopPeriodicMeasurement();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    error = _driver.startPeriodicMeasurement();
-    return error;
-}
+class Stc3x : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x29;
+    explicit Stc3x(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(DataPoint dataPoints[],
+                             const unsigned long timeStamp) override;
+    SensorID getSensorId() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
+    void* getDriver() override;
 
-uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    uint16_t co2;
-    float temp;
-    float humi;
-    uint16_t error = _driver.readMeasurement(co2, temp, humi);
-    if (error) {
-        return error;
-    }
-    dataPoints[0] =
-        DataPoint(SignalType::CO2_PARTS_PER_MILLION, static_cast<float>(co2),
-                  timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
-                              timeStamp, sensorName(_id));
-    dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
-                              timeStamp, sensorName(_id));
-    return HighLevelError::NoError;
-}
+  private:
+    TwoWire& _wire;
+    SensirionI2CStc3x _driver;
+    const SensorID _id = SensorID::STC3X;
+};
 
-SensorID Scd4x::getSensorId() const {
-    return _id;
-}
-
-size_t Scd4x::getNumberOfDataPoints() const {
-    return 3;
-}
-
-unsigned long Scd4x::getMinimumMeasurementInterval() const {
-    return 5000;
-}
-
-void* Scd4x::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
-}
+#endif /* _STC3X_H_ */

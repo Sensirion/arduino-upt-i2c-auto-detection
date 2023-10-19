@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SHT4X_H_
-#define _SHT4X_H_
+#ifndef _SEN5X_H_
+#define _SEN5X_H_
 
 #include "ISensor.h"
-#include "SensirionI2CSht4x.h"
 #include "Sensirion_UPT_Core.h"
+#include <SensirionI2CSen5x.h>
 #include <Wire.h>
 
-class Sht4x : public ISensor {
+enum class SensorVersion {
+    UNDEFINED,
+    SEN50,
+    SEN54,
+    SEN55,
+};
+
+class Sen5x : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x44;
-    explicit Sht4x(TwoWire& wire) : _wire(wire){};
+    static const uint16_t I2C_ADDRESS = 0x69;
+    explicit Sen5x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
     uint16_t measureAndWrite(DataPoint dataPoints[],
                              const unsigned long timeStamp) override;
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementInterval() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
 
   private:
     TwoWire& _wire;
-    SensirionI2CSht4x _driver;
-    const SensorID _id = SensorID::SHT4X;
+    SensirionI2CSen5x _driver;
+    const SensorID _id = SensorID::SEN5X;
+    SensorVersion _version = SensorVersion::UNDEFINED;  // determined in start()
+    uint16_t _determineSensorVersion();
 };
 
-#endif /* _SHT4X_H_ */
+#endif /* _SEN5X_H_*/

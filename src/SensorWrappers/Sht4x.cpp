@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Sensirion AG
+ * Copyright (c) 2021, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DRIVER_CONFIG_H_
-#define _DRIVER_CONFIG_H_
+#include "SensorWrappers/Sht4x.h"
+#include "SensirionCore.h"
+#include "Sensirion_UPT_Core.h"
 
-// Comment out lines to remove unwanted drivers
+uint16_t Sht4x::start() {
+    _driver.begin(_wire);
+    return HighLevelError::NoError;
+}
 
-#define INCLUDE_SCD4X_DRIVER
-// #define INCLUDE_SEN44_DRIVER
-#define INCLUDE_SEN5X_DRIVER
-#define INCLUDE_SFA3X_DRIVER
-#define INCLUDE_SVM4X_DRIVER
-#define INCLUDE_SHT4X_DRIVER
-#define INCLUDE_SCD30_DRIVER
-#define INCLUDE_STC3X_DRIVER
-#define INCLUDE_SGP41_DRIVER
+uint16_t Sht4x::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    float temp;
+    float humi;
+    uint16_t error = _driver.measureHighPrecision(temp, humi);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS, temp,
+                              timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
+                              timeStamp, sensorName(_id));
+    return HighLevelError::NoError;
+}
 
-#ifdef INCLUDE_SEN44_DRIVER
-#ifdef INCLUDE_SEN5X_DRIVER
-#error SEN44 and SEN5X cannot be used at the same time as they share the same I2C address (0x69). Please disable one of them in the DriverConfig.h file.
-#endif
-#endif
-#endif /* _DRIVER_CONFIG_H_ */
+SensorID Sht4x::getSensorId() const {
+    return _id;
+}
+
+size_t Sht4x::getNumberOfDataPoints() const {
+    return 2;
+}
+
+unsigned long Sht4x::getMinimumMeasurementIntervalMs() const {
+    return 9;
+}
+
+void* Sht4x::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

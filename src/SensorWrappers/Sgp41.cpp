@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,61 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DRIVER_CONFIG_H_
-#define _DRIVER_CONFIG_H_
+#include "SensorWrappers/Sgp41.h"
+#include "SensirionCore.h"
+#include "Sensirion_UPT_Core.h"
 
-// Comment out lines to remove unwanted drivers
+uint16_t Sgp41::start() {
+    _driver.begin(_wire);
+    return 0;
+}
 
-#define INCLUDE_SCD4X_DRIVER
-// #define INCLUDE_SEN44_DRIVER
-#define INCLUDE_SEN5X_DRIVER
-#define INCLUDE_SFA3X_DRIVER
-#define INCLUDE_SVM4X_DRIVER
-#define INCLUDE_SHT4X_DRIVER
-#define INCLUDE_SCD30_DRIVER
-#define INCLUDE_STC3X_DRIVER
-#define INCLUDE_SGP41_DRIVER
+uint16_t Sgp41::measureAndWrite(DataPoint dataPoints[],
+                                const unsigned long timeStamp) {
+    uint16_t srawVoc = 0;
+    uint16_t srawNox = 0;
 
-#ifdef INCLUDE_SEN44_DRIVER
-#ifdef INCLUDE_SEN5X_DRIVER
-#error SEN44 and SEN5X cannot be used at the same time as they share the same I2C address (0x69). Please disable one of them in the DriverConfig.h file.
-#endif
-#endif
-#endif /* _DRIVER_CONFIG_H_ */
+    uint16_t error =
+        _driver.measureRawSignals(_defaultRh, _defaultT, srawVoc, srawNox);
+    if (error) {
+        return error;
+    }
+    dataPoints[0] =
+        DataPoint(SignalType::VOC_INDEX, static_cast<float>(srawVoc), timeStamp,
+                  sensorName(_id));
+    dataPoints[1] =
+        DataPoint(SignalType::NOX_INDEX, static_cast<float>(srawNox), timeStamp,
+                  sensorName(_id));
+    return HighLevelError::NoError;
+}
+
+uint16_t Sgp41::initializationStep() {
+    uint16_t srawVoc;  // discarded during initialization
+    uint16_t error =
+        _driver.executeConditioning(_defaultRh, _defaultT, srawVoc);
+    return error;
+}
+
+SensorID Sgp41::getSensorId() const {
+    return _id;
+}
+
+size_t Sgp41::getNumberOfDataPoints() const {
+    return 2;
+}
+
+unsigned long Sgp41::getMinimumMeasurementIntervalMs() const {
+    return 1000;
+}
+
+unsigned long Sgp41::getInitializationSteps() const {
+    return 10;
+}
+
+unsigned long Sgp41::getInitializationIntervalMs() const {
+    return 1000;
+}
+
+void* Sgp41::getDriver() {
+    return reinterpret_cast<void*>(&_driver);
+}

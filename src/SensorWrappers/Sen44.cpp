@@ -28,54 +28,70 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Svm4x.h"
+#include "SensorWrappers/Sen44.h"
 #include "SensirionCore.h"
 
-uint16_t Svm4x::start() {
+uint16_t Sen44::start() {
     _driver.begin(_wire);
+    // stop potentially previously started measurement
     uint16_t error = _driver.deviceReset();
     if (error) {
         return error;
     }
     // Start Measurement
-    return _driver.startMeasurement();
+    error = _driver.startMeasurement();
+    return error;
 }
 
-uint16_t Svm4x::measureAndWrite(DataPoint dataPoints[],
+uint16_t Sen44::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
-    float humidity;
-    float temperature;
+    uint16_t massConcentrationPm1p0;
+    uint16_t massConcentrationPm2p5;
+    uint16_t massConcentrationPm4p0;
+    uint16_t massConcentrationPm10p0;
     float vocIndex;
-    float noxIndex;
-    uint16_t error =
-        _driver.readMeasuredValues(humidity, temperature, vocIndex, noxIndex);
+    float ambientHumidity;
+    float ambientTemperature;
+    uint16_t error = _driver.readMeasuredMassConcentrationAndAmbientValues(
+        massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
+        massConcentrationPm10p0, vocIndex, ambientHumidity, ambientTemperature);
     if (error) {
         return error;
     }
-    dataPoints[0] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              humidity, timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              temperature, timeStamp, sensorName(_id));
-    dataPoints[2] =
+    dataPoints[0] = DataPoint(SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm1p0),
+                              timeStamp, sensorName(_id));
+    dataPoints[1] = DataPoint(SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm2p5),
+                              timeStamp, sensorName(_id));
+    dataPoints[2] = DataPoint(SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm4p0),
+                              timeStamp, sensorName(_id));
+    dataPoints[3] = DataPoint(SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+                              static_cast<float>(massConcentrationPm10p0),
+                              timeStamp, sensorName(_id));
+    dataPoints[4] =
         DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp, sensorName(_id));
-    dataPoints[3] =
-        DataPoint(SignalType::NOX_INDEX, noxIndex, timeStamp, sensorName(_id));
+    dataPoints[5] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              ambientHumidity, timeStamp, sensorName(_id));
+    dataPoints[6] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              ambientTemperature, timeStamp, sensorName(_id));
 
     return HighLevelError::NoError;
 }
 
-SensorID Svm4x::getSensorId() const {
+SensorID Sen44::getSensorId() const {
     return _id;
 }
 
-size_t Svm4x::getNumberOfDataPoints() const {
-    return 4;
+size_t Sen44::getNumberOfDataPoints() const {
+    return 7;
 }
 
-unsigned long Svm4x::getMinimumMeasurementInterval() const {
+unsigned long Sen44::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-void* Svm4x::getDriver() {
+void* Sen44::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

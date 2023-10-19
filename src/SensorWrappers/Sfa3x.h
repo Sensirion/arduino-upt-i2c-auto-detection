@@ -45,7 +45,7 @@ class Sfa3x : public ISensor {
                              const unsigned long timeStamp) override;
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementInterval() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
 
   private:

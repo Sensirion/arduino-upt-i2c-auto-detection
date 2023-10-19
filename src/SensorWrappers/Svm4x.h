@@ -28,30 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _SEN44_H_
-#define _SEN44_H_
+#ifndef _SVM40_H_
+#define _SVM40_H_
 
 #include "ISensor.h"
+#include "SensirionI2CSvm41.h"
 #include "Sensirion_UPT_Core.h"
-#include <SensirionI2CSen44.h>
 #include <Wire.h>
 
-class Sen44 : public ISensor {
+class Svm4x : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x69;
-    explicit Sen44(TwoWire& wire) : _wire(wire){};
+    static const uint16_t I2C_ADDRESS = 0x6A;
+    explicit Svm4x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
     uint16_t measureAndWrite(DataPoint dataPoints[],
                              const unsigned long timeStamp) override;
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementInterval() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
 
   private:
     TwoWire& _wire;
-    SensirionI2CSen44 _driver;
-    SensorID _id = SensorID::SEN44;
+    SensirionI2CSvm41 _driver;
+    const SensorID _id = SensorID::SVM4X;
 };
 
-#endif /* _SEN44_H_ */
+#endif /* _SVM40_H_ */
