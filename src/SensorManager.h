@@ -35,33 +35,68 @@
 #include "IAutoDetector.h"
 #include "SensirionCore.h"
 #include "SensorList.h"
-
+/*Class to manage the sensors connected to the board's I2C bus. Handles
+ * detection and signal polling in accordance to the sensor's minimal polling
+ * intervals */
 class SensorManager {
   public:
     /**
      * @brief Must be called before any other method
+     *
+     * Searches I2C bus for available sensors, initializes _data
      */
     void begin();
     /**
      * @brief Calls measure methods on all available sensors, while respecting
      * state and interval conditions
      *
-     * @return AutoDetectorError, NO_ERROR = 0 on success
+     * Iterates through list of sensors identified during the scan of the I2C
+     * bus and polls them for signals
+     *
+     * @return AutoDetectorError, LOST_SENSOR_ERROR incase one or more sensors
+     * were lost during polling
      */
     AutoDetectorError updateData();
+    /**
+     * @brief getter method for _data
+     */
     const Data& getData() const;
+    /**
+     * @brief Sets polling interval for the specified sensor after checking if
+     * it is valid
+     *
+     * @param[in] interval desired measurement interval
+     *
+     * @param[in] SensorID target sensor
+     *
+     * @note Does not return an error in case the validity checks fail, in which
+     * case the interval is not set for the sensor
+     */
     void setInterval(unsigned long interval, SensorID sensorId);
+    /**
+     * @brief constructor
+     *
+     * @param[in] IAutoDetector& detector instance with which to seek for
+     * connected sensors
+     *
+     * @note With this construction we by default limit ourselves to one I2C
+     * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
+     * buses
+     */
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
     /**
      * Retrieve specific sensor driver instance T from
      * SensorManager::_sensorList
      *
-     * @param pDriver nullptr initialized pointer to specific Sensirion sensor
+     * @param[in] pDriver nullptr initialized pointer to specific Sensirion
+     * sensor driver class T.
+     *
+     * @param[in] id SensorId corresponding to ISensor implementation for sensor
      * driver class T.
-     * @param id SensorId corresponding to ISensor implementation for sensor
-     * driver class T.
-     * @return AutodDetectorError::NO_ERROR = 0 on success. Only in this case
-     * may the driver methods be called. e.g.: pDriver->driverMethod()
+     *
+     * @param[out] AutodDetectorError::DRIVER_NOT_FOUND_ERROR in case of failure
+     * to retrieve the driver. Only in case of NO_ERROR may the driver methods
+     * be called. e.g.: pDriver->driverMethod()
      */
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
@@ -82,9 +117,32 @@ class SensorManager {
     Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
+    /**
+     * @brief verify if a given timespan has passed
+     *
+     * @param[in] interval duration of the timespan
+     *
+     * @param[in] currentTimeStamp current time
+     *
+     * @param[in] latestUpdateTimeStamp time at which the last update was
+     * performed
+     *
+     * @param[out] boolean true if more time than interval has passed since
+     * latestUpdateTimeStamp
+     */
     bool _timeIntervalPassed(const unsigned long interval,
                              const unsigned long currentTimeStamp,
                              const unsigned long latestUpdateTimeStamp);
+    /**
+     * @brief Writes sensor signals into _data, modifies sensor status
+     *
+     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
+     *
+     * @param[in] index of the ISensor index in _sensorList
+     *
+     * @param[in] size_t& reference to the write offset, a dynamic pointer
+     * offset to the DataPoint in _data to which the signals should be written
+     */
     void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
 };
 

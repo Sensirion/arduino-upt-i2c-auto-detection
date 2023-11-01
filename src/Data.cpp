@@ -39,3 +39,24 @@ void Data::init(const size_t& length) {
 size_t Data::getLength() const {
     return _length;
 }
+
+Data::~Data() {
+    delete[] dataPoints;
+}
+
+Data::Data(Data&& src) : dataPoints(src.dataPoints), _length(src._length) {
+    delete[] src.dataPoints;
+    src._length = 0;
+}
+
+Data& Data::operator=(Data&& src) {
+    if (&src != this) {
+        delete[] dataPoints;
+
+        this->dataPoints = src.dataPoints;
+        src.dataPoints = nullptr;
+        this->_length = src._length;
+        src._length = 0;
+    }
+    return *this;
+}

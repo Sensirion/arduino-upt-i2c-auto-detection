@@ -47,10 +47,36 @@ struct SensorList {
     unsigned long latestUpdateTimeStamps[LENGTH] = {};
     unsigned long measurementIntervals[LENGTH] = {};
     SensorState sensorStates[LENGTH] = {};
+    /**
+     * @brief add a sensor to the list of tracked sensors
+     *
+     * @param[in] ISensor* pointer to the sensor to be added to teh list
+     *
+     * @param[out] AutoDetectorError::FULL_SENSOR_LIST_ERROR in case the list is
+     * already full
+     */
     AutoDetectorError addSensor(ISensor* pSensor);
+    /// @brief Resets the list
     void reset();
+    /**
+     * @brief Counts sensors contained in the list
+     *
+     * @param[out] size_t number of sensors in the list
+     */
     size_t count();
+    /**
+     * @brief count number of signals measured by all sensors contained in the
+     * list
+     *
+     * @param[out] size_t number of DataPoints returned by the sensors in the
+     * list
+     */
     size_t getTotalNumberOfDataPoints();
+    /**
+     * @brief Counts number of sensors whose state is SensorState::LOST
+     *
+     * @param[out] uint16_t number of lost sensors
+     */
     uint16_t getNumberOfSensorsLost();
 };
 
