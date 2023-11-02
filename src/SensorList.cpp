@@ -31,13 +31,13 @@
 #include "SensorList.h"
 
 AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
-    for (int i = 0; i < LENGTH; ++i) {
-        if (sensors[i] == nullptr) {
-            sensors[i] = pSensor;
-            if (sensors[i]->getInitializationSteps() > 0) {
-                sensors[i]->setSensorState(SensorState::INITIALIZING);
+    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+        if (_sensors[i] == nullptr) {
+            _sensors[i] = pSensor;
+            if (_sensors[i]->getInitializationSteps() > 0) {
+                _sensors[i]->setSensorState(SensorState::INITIALIZING);
             } else {
-                sensors[i]->setSensorState(SensorState::RUNNING);
+                _sensors[i]->setSensorState(SensorState::RUNNING);
             }
             return NO_ERROR;
         }
@@ -47,8 +47,8 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
 
 size_t SensorList::count() {
     size_t numberOfSensors = 0;
-    for (int i = 0; i < LENGTH; ++i) {
-        if (sensors[i]) {
+    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+        if (_sensors[i]) {
             ++numberOfSensors;
         }
     }
@@ -57,27 +57,35 @@ size_t SensorList::count() {
 
 size_t SensorList::getTotalNumberOfDataPoints() {
     size_t totalNumberOfDataPoints = 0;
-    for (int i = 0; i < LENGTH; ++i) {
-        if (sensors[i]) {
-            totalNumberOfDataPoints += sensors[i]->getNumberOfDataPoints();
+    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+        if (_sensors[i]) {
+            totalNumberOfDataPoints += _sensors[i]->getNumberOfDataPoints();
         }
     }
     return totalNumberOfDataPoints;
 }
 
 void SensorList::reset() {
-    for (int i = 0; i < LENGTH; ++i) {
-        delete sensors[i];
-        sensors[i] = nullptr;
+    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+        delete _sensors[i];
+        _sensors[i] = nullptr;
     }
 }
 
 uint16_t SensorList::getNumberOfSensorsLost() {
     uint16_t count = 0;
-    for (int i = 0; i < LENGTH; ++i) {
-        if (sensors[i]->getSensorState() == SensorState::LOST) {
+    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+        if (_sensors[i]->getSensorState() == SensorState::LOST) {
             ++count;
         }
     }
     return count;
+}
+
+int SensorList::getLength() const {
+    return _MAX_NUM_SENSORS;
+}
+
+ISensor* SensorList::getSensor(size_t i) const {
+    return _sensors[i];
 }

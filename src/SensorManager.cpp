@@ -41,8 +41,8 @@ AutoDetectorError SensorManager::updateData() {
     size_t writeOffset = 0;
     uint16_t numberOfSensorsLostBeforeUpdate =
         _sensorList.getNumberOfSensorsLost();
-    for (int i = 0; i < SensorList::LENGTH; ++i) {
-        ISensor* sensor = _sensorList.sensors[i];
+    for (int i = 0; i < _sensorList.getLength(); ++i) {
+        ISensor* sensor = _sensorList.getSensor(i);
         if (sensor == nullptr) {
             continue;
         }
@@ -62,8 +62,8 @@ const Data& SensorManager::getData() const {
 }
 
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
-    for (int i = 0; i < SensorList::LENGTH; ++i) {
-        ISensor* sensor = _sensorList.sensors[i];
+    for (int i = 0; i < _sensorList.getLength(); ++i) {
+        ISensor* sensor = _sensorList.getSensor(i);
         if (sensor == nullptr) {
             continue;
         }

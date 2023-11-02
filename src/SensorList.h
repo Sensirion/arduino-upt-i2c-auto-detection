@@ -34,11 +34,13 @@
 #include "AutoDetectorErrors.h"
 #include "ISensor.h"
 
-struct SensorList {
-    static constexpr int LENGTH = 16;
-    ISensor* sensors[LENGTH] =
-        {};  // = {} initializes all elements to 0, i.e. here to nullptr
+/* Class to handle the list of sensors on the i2c bus */
+class SensorList {
+  private:
+    static const int _MAX_NUM_SENSORS = 16;
+    ISensor* _sensors[_MAX_NUM_SENSORS] = {NULL};
 
+  public:
     /**
      * @brief add a sensor to the list of tracked sensors
      *
@@ -74,6 +76,16 @@ struct SensorList {
      * @param[out] uint16_t number of lost sensors
      */
     uint16_t getNumberOfSensorsLost();
+
+    /**
+     * @brief getter method for list size
+     */
+    int getLength() const;
+
+    /**
+     * @brief getter method for a stored sensor
+     */
+    ISensor* getSensor(size_t) const;
 };
 
 #endif /* _SENSOR_LIST_H */

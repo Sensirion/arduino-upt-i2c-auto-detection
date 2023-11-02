@@ -107,13 +107,13 @@ class SensorManager {
      */
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
-        for (int i = 0; i < SensorList::LENGTH; ++i) {
-            if (_sensorList.sensors[i] == nullptr) {
+        for (int i = 0; i < _sensorList.getLength(); ++i) {
+            if (_sensorList.getSensor(i) == nullptr) {
                 continue;
             }
-            if (_sensorList.sensors[i]->getSensorId() == id) {
+            if (_sensorList.getSensor(i)->getSensorId() == id) {
                 pDriver =
-                    reinterpret_cast<T*>(_sensorList.sensors[i]->getDriver());
+                    reinterpret_cast<T*>(_sensorList.getSensor(i)->getDriver());
                 return NO_ERROR;
             }
         }
