@@ -31,11 +31,14 @@
 #ifndef _I_SENSOR_H_
 #define _I_SENSOR_H_
 
-// #include "DataPoint.h"
 #include "Sensirion_UPT_Core.h"
 #include <Arduino.h>
 
+/* Class handling communication with a particular sensor over the I2C bus */
 class ISensor {
+    private:
+        static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
+
   public:
     virtual ~ISensor() = default;
 
@@ -120,6 +123,11 @@ class ISensor {
      * @return void*
      */
     virtual void* getDriver() = 0;
+
+    /**
+     * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
+    */
+   uint16_t getNumberOfAllowedConsecutiveErrors() const;
 };
 
 #endif /* _I_SENSOR_H_ */

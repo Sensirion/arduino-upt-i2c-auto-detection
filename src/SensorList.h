@@ -38,7 +38,6 @@ enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
 
 struct SensorList {
     static constexpr int LENGTH = 16;
-    static constexpr int NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
     ISensor* sensors[LENGTH] =
         {};  // = {} initializes all elements to 0, i.e. here to nullptr
     uint16_t latestMeasurementErrors[LENGTH] = {};
