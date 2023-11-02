@@ -45,6 +45,7 @@ class ISensor {
     uint16_t _measurementErrorCounter = 0;
     uint16_t _initStepCounter = 0;
     uint32_t _latestMeasurementTimeStamp = 0;
+    uint32_t _customMeasurementInterval = 0;
 
   public:
     virtual ~ISensor() = default;
@@ -138,12 +139,12 @@ class ISensor {
 
     /**
      * @brief getter method for _sensorState
-    */
+     */
     SensorState getSensorState() const;
 
     /**
      * @brief setter method for _sensorState
-    */
+     */
     void setSensorState(SensorState);
 
     /**
@@ -185,6 +186,16 @@ class ISensor {
      * @brief setter method for _latestMeasurementTimeStamp
      */
     void setLatestMeasurementTimeStamp(uint32_t);
+
+    /**
+     * @brief getter method for _customMeasurementInterval
+     */
+    uint32_t getMeasurementInterval() const;
+
+    /**
+     * @brief setter method for _customMeasurementInterval
+     */
+    void setMeasurementInterval(uint32_t);
 };
 
 #endif /* _I_SENSOR_H_ */

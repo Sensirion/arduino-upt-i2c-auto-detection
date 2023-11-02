@@ -64,13 +64,12 @@ const Data& SensorManager::getData() const {
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
     for (int i = 0; i < SensorList::LENGTH; ++i) {
         ISensor* sensor = _sensorList.sensors[i];
-        if (sensor == nullptr)
-            continue;
-        if (sensor->getSensorId() != sensorId &&
-            interval < sensor->getMinimumMeasurementIntervalMs()) {
+        if (sensor == nullptr) {
             continue;
         }
-        _sensorList.measurementIntervals[i] = interval;
+        if (sensor->getSensorId() == sensorId) {
+            sensor->setMeasurementInterval(interval);
+        }
     }
 }
 
@@ -90,7 +89,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
     unsigned long currentTimeStamp = millis();
     unsigned long initSteps = sensor->getInitializationSteps();
     unsigned long initIntervalMs = sensor->getInitializationIntervalMs();
-    unsigned long measureIntervalMs = _sensorList.measurementIntervals[index];
+    unsigned long measureIntervalMs = sensor->getMeasurementInterval();
 
     uint16_t measureAndWriteError = 0x1234;
 
@@ -142,7 +141,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             // Check for max number of allowed errors
             if (sensor->getMeasurementErrorCounter() >=
                 sensor->getNumberOfAllowedConsecutiveErrors()) {
-                    sensor->setSensorState(SensorState::LOST);
+                sensor->setSensorState(SensorState::LOST);
             }
             break;
 

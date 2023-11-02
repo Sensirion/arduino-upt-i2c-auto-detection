@@ -43,3 +43,17 @@ uint32_t ISensor::getLatestMeasurementTimeStamp() const {
 void ISensor::setLatestMeasurementTimeStamp(uint32_t ts) {
     _latestMeasurementTimeStamp = ts;
 }
+
+uint32_t ISensor::getMeasurementInterval() const {
+    if (_customMeasurementInterval > getMinimumMeasurementIntervalMs()) {
+        return _customMeasurementInterval;
+    } else {
+        return getMinimumMeasurementIntervalMs();
+    }
+}
+
+void ISensor::setMeasurementInterval(uint32_t interval) {
+    if (interval > getMinimumMeasurementIntervalMs()) {
+        _customMeasurementInterval = interval;
+    }
+}
