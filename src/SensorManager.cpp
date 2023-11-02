@@ -143,8 +143,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
                 errorCounter += 1;
             }
             // Check for max number of allowed errors
-            if (errorCounter >=
-                sensor->getNumberOfAllowedConsecutiveErrors()) {
+            if (errorCounter >= sensor->getNumberOfAllowedConsecutiveErrors()) {
                 state = SensorState::LOST;
             }
             break;

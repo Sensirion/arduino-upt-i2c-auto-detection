@@ -34,8 +34,6 @@
 #include "AutoDetectorErrors.h"
 #include "ISensor.h"
 
-enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
-
 struct SensorList {
     static constexpr int LENGTH = 16;
     ISensor* sensors[LENGTH] =

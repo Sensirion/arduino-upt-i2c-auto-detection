@@ -34,10 +34,12 @@
 #include "Sensirion_UPT_Core.h"
 #include <Arduino.h>
 
+enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
+
 /* Class handling communication with a particular sensor over the I2C bus */
 class ISensor {
-    private:
-        static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
+  private:
+    static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
 
   public:
     virtual ~ISensor() = default;
@@ -126,8 +128,8 @@ class ISensor {
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
-    */
-   uint16_t getNumberOfAllowedConsecutiveErrors() const;
+     */
+    uint16_t getNumberOfAllowedConsecutiveErrors() const;
 };
 
 #endif /* _I_SENSOR_H_ */
