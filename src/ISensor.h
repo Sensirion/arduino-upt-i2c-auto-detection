@@ -38,6 +38,7 @@
 class ISensor {
   public:
     virtual ~ISensor() = default;
+
     /**
      * @brief Initialize sensor driver such that data may be read out
      *
@@ -45,6 +46,7 @@ class ISensor {
      * SensirionCore, where 0 value corresponds to no error.
      */
     virtual uint16_t start() = 0;
+
     /**
      * @brief Call driver methods to perform measurement and update DataPoints
      *
@@ -59,6 +61,7 @@ class ISensor {
      */
     virtual uint16_t measureAndWrite(DataPoint dataPoints[],
                                      const unsigned long timeStamp) = 0;
+
     /**
      * @brief Perform extended sensor initialization.
      * As most sensors don't require this, overriding this method is optional.
@@ -66,12 +69,14 @@ class ISensor {
     virtual uint16_t initializationStep() {
         return 0;
     };
+
     /**
      * @brief Get the specific SensorId of the ISensor realization
      *
      * @return SensorId
      */
     virtual SensorID getSensorId() const = 0;
+
     /**
      * @brief Get the number of DataPoints this sensor occupies in the Data
      * object.
@@ -79,6 +84,7 @@ class ISensor {
      * @return size_t
      */
     virtual size_t getNumberOfDataPoints() const = 0;
+
     /**
      * @brief Get the minimum measurement interval of the sensor. This must be
      * larger than the longest possible measurement duration.
@@ -86,6 +92,7 @@ class ISensor {
      * @return unsigned long
      */
     virtual unsigned long getMinimumMeasurementIntervalMs() const = 0;
+
     /**
      * @brief Get the number of times the initializationStep method should be
      * called. Note that most sensors don't require an extended initialization.
@@ -95,6 +102,7 @@ class ISensor {
     virtual unsigned long getInitializationSteps() const {
         return 0;
     };
+
     /**
      * @brief Get the interval at which the initializationStep method should be
      * called during initialization in milliseconds.
@@ -104,6 +112,7 @@ class ISensor {
     virtual unsigned long getInitializationIntervalMs() const {
         return 0;
     };
+
     /**
      * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
      * pointer
