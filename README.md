@@ -61,11 +61,6 @@ cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/
 As of november 2, 2023 platformIO does not correctly convert `.ino` files to `.cpp` files in subdirectories of the project. We must do so manually with the following commands, 
 for platformio does not compile .ino files.
 ```bash
-cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
-cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
-```
-We may then build the project and upload
-```bash
 pio run -e basicUsage -t upload
 ```
 and start the Serial monitor.
