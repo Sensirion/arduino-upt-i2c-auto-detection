@@ -94,7 +94,6 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
 
     const unsigned long& latestUpdateTimeStamp =
         _sensorList.latestUpdateTimeStamps[index];
-    uint16_t& sensorError = _sensorList.latestMeasurementErrors[index];
     uint16_t& errorCounter = _sensorList.measurementErrorCounters[index];
     uint16_t& initStepsCounter = _sensorList.initStepCounters[index];
     SensorState& state = _sensorList.sensorStates[index];
@@ -133,10 +132,11 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
                                      latestUpdateTimeStamp)) {
                 break;
             }
-            sensorError =
+            uint16_t error =
                 sensor->measureAndWrite(writePosition, currentTimeStamp);
+            sensor->setLatestMeasurementError(error);
             // Update error counter
-            if (!sensorError) {
+            if (!error) {
                 errorCounter = 0;
                 break;
             } else {

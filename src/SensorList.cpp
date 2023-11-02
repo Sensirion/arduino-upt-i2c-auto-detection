@@ -71,7 +71,6 @@ void SensorList::reset() {
     for (int i = 0; i < LENGTH; ++i) {
         delete sensors[i];
         sensors[i] = nullptr;
-        latestMeasurementErrors[i] = 0;
         latestUpdateTimeStamps[i] = 0;
         measurementIntervals[i] = 0;
         measurementErrorCounters[i] = 0;

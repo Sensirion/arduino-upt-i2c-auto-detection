@@ -40,6 +40,7 @@ enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
 class ISensor {
   private:
     static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
+    uint16_t _latestMeasurementError = 0;
 
   public:
     virtual ~ISensor() = default;
@@ -130,6 +131,11 @@ class ISensor {
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
      */
     uint16_t getNumberOfAllowedConsecutiveErrors() const;
+
+    /**
+     * @brief setter method for  _latestMeasurementError
+     */
+    void setLatestMeasurementError(uint16_t);
 };
 
 #endif /* _I_SENSOR_H_ */
