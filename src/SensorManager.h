@@ -42,6 +42,18 @@
  * intervals */
 class SensorManager {
   public:
+      /**
+     * @brief constructor
+     *
+     * @param[in] IAutoDetector& detector instance with which to seek for
+     * connected sensors
+     *
+     * @note With this construction we by default limit ourselves to one I2C
+     * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
+     * buses
+     */
+    explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+    
     /**
      * @brief Must be called before any other method
      *
@@ -78,18 +90,6 @@ class SensorManager {
      * case the interval is not set for the sensor
      */
     void setInterval(unsigned long interval, SensorID sensorId);
-
-    /**
-     * @brief constructor
-     *
-     * @param[in] IAutoDetector& detector instance with which to seek for
-     * connected sensors
-     *
-     * @note With this construction we by default limit ourselves to one I2C
-     * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
-     * buses
-     */
-    explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
 
     /**
      * Retrieve specific sensor driver instance T from
