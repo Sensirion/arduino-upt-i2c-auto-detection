@@ -4,6 +4,14 @@ uint16_t ISensor::getNumberOfAllowedConsecutiveErrors() const {
     return _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
 }
 
+SensorState ISensor::getSensorState() const {
+    return _sensorState;
+}
+
+void ISensor::setSensorState(SensorState s) {
+    _sensorState = s;
+}
+
 void ISensor::setLatestMeasurementError(uint16_t err) {
     _latestMeasurementError = err;
 }

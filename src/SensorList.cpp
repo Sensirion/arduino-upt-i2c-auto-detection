@@ -37,9 +37,9 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
             measurementIntervals[i] =
                 pSensor->getMinimumMeasurementIntervalMs();
             if (sensors[i]->getInitializationSteps() > 0) {
-                sensorStates[i] = SensorState::INITIALIZING;
+                sensors[i]->setSensorState(SensorState::INITIALIZING);
             } else {
-                sensorStates[i] = SensorState::RUNNING;
+                sensors[i]->setSensorState(SensorState::RUNNING);
             }
             return NO_ERROR;
         }
@@ -78,7 +78,7 @@ void SensorList::reset() {
 uint16_t SensorList::getNumberOfSensorsLost() {
     uint16_t count = 0;
     for (int i = 0; i < LENGTH; ++i) {
-        if (sensorStates[i] == SensorState::LOST) {
+        if (sensors[i]->getSensorState() == SensorState::LOST) {
             ++count;
         }
     }

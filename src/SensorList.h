@@ -39,7 +39,6 @@ struct SensorList {
     ISensor* sensors[LENGTH] =
         {};  // = {} initializes all elements to 0, i.e. here to nullptr
     unsigned long measurementIntervals[LENGTH] = {};
-    SensorState sensorStates[LENGTH] = {};
 
     /**
      * @brief add a sensor to the list of tracked sensors

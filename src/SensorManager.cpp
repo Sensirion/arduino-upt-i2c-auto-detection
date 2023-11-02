@@ -93,19 +93,18 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
     unsigned long measureIntervalMs = _sensorList.measurementIntervals[index];
 
     uint16_t measureAndWriteError = 0x1234;
-    SensorState& state = _sensorList.sensorStates[index];
 
     DataPoint* writePosition = _data.dataPoints + writeOffset;
 
     // State handling
-    switch (state) {
+    switch (sensor->getSensorState()) {
         case SensorState::UNDEFINED:
             break;
 
         case SensorState::INITIALIZING:
             // Check if initialization is done
             if (sensor->getInitStepsCounter() >= initSteps) {
-                state = SensorState::RUNNING;
+                sensor->setSensorState(SensorState::RUNNING);
             }
             // Set Sensor name of empty Datapoints for initialization period
             if (sensor->getInitStepsCounter() == 0) {
@@ -143,7 +142,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             // Check for max number of allowed errors
             if (sensor->getMeasurementErrorCounter() >=
                 sensor->getNumberOfAllowedConsecutiveErrors()) {
-                state = SensorState::LOST;
+                    sensor->setSensorState(SensorState::LOST);
             }
             break;
 
