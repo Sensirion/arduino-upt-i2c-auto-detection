@@ -7,3 +7,15 @@ uint16_t ISensor::getNumberOfAllowedConsecutiveErrors() const {
 void ISensor::setLatestMeasurementError(uint16_t err) {
     _latestMeasurementError = err;
 }
+
+uint16_t ISensor::getMeasurementErrorCounter() const {
+    return _measurementErrorCounter;
+}
+
+void ISensor::resetMeasurementErrorCounter() {
+    _measurementErrorCounter = 0;
+}
+
+void ISensor::incrementMeasurementErrorCounter() {
+    _measurementErrorCounter++;
+}
