@@ -41,8 +41,42 @@
  * detection and signal polling in accordance to the sensor's minimal polling
  * intervals */
 class SensorManager {
+  private:
+    Data _data;
+    SensorList _sensorList;
+    IAutoDetector& _detector;
+
+    /**
+     * @brief verify if a given timespan has passed
+     *
+     * @param[in] interval duration of the timespan
+     *
+     * @param[in] currentTimeStamp current time
+     *
+     * @param[in] latestUpdateTimeStamp time at which the last update was
+     * performed
+     *
+     * @param[out] boolean true if more time than interval has passed since
+     * latestUpdateTimeStamp
+     */
+    bool _timeIntervalPassed(const unsigned long interval,
+                             const unsigned long currentTimeStamp,
+                             const unsigned long latestUpdateTimeStamp);
+
+    /**
+     * @brief Writes sensor signals into _data, modifies sensor status
+     *
+     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
+     *
+     * @param[in] index of the ISensor index in _sensorList
+     *
+     * @param[in] size_t& reference to the write offset, a dynamic pointer
+     * offset to the DataPoint in _data to which the signals should be written
+     */
+    void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
+
   public:
-      /**
+    /**
      * @brief constructor
      *
      * @param[in] IAutoDetector& detector instance with which to seek for
@@ -53,7 +87,7 @@ class SensorManager {
      * buses
      */
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
-    
+
     /**
      * @brief Must be called before any other method
      *
@@ -119,40 +153,6 @@ class SensorManager {
         }
         return DRIVER_NOT_FOUND_ERROR;
     };
-
-  private:
-    Data _data;
-    SensorList _sensorList;
-    IAutoDetector& _detector;
-
-    /**
-     * @brief verify if a given timespan has passed
-     *
-     * @param[in] interval duration of the timespan
-     *
-     * @param[in] currentTimeStamp current time
-     *
-     * @param[in] latestUpdateTimeStamp time at which the last update was
-     * performed
-     *
-     * @param[out] boolean true if more time than interval has passed since
-     * latestUpdateTimeStamp
-     */
-    bool _timeIntervalPassed(const unsigned long interval,
-                             const unsigned long currentTimeStamp,
-                             const unsigned long latestUpdateTimeStamp);
-
-    /**
-     * @brief Writes sensor signals into _data, modifies sensor status
-     *
-     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
-     *
-     * @param[in] index of the ISensor index in _sensorList
-     *
-     * @param[in] size_t& reference to the write offset, a dynamic pointer
-     * offset to the DataPoint in _data to which the signals should be written
-     */
-    void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
 };
 
 #endif /* _SENSOR_MANAGER_H_ */
