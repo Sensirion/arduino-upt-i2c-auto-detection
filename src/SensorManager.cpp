@@ -92,8 +92,6 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
     unsigned long initIntervalMs = sensor->getInitializationIntervalMs();
     unsigned long measureIntervalMs = _sensorList.measurementIntervals[index];
 
-    const unsigned long& latestUpdateTimeStamp =
-        _sensorList.latestUpdateTimeStamps[index];
     uint16_t measureAndWriteError = 0x1234;
     SensorState& state = _sensorList.sensorStates[index];
 
@@ -118,7 +116,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             }
             // Only perform initialization every initialization interval
             if (!_timeIntervalPassed(initIntervalMs, currentTimeStamp,
-                                     latestUpdateTimeStamp)) {
+                                     sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
             sensor->initializationStep();
@@ -128,7 +126,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
         case SensorState::RUNNING:
             // Only perform measurement every measurement interval
             if (!_timeIntervalPassed(measureIntervalMs, currentTimeStamp,
-                                     latestUpdateTimeStamp)) {
+                                     sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
             measureAndWriteError =
@@ -137,6 +135,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             // Update error counter
             if (!measureAndWriteError) {
                 sensor->resetMeasurementErrorCounter();
+                sensor->setLatestMeasurementTimeStamp(currentTimeStamp);
                 break;
             } else {
                 sensor->incrementMeasurementErrorCounter();

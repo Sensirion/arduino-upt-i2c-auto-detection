@@ -27,3 +27,11 @@ uint16_t ISensor::getInitStepsCounter() const {
 void ISensor::incrementInitStepsCounter() {
     _initStepCounter++;
 }
+
+uint32_t ISensor::getLatestMeasurementTimeStamp() const {
+    return _latestMeasurementTimeStamp;
+}
+
+void ISensor::setLatestMeasurementTimeStamp(uint32_t ts) {
+    _latestMeasurementTimeStamp = ts;
+}

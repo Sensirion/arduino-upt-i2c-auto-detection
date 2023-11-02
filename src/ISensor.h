@@ -43,6 +43,7 @@ class ISensor {
     uint16_t _latestMeasurementError = 0;
     uint16_t _measurementErrorCounter = 0;
     uint16_t _initStepCounter = 0;
+    uint32_t _latestMeasurementTimeStamp = 0;
 
   public:
     virtual ~ISensor() = default;
@@ -163,6 +164,16 @@ class ISensor {
      * @brief increment _initStepCounter
      */
     void incrementInitStepsCounter();
+
+    /**
+     * @brief getter method for _latestMeasurementTimeStamp
+     */
+    uint32_t getLatestMeasurementTimeStamp() const;
+
+    /**
+     * @brief setter method for _latestMeasurementTimeStamp
+     */
+    void setLatestMeasurementTimeStamp(uint32_t);
 };
 
 #endif /* _I_SENSOR_H_ */
