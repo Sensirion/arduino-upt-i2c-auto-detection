@@ -19,3 +19,11 @@ void ISensor::resetMeasurementErrorCounter() {
 void ISensor::incrementMeasurementErrorCounter() {
     _measurementErrorCounter++;
 }
+
+uint16_t ISensor::getInitStepsCounter() const {
+    return _initStepCounter;
+}
+
+void ISensor::incrementInitStepsCounter() {
+    _initStepCounter++;
+}

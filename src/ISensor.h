@@ -42,6 +42,7 @@ class ISensor {
     static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
     uint16_t _latestMeasurementError = 0;
     uint16_t _measurementErrorCounter = 0;
+    uint16_t _initStepCounter = 0;
 
   public:
     virtual ~ISensor() = default;
@@ -152,6 +153,16 @@ class ISensor {
      * @brief increment _measurementErrorCounter
      */
     void incrementMeasurementErrorCounter();
+
+    /**
+     * @brief getter method for _initStepCounter
+     */
+    uint16_t getInitStepsCounter() const;
+
+    /**
+     * @brief increment _initStepCounter
+     */
+    void incrementInitStepsCounter();
 };
 
 #endif /* _I_SENSOR_H_ */

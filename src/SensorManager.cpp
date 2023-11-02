@@ -95,7 +95,6 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
     const unsigned long& latestUpdateTimeStamp =
         _sensorList.latestUpdateTimeStamps[index];
     uint16_t measureAndWriteError = 0x1234;
-    uint16_t& initStepsCounter = _sensorList.initStepCounters[index];
     SensorState& state = _sensorList.sensorStates[index];
 
     DataPoint* writePosition = _data.dataPoints + writeOffset;
@@ -107,11 +106,11 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
 
         case SensorState::INITIALIZING:
             // Check if initialization is done
-            if (initStepsCounter >= initSteps) {
+            if (sensor->getInitStepsCounter() >= initSteps) {
                 state = SensorState::RUNNING;
             }
             // Set Sensor name of empty Datapoints for initialization period
-            if (initStepsCounter == 0) {
+            if (sensor->getInitStepsCounter() == 0) {
                 for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
                     DataPoint* dataPoint = writePosition + i;
                     dataPoint->sourceDevice = sensorName(sensor->getSensorId());
@@ -123,7 +122,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
                 break;
             }
             sensor->initializationStep();
-            initStepsCounter += 1;
+            sensor->incrementInitStepsCounter();
             break;
 
         case SensorState::RUNNING:
