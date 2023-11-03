@@ -36,7 +36,6 @@
 /* Class handling a collection of DataPoints */
 class Data {
   public:
-    DataPoint* dataPoints = nullptr;
     Data() = default;
     ~Data();
     Data(const Data&) = delete;             // Illegal operation
@@ -63,9 +62,15 @@ class Data {
      */
     void addDataPoint(const DataPoint&);
 
+    /**
+     * @brief getter method for stored DataPoints
+     */
+    const DataPoint& getDataPoint(size_t) const;
+
   private:
     size_t _length = 0;
     size_t _writeHead = 0;
+    DataPoint* _dataPoints = NULL;
 };
 
 #endif /* _DATA_H_ */

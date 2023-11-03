@@ -26,7 +26,7 @@ void loop() {
     // Get Data object contatining DataPoints
     const Data& currentData = sensorManager.getData();
     // Access first dataPoint
-    DataPoint dp = currentData.dataPoints[0];
+    DataPoint dp = currentData.getDataPoint(0);
     // Print DataPoint value
     Serial.println(dp.value);
 }

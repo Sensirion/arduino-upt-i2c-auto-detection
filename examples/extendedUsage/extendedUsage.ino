@@ -80,7 +80,7 @@ void loop() {
 
 void printData(const Data& data) {
     for (size_t i = 0; i < data.getLength(); ++i) {
-        const DataPoint& dp = data.dataPoints[i];
+        const DataPoint& dp = data.getDataPoint(i);
         // Get SensorId string using SensorId enum as index
         Serial.print(dp.sourceDevice.c_str());
         Serial.print("-");
