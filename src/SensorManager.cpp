@@ -29,6 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SensorManager.h"
+#include "utils.h"
 
 void SensorManager::begin() {
     _sensorList.reset();
@@ -73,16 +74,6 @@ void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
     }
 }
 
-bool SensorManager::_timeIntervalPassed(
-    const unsigned long interval, const unsigned long currentTimeStamp,
-    const unsigned long latestUpdateTimeStamp) {
-    if (currentTimeStamp < interval) {
-        return true;
-    }
-    unsigned long elapsedTime = currentTimeStamp - latestUpdateTimeStamp;
-    return elapsedTime >= interval;
-}
-
 void SensorManager::_updateSensor(ISensor* sensor, int index) {
     // Collect variables for readability
     unsigned long currentTimeStamp = millis();
@@ -113,7 +104,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index) {
                 }
             }
             // Only perform initialization every initialization interval
-            if (!_timeIntervalPassed(initIntervalMs, currentTimeStamp,
+            if (!timeIntervalPassed(initIntervalMs, currentTimeStamp,
                                      sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
@@ -123,7 +114,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index) {
 
         case SensorState::RUNNING:
             // Only perform measurement every measurement interval
-            if (!_timeIntervalPassed(measureIntervalMs, currentTimeStamp,
+            if (!timeIntervalPassed(measureIntervalMs, currentTimeStamp,
                                      sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
