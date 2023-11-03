@@ -93,7 +93,7 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
 
     uint16_t measureAndWriteError = 0x1234;
 
-    DataPoint* writePosition = _data.dataPoints + writeOffset;
+    DataPoint sensorSignalsBuffer[sensor->getNumberOfDataPoints()];
 
     // State handling
     switch (sensor->getSensorState()) {
@@ -108,8 +108,9 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             // Set Sensor name of empty Datapoints for initialization period
             if (sensor->getInitStepsCounter() == 0) {
                 for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
-                    DataPoint* dataPoint = writePosition + i;
-                    dataPoint->sourceDevice = sensorName(sensor->getSensorId());
+                    _data.addDataPoint(
+                        DataPoint(SignalType::UNDEFINED, 0.0, 0,
+                                  sensorName(sensor->getSensorId())));
                 }
             }
             // Only perform initialization every initialization interval
@@ -127,22 +128,27 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
                                      sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
+
             measureAndWriteError =
-                sensor->measureAndWrite(writePosition, currentTimeStamp);
+                sensor->measureAndWrite(sensorSignalsBuffer, currentTimeStamp);
             sensor->setLatestMeasurementError(measureAndWriteError);
+
             // Update error counter
-            if (!measureAndWriteError) {
-                sensor->resetMeasurementErrorCounter();
-                sensor->setLatestMeasurementTimeStamp(currentTimeStamp);
-                break;
-            } else {
+            if (measureAndWriteError) {
                 sensor->incrementMeasurementErrorCounter();
+                if (sensor->getMeasurementErrorCounter() >=
+                    sensor->getNumberOfAllowedConsecutiveErrors()) {
+                    sensor->setSensorState(SensorState::LOST);
+                }
+                break;
             }
-            // Check for max number of allowed errors
-            if (sensor->getMeasurementErrorCounter() >=
-                sensor->getNumberOfAllowedConsecutiveErrors()) {
-                sensor->setSensorState(SensorState::LOST);
+
+            for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
+                _data.addDataPoint(sensorSignalsBuffer[i]);
             }
+            sensor->resetMeasurementErrorCounter();
+            sensor->setLatestMeasurementTimeStamp(currentTimeStamp);
+
             break;
 
         case SensorState::LOST:
@@ -152,8 +158,5 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             break;
     }
 
-    writeOffset +=
-        sensor->getNumberOfDataPoints();  // only gets executed after "break"
-                                          // but not after "continue"
     return;
 }

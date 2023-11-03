@@ -37,15 +37,6 @@
 class Data {
   public:
     DataPoint* dataPoints = nullptr;
-
-    /// @brief Allocates memory for requested number of DataPoints
-    /// @param length desired size
-    void init(const size_t& length);
-
-    /**
-     * @brief getter method for _length
-     */
-    size_t getLength() const;
     Data() = default;
     ~Data();
     Data(const Data&) = delete;             // Illegal operation
@@ -53,8 +44,28 @@ class Data {
     Data(Data&& src);                       // Copy Constructor
     Data& operator=(Data&& src);            // Assignment operator
 
+    /**
+     * @brief Allocates memory for requested number of DataPoints
+     *
+     * @param length desired size
+     */
+    void init(const size_t& length);
+
+    /**
+     * @brief getter method for _length
+     */
+    size_t getLength() const;
+
+    /**
+     * @brief adds a datapoint
+     *
+     * @note Does not report a failure to perform the operation
+     */
+    void addDataPoint(const DataPoint&);
+
   private:
     size_t _length = 0;
+    size_t _writeHead = 0;
 };
 
 #endif /* _DATA_H_ */

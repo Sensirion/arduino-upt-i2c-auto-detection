@@ -60,3 +60,10 @@ Data& Data::operator=(Data&& src) {
     }
     return *this;
 }
+
+void Data::addDataPoint(const DataPoint& dp) {
+    if (_writeHead < _length - 1) {
+        dataPoints[_writeHead] = dp;
+        _writeHead++;
+    }
+}
