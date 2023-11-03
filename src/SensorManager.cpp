@@ -46,7 +46,7 @@ AutoDetectorError SensorManager::updateData() {
         if (sensor == nullptr) {
             continue;
         }
-        _updateSensor(sensor, i, writeOffset);
+        _updateSensor(sensor, i);
     }
     uint16_t numberOfSensorsLostAfterUpdate =
         _sensorList.getNumberOfSensorsLost();
@@ -83,8 +83,7 @@ bool SensorManager::_timeIntervalPassed(
     return elapsedTime >= interval;
 }
 
-void SensorManager::_updateSensor(ISensor* sensor, int index,
-                                  size_t& writeOffset) {
+void SensorManager::_updateSensor(ISensor* sensor, int index) {
     // Collect variables for readability
     unsigned long currentTimeStamp = millis();
     unsigned long initSteps = sensor->getInitializationSteps();

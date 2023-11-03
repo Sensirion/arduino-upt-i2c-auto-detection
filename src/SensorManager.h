@@ -69,11 +69,8 @@ class SensorManager {
      * @param[in] Isensor* pointer to a ISensor instance to poll for signals
      *
      * @param[in] index of the ISensor index in _sensorList
-     *
-     * @param[in] size_t& reference to the write offset, a dynamic pointer
-     * offset to the DataPoint in _data to which the signals should be written
      */
-    void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
+    void _updateSensor(ISensor* sensor, int index);
 
   public:
     /**
