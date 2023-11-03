@@ -53,7 +53,7 @@ class SensorManager {
      *
      * @param[in] index of the ISensor index in _sensorList
      */
-    void _updateSensor(ISensor* sensor, int index);
+    void _updateSensor(ISensor* sensor);
 
   public:
     /**
