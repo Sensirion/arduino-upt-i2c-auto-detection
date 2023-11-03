@@ -38,7 +38,7 @@ void SensorManager::begin() {
 }
 
 AutoDetectorError SensorManager::updateData() {
-    size_t writeOffset = 0;
+    _data.resetWriteHead();
     uint16_t numberOfSensorsLostBeforeUpdate =
         _sensorList.getNumberOfSensorsLost();
     for (int i = 0; i < _sensorList.getLength(); ++i) {

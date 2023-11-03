@@ -67,6 +67,11 @@ class Data {
      */
     const DataPoint& getDataPoint(size_t) const;
 
+    /**
+     * @brief reset _writeHead to start of list
+     */
+    void resetWriteHead();
+
   private:
     size_t _length = 0;
     size_t _writeHead = 0;

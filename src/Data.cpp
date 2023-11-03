@@ -71,3 +71,7 @@ void Data::addDataPoint(const DataPoint& dp) {
 const DataPoint& Data::getDataPoint(size_t i) const {
     return _dataPoints[i];
 }
+
+void Data::resetWriteHead() {
+    _writeHead = 0;
+}
