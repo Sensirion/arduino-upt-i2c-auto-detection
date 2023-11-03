@@ -31,8 +31,9 @@
 #ifndef _I_SENSOR_H_
 #define _I_SENSOR_H_
 
+#include "Arduino.h"
+#include "Data.h"
 #include "Sensirion_UPT_Core.h"
-#include <Arduino.h>
 
 enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
 
@@ -196,6 +197,11 @@ class ISensor {
      * @brief setter method for _customMeasurementInterval
      */
     void setMeasurementInterval(uint32_t);
+
+    /**
+     * @brief update Sensor reading in Data
+     */
+    void updateSensorSignals(Data&);
 };
 
 #endif /* _I_SENSOR_H_ */

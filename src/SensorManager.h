@@ -46,15 +46,6 @@ class SensorManager {
     SensorList _sensorList;
     IAutoDetector& _detector;
 
-    /**
-     * @brief Writes sensor signals into _data, modifies sensor status
-     *
-     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
-     *
-     * @param[in] index of the ISensor index in _sensorList
-     */
-    void _updateSensor(ISensor* sensor);
-
   public:
     /**
      * @brief constructor

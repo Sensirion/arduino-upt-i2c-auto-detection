@@ -1,4 +1,5 @@
 #include "ISensor.h"
+#include "utils.h"
 
 uint16_t ISensor::getNumberOfAllowedConsecutiveErrors() const {
     return _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
@@ -56,4 +57,79 @@ void ISensor::setMeasurementInterval(uint32_t interval) {
     if (interval > getMinimumMeasurementIntervalMs()) {
         _customMeasurementInterval = interval;
     }
+}
+
+void ISensor::updateSensorSignals(Data& data) {
+    // Collect variables for readability
+    unsigned long currentTimeStamp = millis();
+    unsigned long initSteps = getInitializationSteps();
+    unsigned long initIntervalMs = getInitializationIntervalMs();
+    unsigned long measureIntervalMs = getMeasurementInterval();
+
+    uint16_t measureAndWriteError = 0x1234;
+    DataPoint sensorSignalsBuffer[getNumberOfDataPoints()];
+
+    // State handling
+    switch (getSensorState()) {
+        case SensorState::UNDEFINED:
+            break;
+
+        case SensorState::INITIALIZING:
+            // Check if initialization is done
+            if (getInitStepsCounter() >= initSteps) {
+                setSensorState(SensorState::RUNNING);
+            }
+            // Set Sensor name of empty Datapoints for initialization period
+            if (getInitStepsCounter() == 0) {
+                for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
+                    data.addDataPoint(DataPoint(SignalType::UNDEFINED, 0.0, 0,
+                                                sensorName(getSensorId())));
+                }
+            }
+            // Only perform initialization every initialization interval
+            if (!timeIntervalPassed(initIntervalMs, currentTimeStamp,
+                                    getLatestMeasurementTimeStamp())) {
+                break;
+            }
+            initializationStep();
+            incrementInitStepsCounter();
+            break;
+
+        case SensorState::RUNNING:
+            // Only perform measurement every measurement interval
+            if (!timeIntervalPassed(measureIntervalMs, currentTimeStamp,
+                                    getLatestMeasurementTimeStamp())) {
+                break;
+            }
+
+            measureAndWriteError =
+                measureAndWrite(sensorSignalsBuffer, currentTimeStamp);
+            setLatestMeasurementError(measureAndWriteError);
+
+            // Update error counter
+            if (measureAndWriteError) {
+                incrementMeasurementErrorCounter();
+                if (getMeasurementErrorCounter() >=
+                    getNumberOfAllowedConsecutiveErrors()) {
+                    setSensorState(SensorState::LOST);
+                }
+                break;
+            }
+
+            for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
+                data.addDataPoint(sensorSignalsBuffer[i]);
+            }
+            resetMeasurementErrorCounter();
+            setLatestMeasurementTimeStamp(currentTimeStamp);
+
+            break;
+
+        case SensorState::LOST:
+            break;
+
+        default:
+            break;
+    }
+
+    return;
 }

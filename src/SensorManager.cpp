@@ -47,7 +47,7 @@ AutoDetectorError SensorManager::updateData() {
         if (sensor == nullptr) {
             continue;
         }
-        _updateSensor(sensor);
+        sensor->updateSensorSignals(_data);
     }
     uint16_t numberOfSensorsLostAfterUpdate =
         _sensorList.getNumberOfSensorsLost();
@@ -72,81 +72,4 @@ void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
             sensor->setMeasurementInterval(interval);
         }
     }
-}
-
-void SensorManager::_updateSensor(ISensor* sensor) {
-    // Collect variables for readability
-    unsigned long currentTimeStamp = millis();
-    unsigned long initSteps = sensor->getInitializationSteps();
-    unsigned long initIntervalMs = sensor->getInitializationIntervalMs();
-    unsigned long measureIntervalMs = sensor->getMeasurementInterval();
-
-    uint16_t measureAndWriteError = 0x1234;
-
-    DataPoint sensorSignalsBuffer[sensor->getNumberOfDataPoints()];
-
-    // State handling
-    switch (sensor->getSensorState()) {
-        case SensorState::UNDEFINED:
-            break;
-
-        case SensorState::INITIALIZING:
-            // Check if initialization is done
-            if (sensor->getInitStepsCounter() >= initSteps) {
-                sensor->setSensorState(SensorState::RUNNING);
-            }
-            // Set Sensor name of empty Datapoints for initialization period
-            if (sensor->getInitStepsCounter() == 0) {
-                for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
-                    _data.addDataPoint(
-                        DataPoint(SignalType::UNDEFINED, 0.0, 0,
-                                  sensorName(sensor->getSensorId())));
-                }
-            }
-            // Only perform initialization every initialization interval
-            if (!timeIntervalPassed(initIntervalMs, currentTimeStamp,
-                                     sensor->getLatestMeasurementTimeStamp())) {
-                break;
-            }
-            sensor->initializationStep();
-            sensor->incrementInitStepsCounter();
-            break;
-
-        case SensorState::RUNNING:
-            // Only perform measurement every measurement interval
-            if (!timeIntervalPassed(measureIntervalMs, currentTimeStamp,
-                                     sensor->getLatestMeasurementTimeStamp())) {
-                break;
-            }
-
-            measureAndWriteError =
-                sensor->measureAndWrite(sensorSignalsBuffer, currentTimeStamp);
-            sensor->setLatestMeasurementError(measureAndWriteError);
-
-            // Update error counter
-            if (measureAndWriteError) {
-                sensor->incrementMeasurementErrorCounter();
-                if (sensor->getMeasurementErrorCounter() >=
-                    sensor->getNumberOfAllowedConsecutiveErrors()) {
-                    sensor->setSensorState(SensorState::LOST);
-                }
-                break;
-            }
-
-            for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
-                _data.addDataPoint(sensorSignalsBuffer[i]);
-            }
-            sensor->resetMeasurementErrorCounter();
-            sensor->setLatestMeasurementTimeStamp(currentTimeStamp);
-
-            break;
-
-        case SensorState::LOST:
-            break;
-
-        default:
-            break;
-    }
-
-    return;
 }
