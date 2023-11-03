@@ -62,7 +62,7 @@ Data& Data::operator=(Data&& src) {
 }
 
 void Data::addDataPoint(const DataPoint& dp) {
-    if (_writeHead < _length - 1) {
+    if (_writeHead < _length) {
         _dataPoints[_writeHead] = dp;
         _writeHead++;
     }
