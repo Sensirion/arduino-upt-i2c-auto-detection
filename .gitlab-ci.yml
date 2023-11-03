@@ -13,11 +13,7 @@ compile_pio:
       - cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
   parallel:
     matrix:
-<<<<<<< HEAD
       - env: [basicUsage, extendedUsage]
-=======
-      - env: [basicUsage, extendedUsage, lilygo-t-display-s3_basicUsage]
->>>>>>> 431b224 (Move private declarations to the top)
   script:
       - pio run --environment ${env}
 

@@ -61,25 +61,18 @@ cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/
 As of november 2, 2023 platformIO does not correctly convert `.ino` files to `.cpp` files in subdirectories of the project. We must do so manually with the following commands, 
 for platformio does not compile .ino files.
 ```bash
-<<<<<<< HEAD
 cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
 cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
 ```
 We may then build the project and upload
 ```bash
-=======
->>>>>>> 807a1e2 (Updates README to reflect project config changes)
 pio run -e basicUsage -t upload
 ```
 and start the Serial monitor.
 ```bash
 pio device monitor
 ```
-<<<<<<< HEAD
 Available environments are `basicUsage`and `extendedUsage`.
-=======
-Available environments include `basicUsage`, `extendedUsage`, as well as `lilygo-t-display-s3_basicUsage`, used for the development of the Stornella engineering gadget. 
->>>>>>> 807a1e2 (Updates README to reflect project config changes)
 In case you're using some other board, it is recommended you create a new environment in the `platformio.ini` file, using the existing environments as a template.
 
 In order to use this library in your project, add it to the `lib_deps` in your `platformio.ini` file and include `Sensirion_Sensor_Auto_Detection.h`.
