@@ -115,7 +115,9 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sgp41(_wire);
         }
 #endif
-        default: { return nullptr; }
+        default: {
+            return nullptr;
+        }
     }
 }
 

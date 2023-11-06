@@ -37,9 +37,11 @@
 class Data {
   public:
     DataPoint* dataPoints = nullptr;
+
     /// @brief Allocates memory for requested number of DataPoints
     /// @param length desired size
     void init(const size_t& length);
+
     /**
      * @brief getter method for _length
      */

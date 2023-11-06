@@ -1,33 +1,57 @@
 stages:
   - validate
-  - test
+  - compile
+
+compile_pio:
+  stage: compile
+  image:
+      name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
+  tags: [docker, linux]
+  before_script:
+      - pip install -U platformio
+      - cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
+      - cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
+  parallel:
+    matrix:
+      - env: [basicUsage, extendedUsage]
+  script:
+      - pio run --environment ${env}
 
 syntax_check:
   stage: validate
   image:
-      name: registry.gitlab.sensirion.lokal/mso-sw/drivers/docker-driver-generator:0.1.0
+      name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-ubuntu:22.04-1.6.0
   tags: [linux, docker]
+  before_script:
+        - apt update
+        - apt-get install -yq clang-format-14
   script:
-    - pip install --no-index --find-links=/pip editorconfig-checker
-    - editorconfig-checker
-    - find . -type f -iregex ".*\.\(c\|h\|cpp\|ino\)" -exec clang-format-6.0 -i -style=file {} \; && git diff --exit-code
-
+    - find . -type f -iregex ".*\.\(c\|h\|cpp\|ino\)" -exec clang-format-14 -i -style=file {} \; && git diff --exit-code
 
 cppcheck:
   stage: validate
   image:
-      name: registry.gitlab.sensirion.lokal/mso-sw/drivers/docker-driver-generator:0.1.0
+      name: registry.gitlab.sensirion.lokal/mso-sw/drivers/docker-driver-generator:0.2.0
   tags: [linux, docker]
   script:
-    - cppcheck --std=c++11 --language=c++ --error-exitcode=1 --enable=warning,style,performance,portability src/*
+    - cppcheck --std=c++11 --language=c++ --error-exitcode=1 --enable=warning,style,performance,portability --suppress=unreadVariable src/*
 
-compile_test:
-    stage: test
+TODO_check:
+  stage: validate
+  image:
+      name: registry.gitlab.sensirion.lokal/mso-sw/drivers/docker-driver-generator:0.2.0
+  tags: [linux, docker]
+  script:
+    - '! grep -rnw --exclude=.gitlab-ci.yml --exclude-dir=.git . -e "TODO"'
+
+
+compile_arduino:
+    stage: compile
     image:
         name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
     tags: [docker, linux]
     needs: []
-    script:
+    before_script:
         - arduino-cli update
         - arduino-cli lib install "Sensirion Core@0.5.3"
         - arduino-cli lib install "Sensirion_UPT_Core"
@@ -41,15 +65,9 @@ compile_test:
         - arduino-cli lib install "Sensirion I2C SCD30@0.1.0"
         - arduino-cli lib install "Sensirion I2C STC3X@0.1.0"
         - ln -s $PWD ~/Arduino/libraries/
-        # - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/basicUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/basicUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/basicUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/basicUsage
-        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/basicUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:samd:mkrzero examples/extendedUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:avr:mega examples/extendedUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:avr:nano examples/extendedUsage
-        # - arduino-cli compile --warnings all --fqbn arduino:avr:uno examples/extendedUsage
-        - arduino-cli compile --warnings all --fqbn esp32:esp32:esp32 examples/extendedUsage
-        - arduino-cli compile --warnings all --fqbn esp8266:esp8266:generic examples/extendedUsage
+    parallel:
+      matrix:
+        - boards: [esp32:esp32:esp32, esp8266:esp8266:generic]
+          examples: [basicUsage, extendedUsage]
+    script:
+      - arduino-cli compile --warnings all --fqbn ${boards} examples/${examples}

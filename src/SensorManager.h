@@ -28,6 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef _SENSOR_MANAGER_H_
 #define _SENSOR_MANAGER_H_
 
@@ -35,6 +36,7 @@
 #include "IAutoDetector.h"
 #include "SensirionCore.h"
 #include "SensorList.h"
+
 /*Class to manage the sensors connected to the board's I2C bus. Handles
  * detection and signal polling in accordance to the sensor's minimal polling
  * intervals */
@@ -46,6 +48,7 @@ class SensorManager {
      * Searches I2C bus for available sensors, initializes _data
      */
     void begin();
+
     /**
      * @brief Calls measure methods on all available sensors, while respecting
      * state and interval conditions
@@ -57,10 +60,12 @@ class SensorManager {
      * were lost during polling
      */
     AutoDetectorError updateData();
+
     /**
      * @brief getter method for _data
      */
     const Data& getData() const;
+
     /**
      * @brief Sets polling interval for the specified sensor after checking if
      * it is valid
@@ -73,6 +78,7 @@ class SensorManager {
      * case the interval is not set for the sensor
      */
     void setInterval(unsigned long interval, SensorID sensorId);
+
     /**
      * @brief constructor
      *
@@ -84,6 +90,7 @@ class SensorManager {
      * buses
      */
     explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+
     /**
      * Retrieve specific sensor driver instance T from
      * SensorManager::_sensorList
@@ -117,6 +124,7 @@ class SensorManager {
     Data _data;
     SensorList _sensorList;
     IAutoDetector& _detector;
+
     /**
      * @brief verify if a given timespan has passed
      *
@@ -133,6 +141,7 @@ class SensorManager {
     bool _timeIntervalPassed(const unsigned long interval,
                              const unsigned long currentTimeStamp,
                              const unsigned long latestUpdateTimeStamp);
+
     /**
      * @brief Writes sensor signals into _data, modifies sensor status
      *

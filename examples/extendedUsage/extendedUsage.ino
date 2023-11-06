@@ -14,6 +14,7 @@
     connected.
     */
 
+#include "Arduino.h"
 #include "Sensirion_Sensor_Auto_Detection.h"
 #include "Sensirion_UPT_Core.h"
 
@@ -27,6 +28,7 @@ SensorManager sensorManager(i2CAutoDetector);
 // - the sensorId argument
 // accordingly.
 SensirionI2CScd4x* pScd4xDriver = nullptr;
+void printData(const Data&);
 
 void setup() {
 

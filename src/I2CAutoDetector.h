@@ -37,6 +37,12 @@
 class I2CAutoDetector : public IAutoDetector {
   public:
     explicit I2CAutoDetector(TwoWire& wire) : _wire(wire){};
+
+    /**
+     * @brief scan i2c bus for available sensors
+     *
+     * @param SensorList& SensorList to which add the found sensors
+     */
     void findSensors(SensorList& sensorList) override;
 
   private:
