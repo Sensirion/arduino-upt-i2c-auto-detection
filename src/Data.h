@@ -75,7 +75,7 @@ class Data {
   private:
     size_t _length = 0;
     size_t _writeHead = 0;
-    DataPoint* _dataPoints = NULL;
+    DataPoint* _dataPoints = nullptr;
 };
 
 #endif /* _DATA_H_ */
