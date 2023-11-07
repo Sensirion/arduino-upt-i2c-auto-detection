@@ -32,8 +32,8 @@
 
 void Data::init(const size_t& length) {
     _length = length;
-    delete[] dataPoints;
-    dataPoints = new DataPoint[_length];
+    delete[] _dataPoints;
+    _dataPoints = new DataPoint[_length];
 }
 
 size_t Data::getLength() const {
@@ -41,22 +41,37 @@ size_t Data::getLength() const {
 }
 
 Data::~Data() {
-    delete[] dataPoints;
+    delete[] _dataPoints;
 }
 
-Data::Data(Data&& src) : dataPoints(src.dataPoints), _length(src._length) {
-    delete[] src.dataPoints;
+Data::Data(Data&& src) : _length(src._length), _dataPoints(src._dataPoints) {
+    delete[] src._dataPoints;
     src._length = 0;
 }
 
 Data& Data::operator=(Data&& src) {
     if (&src != this) {
-        delete[] dataPoints;
+        delete[] _dataPoints;
 
-        this->dataPoints = src.dataPoints;
-        src.dataPoints = nullptr;
+        this->_dataPoints = src._dataPoints;
+        src._dataPoints = nullptr;
         this->_length = src._length;
         src._length = 0;
     }
     return *this;
+}
+
+void Data::addDataPoint(const DataPoint& dp) {
+    if (_writeHead < _length) {
+        _dataPoints[_writeHead] = dp;
+        _writeHead++;
+    }
+}
+
+const DataPoint& Data::getDataPoint(size_t i) const {
+    return _dataPoints[i];
+}
+
+void Data::resetWriteHead() {
+    _writeHead = 0;
 }

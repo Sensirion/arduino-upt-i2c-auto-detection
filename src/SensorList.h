@@ -38,7 +38,7 @@
 class SensorList {
   private:
     static const int _MAX_NUM_SENSORS = 16;
-    ISensor* _sensors[_MAX_NUM_SENSORS] = {NULL};
+    ISensor* _sensors[_MAX_NUM_SENSORS] = {nullptr};
 
   public:
     /**
