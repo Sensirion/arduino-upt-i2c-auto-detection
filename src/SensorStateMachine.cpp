@@ -1,51 +1,47 @@
-#include "ISensor.h"
+#include "SensorStateMachine.h"
 #include "utils.h"
 
-uint16_t ISensor::getNumberOfAllowedConsecutiveErrors() const {
-    return _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
-}
-
-SensorState ISensor::getSensorState() const {
+SensorStatus SensorStateMachine::getSensorState() const {
     return _sensorState;
 }
 
-void ISensor::setSensorState(SensorState s) {
+void SensorStateMachine::setSensorState(SensorStatus s) {
     _sensorState = s;
 }
 
-void ISensor::setLastMeasurementError(uint16_t err) {
+void SensorStateMachine::setLastMeasurementError(uint16_t err) {
     _lastMeasurementError = err;
 }
 
-uint16_t ISensor::getMeasurementErrorCounter() const {
+uint16_t SensorStateMachine::getMeasurementErrorCounter() const {
     return _measurementErrorCounter;
 }
 
-void ISensor::resetMeasurementErrorCounter() {
+void SensorStateMachine::resetMeasurementErrorCounter() {
     _measurementErrorCounter = 0;
 }
 
-void ISensor::incrementMeasurementErrorCounter() {
+void SensorStateMachine::incrementMeasurementErrorCounter() {
     _measurementErrorCounter++;
 }
 
-uint16_t ISensor::getInitStepsCounter() const {
+uint16_t SensorStateMachine::getInitStepsCounter() const {
     return _initStepsCounter;
 }
 
-void ISensor::incrementInitStepsCounter() {
+void SensorStateMachine::incrementInitStepsCounter() {
     _initStepsCounter++;
 }
 
-uint32_t ISensor::getLastMeasurementTimeStamp() const {
+uint32_t SensorStateMachine::getLastMeasurementTimeStamp() const {
     return _lastMeasurementTimeStampMs;
 }
 
-void ISensor::setLastMeasurementTimeStamp(uint32_t ts) {
+void SensorStateMachine::setLastMeasurementTimeStamp(uint32_t ts) {
     _lastMeasurementTimeStampMs = ts;
 }
 
-uint32_t ISensor::getMeasurementInterval() const {
+uint32_t SensorStateMachine::getMeasurementInterval() const {
     if (_customMeasurementIntervalMs > getMinimumMeasurementIntervalMs()) {
         return _customMeasurementIntervalMs;
     } else {
@@ -53,13 +49,13 @@ uint32_t ISensor::getMeasurementInterval() const {
     }
 }
 
-void ISensor::setMeasurementInterval(uint32_t interval) {
+void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     if (interval > getMinimumMeasurementIntervalMs()) {
         _customMeasurementIntervalMs = interval;
     }
 }
 
-void ISensor::updateSensorSignals(Data& data) {
+void SensorStateMachine::updateSensorSignals(Data& data) {
     // Collect variables for readability
     unsigned long currentTimeStampMs = millis();
     unsigned long initSteps = getInitializationSteps();
@@ -71,10 +67,10 @@ void ISensor::updateSensorSignals(Data& data) {
 
     // State handling
     switch (_sensorState) {
-        case SensorState::UNDEFINED:
+        case SensorStatus::UNDEFINED:
             break;
 
-        case SensorState::INITIALIZING:
+        case SensorStatus::INITIALIZING:
             // Set Sensor name of empty Datapoints for initialization period
             if (getInitStepsCounter() == 0) {
                 for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
@@ -93,11 +89,11 @@ void ISensor::updateSensorSignals(Data& data) {
 
             // Check if initialization is done
             if (getInitStepsCounter() >= initSteps) {
-                setSensorState(SensorState::RUNNING);
+                setSensorState(SensorStatus::RUNNING);
             }
             break;
 
-        case SensorState::RUNNING:
+        case SensorStatus::RUNNING:
             // Only perform measurement every measurement interval
             if (!timeIntervalPassed(measureIntervalMs, currentTimeStampMs,
                                     getLastMeasurementTimeStamp())) {
@@ -113,7 +109,7 @@ void ISensor::updateSensorSignals(Data& data) {
                 incrementMeasurementErrorCounter();
                 if (getMeasurementErrorCounter() >=
                     getNumberOfAllowedConsecutiveErrors()) {
-                    setSensorState(SensorState::LOST);
+                    setSensorState(SensorStatus::LOST);
                 }
                 break;
             }
@@ -129,7 +125,7 @@ void ISensor::updateSensorSignals(Data& data) {
 
             break;
 
-        case SensorState::LOST:
+        case SensorStatus::LOST:
             break;
 
         default:
