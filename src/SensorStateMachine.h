@@ -20,12 +20,10 @@ class SensorStateMachine : public ICommonSensorOperations {
     uint32_t _customMeasurementIntervalMs;
 
   public:
-    SensorStateMachine() : _sensorState(SensorStatus::UNDEFINED), 
-                            _lastMeasurementError(0),
-                            _measurementErrorCounter(0),
-                            _initStepsCounter(0),
-                            _lastMeasurementTimeStampMs(0),
-                            _customMeasurementIntervalMs(0) {};
+    SensorStateMachine()
+        : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),
+          _measurementErrorCounter(0), _initStepsCounter(0),
+          _lastMeasurementTimeStampMs(0), _customMeasurementIntervalMs(0){};
 
     /**
      * @brief getter method for _sensorState
