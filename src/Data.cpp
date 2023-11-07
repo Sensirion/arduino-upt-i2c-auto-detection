@@ -44,7 +44,7 @@ Data::~Data() {
     delete[] _dataPoints;
 }
 
-Data::Data(Data&& src) : _dataPoints(src._dataPoints), _length(src._length) {
+Data::Data(Data&& src) : _length(src._length), _dataPoints(src._dataPoints) {
     delete[] src._dataPoints;
     src._length = 0;
 }
