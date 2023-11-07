@@ -41,8 +41,8 @@ AutoDetectorError SensorManager::updateData() {
     size_t writeOffset = 0;
     uint16_t numberOfSensorsLostBeforeUpdate =
         _sensorList.getNumberOfSensorsLost();
-    for (int i = 0; i < SensorList::LENGTH; ++i) {
-        ISensor* sensor = _sensorList.sensors[i];
+    for (int i = 0; i < _sensorList.getLength(); ++i) {
+        ISensor* sensor = _sensorList.getSensor(i);
         if (sensor == nullptr) {
             continue;
         }
@@ -62,15 +62,14 @@ const Data& SensorManager::getData() const {
 }
 
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
-    for (int i = 0; i < SensorList::LENGTH; ++i) {
-        ISensor* sensor = _sensorList.sensors[i];
-        if (sensor == nullptr)
-            continue;
-        if (sensor->getSensorId() != sensorId &&
-            interval < sensor->getMinimumMeasurementIntervalMs()) {
+    for (int i = 0; i < _sensorList.getLength(); ++i) {
+        ISensor* sensor = _sensorList.getSensor(i);
+        if (sensor == nullptr) {
             continue;
         }
-        _sensorList.measurementIntervals[i] = interval;
+        if (sensor->getSensorId() == sensorId) {
+            sensor->setMeasurementInterval(interval);
+        }
     }
 }
 
@@ -90,29 +89,24 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
     unsigned long currentTimeStamp = millis();
     unsigned long initSteps = sensor->getInitializationSteps();
     unsigned long initIntervalMs = sensor->getInitializationIntervalMs();
-    unsigned long measureIntervalMs = _sensorList.measurementIntervals[index];
+    unsigned long measureIntervalMs = sensor->getMeasurementInterval();
 
-    const unsigned long& latestUpdateTimeStamp =
-        _sensorList.latestUpdateTimeStamps[index];
-    uint16_t& sensorError = _sensorList.latestMeasurementErrors[index];
-    uint16_t& errorCounter = _sensorList.measurementErrorCounters[index];
-    uint16_t& initStepsCounter = _sensorList.initStepCounters[index];
-    SensorState& state = _sensorList.sensorStates[index];
+    uint16_t measureAndWriteError = 0x1234;
 
     DataPoint* writePosition = _data.dataPoints + writeOffset;
 
     // State handling
-    switch (state) {
+    switch (sensor->getSensorState()) {
         case SensorState::UNDEFINED:
             break;
 
         case SensorState::INITIALIZING:
             // Check if initialization is done
-            if (initStepsCounter >= initSteps) {
-                state = SensorState::RUNNING;
+            if (sensor->getInitStepsCounter() >= initSteps) {
+                sensor->setSensorState(SensorState::RUNNING);
             }
             // Set Sensor name of empty Datapoints for initialization period
-            if (initStepsCounter == 0) {
+            if (sensor->getInitStepsCounter() == 0) {
                 for (size_t i = 0; i < sensor->getNumberOfDataPoints(); ++i) {
                     DataPoint* dataPoint = writePosition + i;
                     dataPoint->sourceDevice = sensorName(sensor->getSensorId());
@@ -120,32 +114,34 @@ void SensorManager::_updateSensor(ISensor* sensor, int index,
             }
             // Only perform initialization every initialization interval
             if (!_timeIntervalPassed(initIntervalMs, currentTimeStamp,
-                                     latestUpdateTimeStamp)) {
+                                     sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
             sensor->initializationStep();
-            initStepsCounter += 1;
+            sensor->incrementInitStepsCounter();
             break;
 
         case SensorState::RUNNING:
             // Only perform measurement every measurement interval
             if (!_timeIntervalPassed(measureIntervalMs, currentTimeStamp,
-                                     latestUpdateTimeStamp)) {
+                                     sensor->getLatestMeasurementTimeStamp())) {
                 break;
             }
-            sensorError =
+            measureAndWriteError =
                 sensor->measureAndWrite(writePosition, currentTimeStamp);
+            sensor->setLatestMeasurementError(measureAndWriteError);
             // Update error counter
-            if (!sensorError) {
-                errorCounter = 0;
+            if (!measureAndWriteError) {
+                sensor->resetMeasurementErrorCounter();
+                sensor->setLatestMeasurementTimeStamp(currentTimeStamp);
                 break;
             } else {
-                errorCounter += 1;
+                sensor->incrementMeasurementErrorCounter();
             }
             // Check for max number of allowed errors
-            if (errorCounter >=
-                SensorList::NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS) {
-                state = SensorState::LOST;
+            if (sensor->getMeasurementErrorCounter() >=
+                sensor->getNumberOfAllowedConsecutiveErrors()) {
+                sensor->setSensorState(SensorState::LOST);
             }
             break;
 

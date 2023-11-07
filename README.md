@@ -43,7 +43,7 @@ and add it to the [Arduino IDE](http://www.arduino.cc/en/main/software) via
 
     Sketch => Include Library => Add .ZIP Library...
 
-In both cases, don't forget to _install the dependencies_ listed below.
+In both cases, don't forget to _install the dependencies_ listed below. Platformio should take care of this automatically, these dependencies being listed in the `platformio.ini` file.
 
 ### PlatformIO
 An often more straightforward alternative to the Arduino IDE is the PlatformIO framework. It is integrated well into Visual Studio Code on all platforms and can also be used via a terminal, which is the recommended approach on Linux/Unix systems and is detailed in the following.

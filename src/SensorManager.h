@@ -41,7 +41,53 @@
  * detection and signal polling in accordance to the sensor's minimal polling
  * intervals */
 class SensorManager {
+  private:
+    Data _data;
+    SensorList _sensorList;
+    IAutoDetector& _detector;
+
+    /**
+     * @brief verify if a given timespan has passed
+     *
+     * @param[in] interval duration of the timespan
+     *
+     * @param[in] currentTimeStamp current time
+     *
+     * @param[in] latestUpdateTimeStamp time at which the last update was
+     * performed
+     *
+     * @param[out] boolean true if more time than interval has passed since
+     * latestUpdateTimeStamp
+     */
+    bool _timeIntervalPassed(const unsigned long interval,
+                             const unsigned long currentTimeStamp,
+                             const unsigned long latestUpdateTimeStamp);
+
+    /**
+     * @brief Writes sensor signals into _data, modifies sensor status
+     *
+     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
+     *
+     * @param[in] index of the ISensor index in _sensorList
+     *
+     * @param[in] size_t& reference to the write offset, a dynamic pointer
+     * offset to the DataPoint in _data to which the signals should be written
+     */
+    void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
+
   public:
+    /**
+     * @brief constructor
+     *
+     * @param[in] IAutoDetector& detector instance with which to seek for
+     * connected sensors
+     *
+     * @note With this construction we by default limit ourselves to one I2C
+     * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
+     * buses
+     */
+    explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+
     /**
      * @brief Must be called before any other method
      *
@@ -80,18 +126,6 @@ class SensorManager {
     void setInterval(unsigned long interval, SensorID sensorId);
 
     /**
-     * @brief constructor
-     *
-     * @param[in] IAutoDetector& detector instance with which to seek for
-     * connected sensors
-     *
-     * @note With this construction we by default limit ourselves to one I2C
-     * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
-     * buses
-     */
-    explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
-
-    /**
      * Retrieve specific sensor driver instance T from
      * SensorManager::_sensorList
      *
@@ -107,52 +141,18 @@ class SensorManager {
      */
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
-        for (int i = 0; i < SensorList::LENGTH; ++i) {
-            if (_sensorList.sensors[i] == nullptr) {
+        for (int i = 0; i < _sensorList.getLength(); ++i) {
+            if (_sensorList.getSensor(i) == nullptr) {
                 continue;
             }
-            if (_sensorList.sensors[i]->getSensorId() == id) {
+            if (_sensorList.getSensor(i)->getSensorId() == id) {
                 pDriver =
-                    reinterpret_cast<T*>(_sensorList.sensors[i]->getDriver());
+                    reinterpret_cast<T*>(_sensorList.getSensor(i)->getDriver());
                 return NO_ERROR;
             }
         }
         return DRIVER_NOT_FOUND_ERROR;
     };
-
-  private:
-    Data _data;
-    SensorList _sensorList;
-    IAutoDetector& _detector;
-
-    /**
-     * @brief verify if a given timespan has passed
-     *
-     * @param[in] interval duration of the timespan
-     *
-     * @param[in] currentTimeStamp current time
-     *
-     * @param[in] latestUpdateTimeStamp time at which the last update was
-     * performed
-     *
-     * @param[out] boolean true if more time than interval has passed since
-     * latestUpdateTimeStamp
-     */
-    bool _timeIntervalPassed(const unsigned long interval,
-                             const unsigned long currentTimeStamp,
-                             const unsigned long latestUpdateTimeStamp);
-
-    /**
-     * @brief Writes sensor signals into _data, modifies sensor status
-     *
-     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
-     *
-     * @param[in] index of the ISensor index in _sensorList
-     *
-     * @param[in] size_t& reference to the write offset, a dynamic pointer
-     * offset to the DataPoint in _data to which the signals should be written
-     */
-    void _updateSensor(ISensor* sensor, int index, size_t& writeOffset);
 };
 
 #endif /* _SENSOR_MANAGER_H_ */
