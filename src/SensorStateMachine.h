@@ -19,6 +19,18 @@ class SensorStateMachine : public ICommonSensorOperations {
     uint32_t _lastMeasurementTimeStampMs;
     uint32_t _customMeasurementIntervalMs;
 
+    /**
+     * @brief Wite sensor signals to DataPoint buffer
+     *
+     * @param[in] DataPoint* DataPoint buffer array to which write measurements
+     *
+     * @param[in] uint32_t timeStamp of the DataPoints in Ms
+     *
+     * @note Doesn't throw an error in case the measurement fails, but records
+     * the error and increments the error counter in the state machine
+     */
+    void readSignals(DataPoint*, uint32_t);
+
   public:
     SensorStateMachine()
         : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),

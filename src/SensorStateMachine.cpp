@@ -23,6 +23,22 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     }
 }
 
+void SensorStateMachine::readSignals(DataPoint* signalsBuffer,
+                                     uint32_t timeStampMs) {
+    uint16_t measureAndWriteError = measureAndWrite(signalsBuffer, timeStampMs);
+    _lastMeasurementError = measureAndWriteError;
+
+    if (measureAndWriteError) {
+        _measurementErrorCounter++;
+        if (_measurementErrorCounter >= getNumberOfAllowedConsecutiveErrors()) {
+            _sensorState = SensorStatus::LOST;
+        }
+    }
+
+    _lastMeasurementTimeStampMs = timeStampMs;
+    _measurementErrorCounter = 0;
+}
+
 void SensorStateMachine::updateSensorSignals(Data& data) {
     // Collect variables for readability
     unsigned long currentTimeStampMs = millis();
@@ -69,27 +85,12 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
             }
 
             // Perform measurement
-            measureAndWriteError =
-                measureAndWrite(sensorSignalsBuffer, currentTimeStampMs);
-            _lastMeasurementError = measureAndWriteError;
-
-            if (measureAndWriteError) {
-                _measurementErrorCounter++;
-                if (_measurementErrorCounter >=
-                    getNumberOfAllowedConsecutiveErrors()) {
-                    setSensorState(SensorStatus::LOST);
-                }
-                break;
-            }
-
-            _lastMeasurementTimeStampMs = currentTimeStampMs;
+            readSignals(sensorSignalsBuffer, currentTimeStampMs);
 
             // Push DataPoints to Data container
             for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
                 data.addDataPoint(sensorSignalsBuffer[i]);
             }
-            _measurementErrorCounter = 0;
-            _lastMeasurementTimeStampMs = currentTimeStampMs;
 
             break;
 
