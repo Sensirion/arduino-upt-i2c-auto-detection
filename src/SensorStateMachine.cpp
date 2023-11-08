@@ -9,38 +9,6 @@ void SensorStateMachine::setSensorState(SensorStatus s) {
     _sensorState = s;
 }
 
-void SensorStateMachine::setLastMeasurementError(uint16_t err) {
-    _lastMeasurementError = err;
-}
-
-uint16_t SensorStateMachine::getMeasurementErrorCounter() const {
-    return _measurementErrorCounter;
-}
-
-void SensorStateMachine::resetMeasurementErrorCounter() {
-    _measurementErrorCounter = 0;
-}
-
-void SensorStateMachine::incrementMeasurementErrorCounter() {
-    _measurementErrorCounter++;
-}
-
-uint16_t SensorStateMachine::getInitStepsCounter() const {
-    return _initStepsCounter;
-}
-
-void SensorStateMachine::incrementInitStepsCounter() {
-    _initStepsCounter++;
-}
-
-uint32_t SensorStateMachine::getLastMeasurementTimeStamp() const {
-    return _lastMeasurementTimeStampMs;
-}
-
-void SensorStateMachine::setLastMeasurementTimeStamp(uint32_t ts) {
-    _lastMeasurementTimeStampMs = ts;
-}
-
 uint32_t SensorStateMachine::getMeasurementInterval() const {
     if (_customMeasurementIntervalMs > getMinimumMeasurementIntervalMs()) {
         return _customMeasurementIntervalMs;
@@ -72,7 +40,7 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
 
         case SensorStatus::INITIALIZING:
             // Set Sensor name of empty Datapoints for initialization period
-            if (getInitStepsCounter() == 0) {
+            if (_initStepsCounter == 0) {
                 for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
                     data.addDataPoint(DataPoint(SignalType::UNDEFINED, 0.0, 0,
                                                 sensorName(getSensorId())));
@@ -81,14 +49,14 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
 
             // Only perform initialization every initialization interval
             if (!timeIntervalPassed(initIntervalMs, currentTimeStampMs,
-                                    getLastMeasurementTimeStamp())) {
+                                    _lastMeasurementTimeStampMs)) {
                 break;
             }
             initializationStep();
-            incrementInitStepsCounter();
+            _initStepsCounter++;
 
             // Check if initialization is done
-            if (getInitStepsCounter() >= initSteps) {
+            if (_initStepsCounter >= initSteps) {
                 setSensorState(SensorStatus::RUNNING);
             }
             break;
@@ -96,32 +64,32 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
         case SensorStatus::RUNNING:
             // Only perform measurement every measurement interval
             if (!timeIntervalPassed(measureIntervalMs, currentTimeStampMs,
-                                    getLastMeasurementTimeStamp())) {
+                                    _lastMeasurementTimeStampMs)) {
                 break;
             }
 
             // Perform measurement
             measureAndWriteError =
                 measureAndWrite(sensorSignalsBuffer, currentTimeStampMs);
-            setLastMeasurementError(measureAndWriteError);
+            _lastMeasurementError = measureAndWriteError;
 
             if (measureAndWriteError) {
-                incrementMeasurementErrorCounter();
-                if (getMeasurementErrorCounter() >=
+                _measurementErrorCounter++;
+                if (_measurementErrorCounter >=
                     getNumberOfAllowedConsecutiveErrors()) {
                     setSensorState(SensorStatus::LOST);
                 }
                 break;
             }
 
-            setLastMeasurementTimeStamp(currentTimeStampMs);
+            _lastMeasurementTimeStampMs = currentTimeStampMs;
 
             // Push DataPoints to Data container
             for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
                 data.addDataPoint(sensorSignalsBuffer[i]);
             }
-            resetMeasurementErrorCounter();
-            setLastMeasurementTimeStamp(currentTimeStampMs);
+            _measurementErrorCounter = 0;
+            _lastMeasurementTimeStampMs = currentTimeStampMs;
 
             break;
 

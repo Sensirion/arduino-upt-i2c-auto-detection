@@ -36,46 +36,6 @@ class SensorStateMachine : public ICommonSensorOperations {
     void setSensorState(SensorStatus);
 
     /**
-     * @brief setter method for  _lastMeasurementError
-     */
-    void setLastMeasurementError(uint16_t);
-
-    /**
-     * @brief getter method for _measurementErrorCounter
-     */
-    uint16_t getMeasurementErrorCounter() const;
-
-    /**
-     * @brief reset _measurementErrorCounter to 0
-     */
-    void resetMeasurementErrorCounter();
-
-    /**
-     * @brief increment _measurementErrorCounter
-     */
-    void incrementMeasurementErrorCounter();
-
-    /**
-     * @brief getter method for _initStepsCounter
-     */
-    uint16_t getInitStepsCounter() const;
-
-    /**
-     * @brief increment _initStepsCounter
-     */
-    void incrementInitStepsCounter();
-
-    /**
-     * @brief getter method for _lastMeasurementTimeStampMs
-     */
-    uint32_t getLastMeasurementTimeStamp() const;
-
-    /**
-     * @brief setter method for _lastMeasurementTimeStampMs
-     */
-    void setLastMeasurementTimeStamp(uint32_t);
-
-    /**
      * @brief getter method for _customMeasurementIntervalMs
      */
     uint32_t getMeasurementInterval() const;
