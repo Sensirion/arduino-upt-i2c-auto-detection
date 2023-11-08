@@ -46,32 +46,6 @@ class SensorManager {
     SensorList _sensorList;
     IAutoDetector& _detector;
 
-    /**
-     * @brief verify if a given timespan has passed
-     *
-     * @param[in] interval duration of the timespan
-     *
-     * @param[in] currentTimeStamp current time
-     *
-     * @param[in] latestUpdateTimeStamp time at which the last update was
-     * performed
-     *
-     * @param[out] boolean true if more time than interval has passed since
-     * latestUpdateTimeStamp
-     */
-    bool _timeIntervalPassed(const unsigned long interval,
-                             const unsigned long currentTimeStamp,
-                             const unsigned long latestUpdateTimeStamp);
-
-    /**
-     * @brief Writes sensor signals into _data, modifies sensor status
-     *
-     * @param[in] Isensor* pointer to a ISensor instance to poll for signals
-     *
-     * @param[in] index of the ISensor index in _sensorList
-     */
-    void _updateSensor(ISensor* sensor, int index);
-
   public:
     /**
      * @brief constructor

@@ -31,8 +31,9 @@
 #ifndef _I_SENSOR_H_
 #define _I_SENSOR_H_
 
+#include "Arduino.h"
+#include "Data.h"
 #include "Sensirion_UPT_Core.h"
-#include <Arduino.h>
 
 enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
 
@@ -41,11 +42,11 @@ class ISensor {
   private:
     static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
     SensorState _sensorState = SensorState::UNDEFINED;
-    uint16_t _latestMeasurementError = 0;
+    uint16_t _lastMeasurementError = 0;
     uint16_t _measurementErrorCounter = 0;
-    uint16_t _initStepCounter = 0;
-    uint32_t _latestMeasurementTimeStamp = 0;
-    uint32_t _customMeasurementInterval = 0;
+    uint16_t _initStepsCounter = 0;
+    uint32_t _lastMeasurementTimeStampMs = 0;
+    uint32_t _customMeasurementIntervalMs = 0;
 
   public:
     virtual ~ISensor() = default;
@@ -148,9 +149,9 @@ class ISensor {
     void setSensorState(SensorState);
 
     /**
-     * @brief setter method for  _latestMeasurementError
+     * @brief setter method for  _lastMeasurementError
      */
-    void setLatestMeasurementError(uint16_t);
+    void setLastMeasurementError(uint16_t);
 
     /**
      * @brief getter method for _measurementErrorCounter
@@ -168,34 +169,42 @@ class ISensor {
     void incrementMeasurementErrorCounter();
 
     /**
-     * @brief getter method for _initStepCounter
+     * @brief getter method for _initStepsCounter
      */
     uint16_t getInitStepsCounter() const;
 
     /**
-     * @brief increment _initStepCounter
+     * @brief increment _initStepsCounter
      */
     void incrementInitStepsCounter();
 
     /**
-     * @brief getter method for _latestMeasurementTimeStamp
+     * @brief getter method for _lastMeasurementTimeStampMs
      */
-    uint32_t getLatestMeasurementTimeStamp() const;
+    uint32_t getLastMeasurementTimeStamp() const;
 
     /**
-     * @brief setter method for _latestMeasurementTimeStamp
+     * @brief setter method for _lastMeasurementTimeStampMs
      */
-    void setLatestMeasurementTimeStamp(uint32_t);
+    void setLastMeasurementTimeStamp(uint32_t);
 
     /**
-     * @brief getter method for _customMeasurementInterval
+     * @brief getter method for _customMeasurementIntervalMs
      */
     uint32_t getMeasurementInterval() const;
 
     /**
-     * @brief setter method for _customMeasurementInterval
+     * @brief setter method for _customMeasurementIntervalMs.
+     *
+     * @note Function call has no effect if the requested measurement interval
+     * is smaller than the sensor's minimum measurement interval.
      */
     void setMeasurementInterval(uint32_t);
+
+    /**
+     * @brief update Sensor reading in Data
+     */
+    void updateSensorSignals(Data&);
 };
 
 #endif /* _I_SENSOR_H_ */
