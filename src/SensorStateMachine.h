@@ -22,14 +22,13 @@ class SensorStateMachine : public ICommonSensorOperations {
     /**
      * @brief Wite sensor signals to DataPoint buffer
      *
-     * @param[in] DataPoint* DataPoint buffer array to which write measurements
-     *
-     * @param[in] uint32_t timeStamp of the DataPoints in Ms
+     * @param[in] Data& Data container which write measurements
      *
      * @note Doesn't throw an error in case the measurement fails, but records
-     * the error and increments the error counter in the state machine
+     * the error and increments the error counter in the state machine. Does not
+     * perform a measurement if the measurement interval is too short.
      */
-    void readSignals(DataPoint*, uint32_t);
+    void readSignalsRoutine(Data&);
 
   public:
     SensorStateMachine()

@@ -23,20 +23,32 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     }
 }
 
-void SensorStateMachine::readSignals(DataPoint* signalsBuffer,
-                                     uint32_t timeStampMs) {
-    uint16_t measureAndWriteError = measureAndWrite(signalsBuffer, timeStampMs);
-    _lastMeasurementError = measureAndWriteError;
+void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
+    if (timeIntervalPassed(getMeasurementInterval(), millis(),
+                           _lastMeasurementTimeStampMs)) {
+        DataPoint sensorSignalsBuffer[getNumberOfDataPoints()];
+        uint32_t currentTimeStampMs = millis();
 
-    if (measureAndWriteError) {
-        _measurementErrorCounter++;
-        if (_measurementErrorCounter >= getNumberOfAllowedConsecutiveErrors()) {
-            _sensorState = SensorStatus::LOST;
+        uint16_t measureAndWriteError =
+            measureAndWrite(sensorSignalsBuffer, currentTimeStampMs);
+        _lastMeasurementError = measureAndWriteError;
+
+        if (measureAndWriteError) {
+            _measurementErrorCounter++;
+            if (_measurementErrorCounter >=
+                getNumberOfAllowedConsecutiveErrors()) {
+                _sensorState = SensorStatus::LOST;
+            }
+            return;
+        }
+
+        _lastMeasurementTimeStampMs = currentTimeStampMs;
+        _measurementErrorCounter = 0;
+
+        for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
+            dataContainer.addDataPoint(sensorSignalsBuffer[i]);
         }
     }
-
-    _lastMeasurementTimeStampMs = timeStampMs;
-    _measurementErrorCounter = 0;
 }
 
 void SensorStateMachine::updateSensorSignals(Data& data) {
@@ -78,20 +90,7 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
             break;
 
         case SensorStatus::RUNNING:
-            // Only perform measurement every measurement interval
-            if (!timeIntervalPassed(measureIntervalMs, currentTimeStampMs,
-                                    _lastMeasurementTimeStampMs)) {
-                break;
-            }
-
-            // Perform measurement
-            readSignals(sensorSignalsBuffer, currentTimeStampMs);
-
-            // Push DataPoints to Data container
-            for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
-                data.addDataPoint(sensorSignalsBuffer[i]);
-            }
-
+            readSignalsRoutine(data);
             break;
 
         case SensorStatus::LOST:
