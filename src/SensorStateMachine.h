@@ -20,9 +20,20 @@ class SensorStateMachine : public ICommonSensorOperations {
     uint32_t _customMeasurementIntervalMs;
 
     /**
+     * @brief Return empty DataPoints containing only the source device string,
+     * and initialize the sensor.
+     *
+     * @param[in] Data& Data container which write empty DataPoints
+     *
+     * @note Toggles _sensorStatus to RUNNING incase all initialisation Steps
+     * are completed
+     */
+    void initializeSensorRoutine(Data&);
+
+    /**
      * @brief Wite sensor signals to DataPoint buffer
      *
-     * @param[in] Data& Data container which write measurements
+     * @param[in] Data& Data container which write measurement DataPoints
      *
      * @note Doesn't throw an error in case the measurement fails, but records
      * the error and increments the error counter in the state machine. Does not

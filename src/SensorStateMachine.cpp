@@ -23,6 +23,25 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     }
 }
 
+void SensorStateMachine::initializeSensorRoutine(Data& dataContainer) {
+    if (_initStepsCounter == 0) {
+        for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
+            dataContainer.addDataPoint(DataPoint(SignalType::UNDEFINED, 0.0, 0,
+                                                 sensorName(getSensorId())));
+        }
+    }
+
+    if (timeIntervalPassed(getInitializationIntervalMs(), millis(),
+                           _lastMeasurementTimeStampMs)) {
+        initializationStep();
+        _initStepsCounter++;
+
+        if (_initStepsCounter >= getInitializationSteps()) {
+            _sensorState = SensorStatus::RUNNING;
+        }
+    }
+}
+
 void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
     if (timeIntervalPassed(getMeasurementInterval(), millis(),
                            _lastMeasurementTimeStampMs)) {
@@ -52,41 +71,13 @@ void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
 }
 
 void SensorStateMachine::updateSensorSignals(Data& data) {
-    // Collect variables for readability
-    unsigned long currentTimeStampMs = millis();
-    unsigned long initSteps = getInitializationSteps();
-    unsigned long initIntervalMs = getInitializationIntervalMs();
-    unsigned long measureIntervalMs = getMeasurementInterval();
-
-    uint16_t measureAndWriteError = 0x1234;
-    DataPoint sensorSignalsBuffer[getNumberOfDataPoints()];
-
     // State handling
     switch (_sensorState) {
         case SensorStatus::UNDEFINED:
             break;
 
         case SensorStatus::INITIALIZING:
-            // Set Sensor name of empty Datapoints for initialization period
-            if (_initStepsCounter == 0) {
-                for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
-                    data.addDataPoint(DataPoint(SignalType::UNDEFINED, 0.0, 0,
-                                                sensorName(getSensorId())));
-                }
-            }
-
-            // Only perform initialization every initialization interval
-            if (!timeIntervalPassed(initIntervalMs, currentTimeStampMs,
-                                    _lastMeasurementTimeStampMs)) {
-                break;
-            }
-            initializationStep();
-            _initStepsCounter++;
-
-            // Check if initialization is done
-            if (_initStepsCounter >= initSteps) {
-                setSensorState(SensorStatus::RUNNING);
-            }
+            initializeSensorRoutine(data);
             break;
 
         case SensorStatus::RUNNING:
@@ -99,6 +90,5 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
         default:
             break;
     }
-
     return;
 }
