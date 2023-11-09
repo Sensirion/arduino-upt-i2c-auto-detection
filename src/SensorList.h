@@ -32,13 +32,13 @@
 #define _SENSOR_LIST_H
 
 #include "AutoDetectorErrors.h"
-#include "ISensor.h"
+#include "SensorStateMachine.h"
 
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   private:
     static const int _MAX_NUM_SENSORS = 16;
-    ISensor* _sensors[_MAX_NUM_SENSORS] = {nullptr};
+    SensorStateMachine* _sensors[_MAX_NUM_SENSORS] = {nullptr};
 
   public:
     /**
@@ -81,6 +81,14 @@ class SensorList {
      * @brief getter method for list size
      */
     int getLength() const;
+
+    /**
+     * @brief getter method for a stored state machine
+     *
+     * @note may return a nullptr if no sensor state machine is stored at the
+     * requested index
+     */
+    SensorStateMachine* getSensorStateMachine(size_t);
 
     /**
      * @brief getter method for a stored sensor

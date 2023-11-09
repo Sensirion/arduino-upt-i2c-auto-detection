@@ -2,7 +2,7 @@
 #define _SENSOR_STATE_MACHINE_H_
 
 #include "Data.h"
-#include "ICommonSensorOperations.h"
+#include "ISensor.h"
 #include <stdint.h>
 
 enum class SensorStatus { UNDEFINED, INITIALIZING, RUNNING, LOST };
@@ -10,7 +10,7 @@ enum class SensorStatus { UNDEFINED, INITIALIZING, RUNNING, LOST };
 /* Class handling the state machine for the sensors without including the state
  * information and operations common to all sensor types to the interface class.
  */
-class SensorStateMachine : public ICommonSensorOperations {
+class SensorStateMachine {
   private:
     SensorStatus _sensorState;
     uint16_t _lastMeasurementError;
@@ -18,6 +18,8 @@ class SensorStateMachine : public ICommonSensorOperations {
     uint16_t _initStepsCounter;
     uint32_t _lastMeasurementTimeStampMs;
     uint32_t _customMeasurementIntervalMs;
+
+    ISensor* _sensor;
 
     /**
      * @brief Return empty DataPoints containing only the source device string,
@@ -45,7 +47,13 @@ class SensorStateMachine : public ICommonSensorOperations {
     SensorStateMachine()
         : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),
           _measurementErrorCounter(0), _initStepsCounter(0),
-          _lastMeasurementTimeStampMs(0), _customMeasurementIntervalMs(0){};
+          _lastMeasurementTimeStampMs(0), _customMeasurementIntervalMs(0),
+          _sensor(nullptr){};
+
+    /**
+     * @brief constructor with ISensor pointer, used by autodetector
+     */
+    SensorStateMachine(ISensor*);
 
     /**
      * @brief getter method for _sensorState
@@ -74,6 +82,13 @@ class SensorStateMachine : public ICommonSensorOperations {
      * @brief update Sensor reading in Data
      */
     void updateSensorSignals(Data&);
+
+    /**
+     * @brief getter method for sensor handled by state machine
+     *
+     * @note: Needed to fetch number of signal DataPoints from SensorManager
+     */
+    ISensor* getSensor() const;
 };
 
 #endif /* _SENSOR_STATE_MACHINE_H_ */
