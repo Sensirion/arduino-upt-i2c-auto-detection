@@ -23,7 +23,19 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     }
 }
 
-void SensorStateMachine::initializeSensorRoutine(Data& dataContainer) {
+void SensorStateMachine::initializationRoutine(Data& dataContainer) {
+    /**
+     *  Am unsure of how exactly this is supposed to work. Some sensors (if not most) require a single initialization step,
+     * in the form if a start_periodic_measurement() call. Measurements can then be read from the sensors in a given interval (example each 5k ms for SCD41)
+     * See https://www.sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+     *
+     * Some sensors, like SGP41, require a initialization period over some period. This sensor requires a call to sgp41_execute_conditioning(), and can deliver readings not straight away but within a period of 10k ms max.
+     * How do We handle this? The state machine has no way to plan ahead in the future, it can only make decisions based on previous decisions.
+     *
+     * In the case of SGP41, requesting a measurement with a frequency greater than 1/10 Hz should fail (if I understand the doc right)
+     * See https://www.sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
+     */
+
     if (_initStepsCounter == 0) {
         for (size_t i = 0; i < getNumberOfDataPoints(); ++i) {
             dataContainer.addDataPoint(DataPoint(SignalType::UNDEFINED, 0.0, 0,
@@ -77,7 +89,7 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
             break;
 
         case SensorStatus::INITIALIZING:
-            initializeSensorRoutine(data);
+            initializationRoutine(data);
             break;
 
         case SensorStatus::RUNNING:

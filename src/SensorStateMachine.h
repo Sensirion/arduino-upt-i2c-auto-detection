@@ -28,7 +28,7 @@ class SensorStateMachine : public ICommonSensorOperations {
      * @note Toggles _sensorStatus to RUNNING incase all initialisation Steps
      * are completed
      */
-    void initializeSensorRoutine(Data&);
+    void initializationRoutine(Data&);
 
     /**
      * @brief Wite sensor signals to DataPoint buffer

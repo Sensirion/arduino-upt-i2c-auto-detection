@@ -37,7 +37,7 @@
 #include "SensirionCore.h"
 #include "SensorList.h"
 
-/*Class to manage the sensors connected to the board's I2C bus. Handles
+/* Class to manage the sensors connected to the board's I2C bus. Handles
  * detection and signal polling in accordance to the sensor's minimal polling
  * intervals */
 class SensorManager {
