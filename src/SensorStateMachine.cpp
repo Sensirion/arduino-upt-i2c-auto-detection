@@ -25,7 +25,7 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
 
 void SensorStateMachine::initializationRoutine(Data& dataContainer) {
     /**
-     *  Am unsure of how exactly this is supposed to work. Some sensors (if not most) require a single initialization step,
+     * Am unsure of how exactly this is supposed to work. Some sensors (if not most) require a single initialization step,
      * in the form if a start_periodic_measurement() call. Measurements can then be read from the sensors in a given interval (example each 5k ms for SCD41)
      * See https://www.sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf
      *
@@ -47,6 +47,7 @@ void SensorStateMachine::initializationRoutine(Data& dataContainer) {
                            _lastMeasurementTimeStampMs)) {
         initializationStep();
         _initStepsCounter++;
+        _lastMeasurementTimeStampMs = millis(); // <-- unsure if this is required (wasn't in the code)
 
         if (_initStepsCounter >= getInitializationSteps()) {
             _sensorState = SensorStatus::RUNNING;
