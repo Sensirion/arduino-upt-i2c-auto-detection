@@ -53,7 +53,7 @@ class SensorStateMachine {
     /**
      * @brief constructor with ISensor pointer, used by autodetector
      */
-    SensorStateMachine(ISensor*);
+    explicit SensorStateMachine(ISensor*);
 
     /**
      * @brief getter method for _sensorState
