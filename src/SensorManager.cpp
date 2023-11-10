@@ -64,10 +64,8 @@ const Data& SensorManager::getData() const {
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
-        if (ssm) {
-            if (ssm->getSensor()->getSensorId() == sensorId) {
-                ssm->setMeasurementInterval(interval);
-            }
+        if (ssm && ssm->getSensor()->getSensorId() == sensorId) {
+            ssm->setMeasurementInterval(interval);
         }
     }
 }

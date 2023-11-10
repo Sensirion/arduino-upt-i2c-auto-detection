@@ -17,7 +17,7 @@ class SensorStateMachine {
     uint16_t _measurementErrorCounter;
     uint16_t _initStepsCounter;
     uint32_t _lastMeasurementTimeStampMs;
-    uint32_t _customMeasurementIntervalMs;
+    uint32_t _measurementIntervalMs;
 
     ISensor* _sensor;
 
@@ -47,7 +47,7 @@ class SensorStateMachine {
     SensorStateMachine()
         : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),
           _measurementErrorCounter(0), _initStepsCounter(0),
-          _lastMeasurementTimeStampMs(0), _customMeasurementIntervalMs(0),
+          _lastMeasurementTimeStampMs(0), _measurementIntervalMs(0),
           _sensor(nullptr){};
 
     /**
@@ -66,12 +66,7 @@ class SensorStateMachine {
     void setSensorState(SensorStatus);
 
     /**
-     * @brief getter method for _customMeasurementIntervalMs
-     */
-    uint32_t getMeasurementInterval() const;
-
-    /**
-     * @brief setter method for _customMeasurementIntervalMs.
+     * @brief setter method for _measurementIntervalMs.
      *
      * @note Function call has no effect if the requested measurement interval
      * is smaller than the sensor's minimum measurement interval.

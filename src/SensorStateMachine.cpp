@@ -4,12 +4,13 @@
 SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     : _lastMeasurementError(0), _measurementErrorCounter(0),
       _initStepsCounter(0), _lastMeasurementTimeStampMs(0),
-      _customMeasurementIntervalMs(0), _sensor(pSensor) {
+      _measurementIntervalMs(0), _sensor(pSensor) {
     if (_sensor->getInitializationSteps() > 0) {
         _sensorState = SensorStatus::INITIALIZING;
     } else {
         _sensorState = SensorStatus::RUNNING;
     }
+    _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
 };
 
 SensorStatus SensorStateMachine::getSensorState() const {
@@ -20,18 +21,9 @@ void SensorStateMachine::setSensorState(SensorStatus s) {
     _sensorState = s;
 }
 
-uint32_t SensorStateMachine::getMeasurementInterval() const {
-    if (_customMeasurementIntervalMs >
-        _sensor->getMinimumMeasurementIntervalMs()) {
-        return _customMeasurementIntervalMs;
-    } else {
-        return _sensor->getMinimumMeasurementIntervalMs();
-    }
-}
-
 void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     if (interval > _sensor->getMinimumMeasurementIntervalMs()) {
-        _customMeasurementIntervalMs = interval;
+        _measurementIntervalMs = interval;
     }
 }
 
@@ -59,7 +51,7 @@ void SensorStateMachine::initializationRoutine(Data& dataContainer) {
 }
 
 void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
-    if (timeIntervalPassed(getMeasurementInterval(), millis(),
+    if (timeIntervalPassed(_measurementIntervalMs, millis(),
                            _lastMeasurementTimeStampMs)) {
         DataPoint sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
         uint32_t currentTimeStampMs = millis();
