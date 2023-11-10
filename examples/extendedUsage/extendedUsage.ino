@@ -15,6 +15,7 @@
     */
 
 #include "Arduino.h"
+#include "SensirionI2CScd4x.h"
 #include "Sensirion_Sensor_Auto_Detection.h"
 #include "Sensirion_UPT_Core.h"
 
