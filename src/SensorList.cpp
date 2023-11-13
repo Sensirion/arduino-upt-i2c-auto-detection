@@ -33,12 +33,7 @@
 AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
     for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
         if (_sensors[i] == nullptr) {
-            _sensors[i] = pSensor;
-            if (_sensors[i]->getInitializationSteps() > 0) {
-                _sensors[i]->setSensorState(SensorState::INITIALIZING);
-            } else {
-                _sensors[i]->setSensorState(SensorState::RUNNING);
-            }
+            _sensors[i] = new SensorStateMachine(pSensor);
             return NO_ERROR;
         }
     }
@@ -59,7 +54,8 @@ size_t SensorList::getTotalNumberOfDataPoints() {
     size_t totalNumberOfDataPoints = 0;
     for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
         if (_sensors[i]) {
-            totalNumberOfDataPoints += _sensors[i]->getNumberOfDataPoints();
+            totalNumberOfDataPoints +=
+                _sensors[i]->getSensor()->getNumberOfDataPoints();
         }
     }
     return totalNumberOfDataPoints;
@@ -78,7 +74,7 @@ uint16_t SensorList::getNumberOfSensorsLost() {
         if (_sensors[i] == nullptr) {
             continue;
         }
-        if (_sensors[i]->getSensorState() == SensorState::LOST) {
+        if (_sensors[i]->getSensorState() == SensorStatus::LOST) {
             ++count;
         }
     }
@@ -89,6 +85,13 @@ int SensorList::getLength() const {
     return _MAX_NUM_SENSORS;
 }
 
-ISensor* SensorList::getSensor(size_t i) const {
+SensorStateMachine* SensorList::getSensorStateMachine(size_t i) {
     return _sensors[i];
+}
+
+ISensor* SensorList::getSensor(size_t i) const {
+    if (_sensors[i]) {
+        return _sensors[i]->getSensor();
+    }
+    return nullptr;
 }

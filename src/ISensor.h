@@ -32,21 +32,12 @@
 #define _I_SENSOR_H_
 
 #include "Arduino.h"
-#include "Data.h"
 #include "Sensirion_UPT_Core.h"
-
-enum class SensorState { UNDEFINED, INITIALIZING, RUNNING, LOST };
 
 /* Class handling communication with a particular sensor over the I2C bus */
 class ISensor {
   private:
     static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
-    SensorState _sensorState = SensorState::UNDEFINED;
-    uint16_t _lastMeasurementError = 0;
-    uint16_t _measurementErrorCounter = 0;
-    uint16_t _initStepsCounter = 0;
-    uint32_t _lastMeasurementTimeStampMs = 0;
-    uint32_t _customMeasurementIntervalMs = 0;
 
   public:
     virtual ~ISensor() = default;
@@ -60,21 +51,6 @@ class ISensor {
     virtual uint16_t start() = 0;
 
     /**
-     * @brief Call driver methods to perform measurement and update DataPoints
-     *
-     * @param dataPoints argument must be at least getNumberOfDataPoints()
-     * long
-     *
-     * @param timeStamp at time of function call, represents milliseconds
-     * passed since program startup.
-     *
-     * @return A uint16_t error corresponding to SensirionErrors.h of
-     * SensirionCore, where 0 value corresponds to no error.
-     */
-    virtual uint16_t measureAndWrite(DataPoint dataPoints[],
-                                     const unsigned long timeStamp) = 0;
-
-    /**
      * @brief Perform extended sensor initialization.
      * As most sensors don't require this, overriding this method is optional.
      */
@@ -83,19 +59,12 @@ class ISensor {
     };
 
     /**
-     * @brief Get the specific SensorId of the ISensor realization
+     * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
+     * pointer
      *
-     * @return SensorId
+     * @return void*
      */
-    virtual SensorID getSensorId() const = 0;
-
-    /**
-     * @brief Get the number of DataPoints this sensor occupies in the Data
-     * object.
-     *
-     * @return size_t
-     */
-    virtual size_t getNumberOfDataPoints() const = 0;
+    virtual void* getDriver() = 0;
 
     /**
      * @brief Get the minimum measurement interval of the sensor. This must be
@@ -126,85 +95,41 @@ class ISensor {
     };
 
     /**
-     * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
-     * pointer
+     * @brief Get the number of DataPoints this sensor occupies in the Data
+     * object.
      *
-     * @return void*
+     * @return size_t
      */
-    virtual void* getDriver() = 0;
+    virtual size_t getNumberOfDataPoints() const = 0;
+
+    /**
+     * @brief Call driver methods to perform measurement and update DataPoints
+     *
+     * @param dataPoints argument must be at least getNumberOfDataPoints()
+     * long
+     *
+     * @param timeStamp at time of function call, represents milliseconds
+     * passed since program startup.
+     *
+     * @return A uint16_t error corresponding to SensirionErrors.h of
+     * SensirionCore, where 0 value corresponds to no error.
+     */
+    virtual uint16_t measureAndWrite(DataPoint dataPoints[],
+                                     const unsigned long timeStamp) = 0;
+
+    /**
+     * @brief Get the specific SensorId of the ISensor realization
+     *
+     * @return SensorId
+     */
+    virtual SensorID getSensorId() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
      */
-    uint16_t getNumberOfAllowedConsecutiveErrors() const;
-
-    /**
-     * @brief getter method for _sensorState
-     */
-    SensorState getSensorState() const;
-
-    /**
-     * @brief setter method for _sensorState
-     */
-    void setSensorState(SensorState);
-
-    /**
-     * @brief setter method for  _lastMeasurementError
-     */
-    void setLastMeasurementError(uint16_t);
-
-    /**
-     * @brief getter method for _measurementErrorCounter
-     */
-    uint16_t getMeasurementErrorCounter() const;
-
-    /**
-     * @brief reset _measurementErrorCounter to 0
-     */
-    void resetMeasurementErrorCounter();
-
-    /**
-     * @brief increment _measurementErrorCounter
-     */
-    void incrementMeasurementErrorCounter();
-
-    /**
-     * @brief getter method for _initStepsCounter
-     */
-    uint16_t getInitStepsCounter() const;
-
-    /**
-     * @brief increment _initStepsCounter
-     */
-    void incrementInitStepsCounter();
-
-    /**
-     * @brief getter method for _lastMeasurementTimeStampMs
-     */
-    uint32_t getLastMeasurementTimeStamp() const;
-
-    /**
-     * @brief setter method for _lastMeasurementTimeStampMs
-     */
-    void setLastMeasurementTimeStamp(uint32_t);
-
-    /**
-     * @brief getter method for _customMeasurementIntervalMs
-     */
-    uint32_t getMeasurementInterval() const;
-
-    /**
-     * @brief setter method for _customMeasurementIntervalMs.
-     *
-     * @note Function call has no effect if the requested measurement interval
-     * is smaller than the sensor's minimum measurement interval.
-     */
-    void setMeasurementInterval(uint32_t);
-
-    /**
-     * @brief update Sensor reading in Data
-     */
-    void updateSensorSignals(Data&);
+    uint16_t getNumberOfAllowedConsecutiveErrors() const {
+        return _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
+    }
 };
 
 #endif /* _I_SENSOR_H_ */
