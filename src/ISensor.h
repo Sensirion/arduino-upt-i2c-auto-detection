@@ -34,7 +34,8 @@
 #include "Arduino.h"
 #include "Sensirion_UPT_Core.h"
 
-/* Class handling communication with a particular sensor over a communication bus */
+/* Class handling communication with a particular sensor over a communication
+ * bus */
 class ISensor {
   private:
     static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
@@ -108,6 +109,23 @@ class ISensor {
      * @return unsigned long
      */
     virtual unsigned long getMinimumMeasurementIntervalMs() const = 0;
+
+    /**
+     * @brief Get ready condition decay time.
+     *
+     * Some sensors that require special hardware for the measurement (such as
+     * heaters) need to regularly be called for measurements, or else the
+     * conditioning procedure must be exectued again. The time interval within
+     * which the sensor must be called for a reading can be queried with this
+     * method.
+     *
+     * @param[out] long time (in ms) within which the sensor must be called for
+     * a measurement, else it decays to the UNINITIALIZED state. Returns -1 if
+     * no such interval is defined for the sensor.
+     */
+    virtual long readyStateDecayTimeMs() const {
+        return -1;
+    }
 
     /**
      * @brief Get the specific SensorId of the ISensor realization

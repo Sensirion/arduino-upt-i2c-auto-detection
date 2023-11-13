@@ -80,9 +80,13 @@ bool Sgp41::requiresInitializationStep() const {
 }
 
 unsigned long Sgp41::getInitializationIntervalMs() const {
-    return 1000;
+    return 8000;
 }
 
 void* Sgp41::getDriver() {
     return reinterpret_cast<void*>(&_driver);
+}
+
+long Sgp41::readyStateDecayTimeMs() const {
+    return 2000;
 }

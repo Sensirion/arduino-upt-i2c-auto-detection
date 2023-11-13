@@ -48,8 +48,13 @@ class Sgp41 : public ISensor {
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     bool requiresInitializationStep() const override;
+
+    // Typical: 10s
     unsigned long getInitializationIntervalMs() const override;
     void* getDriver() override;
+
+    // Typical measurement interval: 1s
+    long readyStateDecayTimeMs() const override;
 
   private:
     TwoWire& _wire;
