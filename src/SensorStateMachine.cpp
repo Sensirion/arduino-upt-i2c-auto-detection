@@ -33,13 +33,15 @@ void SensorStateMachine::initializationRoutine(Data& dataContainer) {
         _sensor->initializationStep();
         _lastMeasurementTimeStampMs = millis();
         _sensorState = SensorStatus::INITIALIZING;
-    }
 
-    for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
+        for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
             dataContainer.addDataPoint(
                 DataPoint(SignalType::UNDEFINED, 0.0, 0,
                           sensorName(_sensor->getSensorId())));
+        }
     }
+
+    dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
 
     if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
                            _lastMeasurementTimeStampMs)) {
@@ -72,6 +74,8 @@ void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
             dataContainer.addDataPoint(sensorSignalsBuffer[i]);
         }
+    } else {
+        dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
     }
 }
 

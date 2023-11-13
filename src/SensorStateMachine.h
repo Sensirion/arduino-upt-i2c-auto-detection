@@ -5,7 +5,13 @@
 #include "ISensor.h"
 #include <stdint.h>
 
-enum class SensorStatus { UNDEFINED, UNINITIALIZED, INITIALIZING, RUNNING, LOST };
+enum class SensorStatus {
+    UNDEFINED,
+    UNINITIALIZED,
+    INITIALIZING,
+    RUNNING,
+    LOST
+};
 
 /* Class handling the state machine for the sensors without including the state
  * information and operations common to all sensor types to the interface class.

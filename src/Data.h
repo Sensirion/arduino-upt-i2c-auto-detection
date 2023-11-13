@@ -72,6 +72,14 @@ class Data {
      */
     void resetWriteHead();
 
+    /**
+     * @brief jump writehead ahead a specified number of entries
+     *
+     * @note will not set _writeHead to a value greater than _lenght - 1, but
+     * won't return an error in that case.
+     */
+    void skipDataPoints(size_t);
+
   private:
     size_t _length = 0;
     size_t _writeHead = 0;
