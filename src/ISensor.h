@@ -34,7 +34,7 @@
 #include "Arduino.h"
 #include "Sensirion_UPT_Core.h"
 
-/* Class handling communication with a particular sensor over the I2C bus */
+/* Class handling communication with a particular sensor over a communication bus */
 class ISensor {
   private:
     static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
@@ -51,30 +51,6 @@ class ISensor {
     virtual uint16_t start() = 0;
 
     /**
-     * @brief Perform extended sensor initialization.
-     * As most sensors don't require this, overriding this method is optional.
-     */
-    virtual uint16_t initializationStep() {
-        return 0;
-    };
-
-    /**
-     * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
-     * pointer
-     *
-     * @return void*
-     */
-    virtual void* getDriver() = 0;
-
-    /**
-     * @brief Get the minimum measurement interval of the sensor. This must be
-     * larger than the longest possible measurement duration.
-     *
-     * @return unsigned long
-     */
-    virtual unsigned long getMinimumMeasurementIntervalMs() const = 0;
-
-    /**
      * @brief Get the number of times the initializationStep method should be
      * called. Note that most sensors don't require an extended initialization.
      *
@@ -82,6 +58,14 @@ class ISensor {
      */
     virtual bool requiresInitializationStep() const {
         return false;
+    };
+
+    /**
+     * @brief Perform extended sensor initialization.
+     * As most sensors don't require this, overriding this method is optional.
+     */
+    virtual uint16_t initializationStep() {
+        return 0;
     };
 
     /**
@@ -118,6 +102,14 @@ class ISensor {
                                      const unsigned long timeStamp) = 0;
 
     /**
+     * @brief Get the minimum measurement interval of the sensor. This must be
+     * larger than the longest possible measurement duration.
+     *
+     * @return unsigned long
+     */
+    virtual unsigned long getMinimumMeasurementIntervalMs() const = 0;
+
+    /**
      * @brief Get the specific SensorId of the ISensor realization
      *
      * @return SensorId
@@ -130,6 +122,14 @@ class ISensor {
     uint16_t getNumberOfAllowedConsecutiveErrors() const {
         return _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
     }
+
+    /**
+     * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
+     * pointer
+     *
+     * @return void*
+     */
+    virtual void* getDriver() = 0;
 };
 
 #endif /* _I_SENSOR_H_ */
