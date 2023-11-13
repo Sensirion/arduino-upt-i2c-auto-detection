@@ -52,10 +52,10 @@ class ISensor {
     virtual uint16_t start() = 0;
 
     /**
-     * @brief Get the number of times the initializationStep method should be
-     * called. Note that most sensors don't require an extended initialization.
+     * @brief Query sensor whether an initialization step is required or not.
      *
-     * @return const unsigned long
+     * @param[out] bool true if either a conditioning or initialization command
+     * must be called before measurements are available
      */
     virtual bool requiresInitializationStep() const {
         return false;
@@ -70,8 +70,7 @@ class ISensor {
     };
 
     /**
-     * @brief Get the interval at which the initializationStep method should be
-     * called during initialization in milliseconds.
+     * @brief Get the duration of the conditioning period
      *
      * @return const unsigned long
      */
@@ -121,7 +120,7 @@ class ISensor {
      *
      * @param[out] long time (in ms) within which the sensor must be called for
      * a measurement, else it decays to the UNINITIALIZED state. Returns -1 if
-     * no such interval is defined for the sensor.
+     * no such interval is defined for the sensor (ie. decay time is infinite).
      */
     virtual long readyStateDecayTimeMs() const {
         return -1;

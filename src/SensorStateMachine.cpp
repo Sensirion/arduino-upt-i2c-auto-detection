@@ -28,7 +28,6 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
 }
 
 void SensorStateMachine::initializationRoutine(Data& dataContainer) {
-
     if (_sensorState == SensorStatus::UNINITIALIZED) {
         _sensor->initializationStep();
         _lastMeasurementTimeStampMs = millis();
@@ -39,48 +38,84 @@ void SensorStateMachine::initializationRoutine(Data& dataContainer) {
                 DataPoint(SignalType::UNDEFINED, 0.0, 0,
                           sensorName(_sensor->getSensorId())));
         }
+    } else {  // _sensorState == INITIALIZING
+        dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
     }
-
-    dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
 
     if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
                            _lastMeasurementTimeStampMs)) {
         _sensorState = SensorStatus::RUNNING;
+        _lastMeasurementTimeStampMs = millis();
+    }
+}
+
+void SensorStateMachine::readSignals(Data& dataContainer) {
+    DataPoint sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
+    uint32_t currentTimeStampMs = millis();
+
+    uint16_t measureAndWriteError =
+        _sensor->measureAndWrite(sensorSignalsBuffer, currentTimeStampMs);
+    _lastMeasurementError = measureAndWriteError;
+
+    if (measureAndWriteError) {
+        _measurementErrorCounter++;
+        if (_measurementErrorCounter >=
+            _sensor->getNumberOfAllowedConsecutiveErrors()) {
+            _sensorState = SensorStatus::LOST;
+        }
+        return;
+    }
+
+    _lastMeasurementTimeStampMs = currentTimeStampMs;
+    _measurementErrorCounter = 0;
+
+    for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
+        dataContainer.addDataPoint(sensorSignalsBuffer[i]);
     }
 }
 
 void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
-    if (timeIntervalPassed(_measurementIntervalMs, millis(),
-                           _lastMeasurementTimeStampMs)) {
-        DataPoint sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
-        uint32_t currentTimeStampMs = millis();
+    unsigned long timeSinceLastMeasurementMs =
+        millis() - _lastMeasurementTimeStampMs;
 
-        uint16_t measureAndWriteError =
-            _sensor->measureAndWrite(sensorSignalsBuffer, currentTimeStampMs);
-        _lastMeasurementError = measureAndWriteError;
+    enum class timeLineRegion {
+        INSIDE_MIN_INTERVAL,
+        INSIDE_VALID_BAND,
+        OUTSIDE_VALID_INITIALIZATION
+    };
+    timeLineRegion tlr_position = timeLineRegion::INSIDE_MIN_INTERVAL;
 
-        if (measureAndWriteError) {
-            _measurementErrorCounter++;
-            if (_measurementErrorCounter >=
-                _sensor->getNumberOfAllowedConsecutiveErrors()) {
-                _sensorState = SensorStatus::LOST;
-            }
-            return;
-        }
+    if (timeSinceLastMeasurementMs >= _measurementIntervalMs) {
+        tlr_position = timeLineRegion::INSIDE_VALID_BAND;
+    }
 
-        _lastMeasurementTimeStampMs = currentTimeStampMs;
-        _measurementErrorCounter = 0;
+    if (_sensor->readyStateDecayTimeMs() > 0 &&
+        timeSinceLastMeasurementMs > _sensor->readyStateDecayTimeMs()) {
+        tlr_position = timeLineRegion::OUTSIDE_VALID_INITIALIZATION;
+    }
 
-        for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-            dataContainer.addDataPoint(sensorSignalsBuffer[i]);
-        }
-    } else {
-        dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
+    switch (tlr_position) {
+        case timeLineRegion::INSIDE_MIN_INTERVAL:
+            dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
+            break;
+
+        case timeLineRegion::INSIDE_VALID_BAND:
+            readSignals(dataContainer);
+            break;
+
+        case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
+            dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
+            _sensorState = SensorStatus::UNINITIALIZED;
+            initializationRoutine(dataContainer);
+            // throw error
+            break;
+
+        default:
+            break;
     }
 }
 
-void SensorStateMachine::updateSensorSignals(Data& data) {
-    // State handling
+void SensorStateMachine::update(Data& data) {
     switch (_sensorState) {
         case SensorStatus::UNDEFINED:
             break;
