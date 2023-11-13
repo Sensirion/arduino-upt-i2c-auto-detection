@@ -57,6 +57,7 @@ Data& Data::operator=(Data&& src) {
         src._dataPoints = nullptr;
         this->_length = src._length;
         src._length = 0;
+        this->_writeHead = src._writeHead;
     }
     return *this;
 }
