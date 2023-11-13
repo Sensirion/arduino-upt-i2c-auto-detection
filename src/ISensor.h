@@ -80,8 +80,8 @@ class ISensor {
      *
      * @return const unsigned long
      */
-    virtual unsigned long getInitializationSteps() const {
-        return 0;
+    virtual bool requiresInitializationStep() const {
+        return false;
     };
 
     /**

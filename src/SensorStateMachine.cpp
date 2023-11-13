@@ -5,8 +5,8 @@ SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     : _lastMeasurementError(0), _measurementErrorCounter(0),
       _initStepsCounter(0), _lastMeasurementTimeStampMs(0),
       _measurementIntervalMs(0), _sensor(pSensor) {
-    if (_sensor->getInitializationSteps() > 0) {
-        _sensorState = SensorStatus::INITIALIZING;
+    if (_sensor->requiresInitializationStep()) {
+        _sensorState = SensorStatus::UNINITIALIZED;
     } else {
         _sensorState = SensorStatus::RUNNING;
     }
@@ -29,24 +29,21 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
 
 void SensorStateMachine::initializationRoutine(Data& dataContainer) {
 
-    if (_initStepsCounter == 0) {
-        for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
+    if (_sensorState == SensorStatus::UNINITIALIZED) {
+        _sensor->initializationStep();
+        _lastMeasurementTimeStampMs = millis();
+        _sensorState = SensorStatus::INITIALIZING;
+    }
+
+    for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
             dataContainer.addDataPoint(
                 DataPoint(SignalType::UNDEFINED, 0.0, 0,
                           sensorName(_sensor->getSensorId())));
-        }
     }
 
     if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
                            _lastMeasurementTimeStampMs)) {
-        _sensor->initializationStep();
-        _initStepsCounter++;
-        _lastMeasurementTimeStampMs =
-            millis();  // <-- unsure if this is required (wasn't in the code)
-
-        if (_initStepsCounter >= _sensor->getInitializationSteps()) {
-            _sensorState = SensorStatus::RUNNING;
-        }
+        _sensorState = SensorStatus::RUNNING;
     }
 }
 
@@ -82,6 +79,10 @@ void SensorStateMachine::updateSensorSignals(Data& data) {
     // State handling
     switch (_sensorState) {
         case SensorStatus::UNDEFINED:
+            break;
+
+        case SensorStatus::UNINITIALIZED:
+            initializationRoutine(data);
             break;
 
         case SensorStatus::INITIALIZING:

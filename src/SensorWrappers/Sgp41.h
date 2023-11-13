@@ -47,7 +47,7 @@ class Sgp41 : public ISensor {
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
-    unsigned long getInitializationSteps() const override;
+    bool requiresInitializationStep() const override;
     unsigned long getInitializationIntervalMs() const override;
     void* getDriver() override;
 
