@@ -69,16 +69,16 @@ void SensorList::reset() {
 }
 
 uint16_t SensorList::getNumberOfSensorsLost() {
-    uint16_t count = 0;
+    uint16_t sensorsLost = 0;
     for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
         if (_sensors[i] == nullptr) {
             continue;
         }
         if (_sensors[i]->getSensorState() == SensorStatus::LOST) {
-            ++count;
+            ++sensorsLost;
         }
     }
-    return count;
+    return sensorsLost;
 }
 
 int SensorList::getLength() const {

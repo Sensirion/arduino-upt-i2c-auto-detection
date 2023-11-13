@@ -75,14 +75,18 @@ unsigned long Sgp41::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-unsigned long Sgp41::getInitializationSteps() const {
-    return 10;
+bool Sgp41::requiresInitializationStep() const {
+    return true;
 }
 
 unsigned long Sgp41::getInitializationIntervalMs() const {
-    return 1000;
+    return 8000;
 }
 
 void* Sgp41::getDriver() {
     return reinterpret_cast<void*>(&_driver);
+}
+
+long Sgp41::readyStateDecayTimeMs() const {
+    return 2000;
 }

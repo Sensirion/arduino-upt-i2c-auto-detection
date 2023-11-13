@@ -45,7 +45,7 @@ AutoDetectorError SensorManager::updateData() {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
-            ssm->updateSensorSignals(_data);
+            ssm->update(_data);
         }
     }
     uint16_t numberOfSensorsLostAfterUpdate =

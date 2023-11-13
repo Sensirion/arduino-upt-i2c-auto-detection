@@ -57,6 +57,7 @@ Data& Data::operator=(Data&& src) {
         src._dataPoints = nullptr;
         this->_length = src._length;
         src._length = 0;
+        this->_writeHead = src._writeHead;
     }
     return *this;
 }
@@ -74,4 +75,10 @@ const DataPoint& Data::getDataPoint(size_t i) const {
 
 void Data::resetWriteHead() {
     _writeHead = 0;
+}
+
+void Data::skipDataPoints(size_t s) {
+    if (_writeHead + s < _length) {
+        _writeHead += s;
+    }
 }
