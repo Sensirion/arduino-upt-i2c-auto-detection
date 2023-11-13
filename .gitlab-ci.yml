@@ -5,10 +5,9 @@ stages:
 compile_pio:
   stage: compile
   image:
-      name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
+      name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.6.0
   tags: [docker, linux]
   before_script:
-      - pip install -U platformio
       - cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
       - cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
   parallel:
@@ -48,7 +47,7 @@ TODO_check:
 compile_arduino:
     stage: compile
     image:
-        name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
+        name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.6.0
     tags: [docker, linux]
     needs: []
     before_script:
