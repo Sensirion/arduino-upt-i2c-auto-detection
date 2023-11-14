@@ -131,15 +131,6 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         if (!pSensor) {
             continue;
         }
-        uint16_t startFailed = pSensor->start();
-        if (startFailed) {
-            char errorMessage[256];
-            Serial.print("Error trying to start() sensor instance: ");
-            errorToString(startFailed, errorMessage, 256);
-            Serial.println(errorMessage);
-            delete pSensor;
-            continue;
-        }
         AutoDetectorError addFailed = sensorList.addSensor(pSensor);
         if (addFailed) {
             Serial.println("Error trying to add sensor instance "

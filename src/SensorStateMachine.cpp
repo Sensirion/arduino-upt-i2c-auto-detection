@@ -12,6 +12,7 @@ SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     }
     _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
     _sensorSignals.init(_sensor->getNumberOfDataPoints());
+    _sensor->start();
 };
 
 SensorStatus SensorStateMachine::getSensorState() const {
@@ -80,9 +81,9 @@ void SensorStateMachine::readSignalsRoutine() {
 
     /* Determine timing relationship vs. last measurement */
     enum class timeLineRegion {
-        INSIDE_MIN_INTERVAL,
-        INSIDE_VALID_BAND,
-        OUTSIDE_VALID_INITIALIZATION
+        INSIDE_MIN_INTERVAL,            // Less time than measuring interval has elapsed since last measurement
+        INSIDE_VALID_BAND,              // May request a reading
+        OUTSIDE_VALID_INITIALIZATION    // Sensor running status has decayed, conditionning must be performed
     };
     timeLineRegion tlr_position = timeLineRegion::INSIDE_MIN_INTERVAL;
 
