@@ -52,7 +52,7 @@ class SensorList {
     /**
      * @brief add a sensor to the list of tracked sensors
      *
-     * @param[in] ISensor* pointer to the sensor to be added to teh list
+     * @param[in] ISensor* pointer to the sensor to be added to the list
      *
      * @param[out] AutoDetectorError::FULL_SENSOR_LIST_ERROR in case the list is
      * already full
@@ -99,6 +99,15 @@ class SensorList {
      * @brief getter method for a stored sensor
      */
     ISensor* getSensor(size_t) const;
+
+    /**
+     * @brief check if the given Sensor is contained in the list.
+     * 
+     * @param[in] SensorID of the sensor to be checked for in the list
+     * 
+     * @param[out] bool: True if the sensor is found, false otherwise.
+    */
+    bool containsSensor(SensorID) const;
 };
 
 #endif /* _SENSOR_LIST_H */
