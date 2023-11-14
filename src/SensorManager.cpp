@@ -29,13 +29,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SensorManager.h"
-#include "utils.h"
 
 void SensorManager::begin() {
     _detector.findSensors(_sensorList);
 }
 
+void SensorManager::updateSensorList() {
+    _sensorList.removeLostSensors();
+    _detector.findSensors(_sensorList);
+}
+
 AutoDetectorError SensorManager::updateStateMachines() {
+    uint16_t numberOfSensorsLostBeforeUpdate =
+        _sensorList.getNumberOfSensorsLost();
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {

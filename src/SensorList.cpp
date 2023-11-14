@@ -110,3 +110,13 @@ bool SensorList::containsSensor(SensorID sid) const {
     }
     return false;
 }
+
+void SensorList::removeLostSensors() {
+    for (size_t i = 0; i < _numSensors; i++) {
+        if (_sensors[i] &&
+            _sensors[i]->getSensorState() == SensorStatus::LOST) {
+            delete _sensors[i];
+            _sensors[i] = nullptr;
+        }
+    }
+}

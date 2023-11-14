@@ -109,6 +109,11 @@ class SensorList {
      * @param[out] bool: True if the sensor is found, false otherwise.
      */
     bool containsSensor(SensorID) const;
+
+    /**
+     * @brief remove lost sensors from list
+     */
+    void removeLostSensors();
 };
 
 #endif /* _SENSOR_LIST_H */
