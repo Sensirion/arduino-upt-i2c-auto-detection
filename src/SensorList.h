@@ -50,7 +50,8 @@ class SensorList {
     ~SensorList();
 
     /**
-     * @brief add a sensor to the list of tracked sensors
+     * @brief add a sensor to the list of tracked sensors. Ignores sensors that
+     * are already in the list
      *
      * @param[in] ISensor* pointer to the sensor to be added to the list
      *
@@ -90,7 +91,7 @@ class SensorList {
     /**
      * @brief getter method for a stored state machine
      *
-     * @note may return a nullptr if no sensor state machine is stored at the
+     * @note returns a nullptr if no sensor state machine is stored at the
      * requested index
      */
     SensorStateMachine* getSensorStateMachine(size_t);
@@ -102,11 +103,11 @@ class SensorList {
 
     /**
      * @brief check if the given Sensor is contained in the list.
-     * 
+     *
      * @param[in] SensorID of the sensor to be checked for in the list
-     * 
+     *
      * @param[out] bool: True if the sensor is found, false otherwise.
-    */
+     */
     bool containsSensor(SensorID) const;
 };
 

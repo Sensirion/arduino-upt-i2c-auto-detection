@@ -1,5 +1,14 @@
 #include "SensorStateMachine.h"
-#include "utils.h"
+
+bool timeIntervalPassed(const uint32_t interval,
+                        const uint32_t currentTimeStamp,
+                        const uint32_t latestUpdateTimeStamp) {
+    if (currentTimeStamp < interval) {
+        return true;
+    }
+    unsigned long elapsedTime = currentTimeStamp - latestUpdateTimeStamp;
+    return elapsedTime >= interval;
+}
 
 SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     : _lastMeasurementError(0), _measurementErrorCounter(0),
@@ -81,9 +90,11 @@ void SensorStateMachine::readSignalsRoutine() {
 
     /* Determine timing relationship vs. last measurement */
     enum class timeLineRegion {
-        INSIDE_MIN_INTERVAL,            // Less time than measuring interval has elapsed since last measurement
-        INSIDE_VALID_BAND,              // May request a reading
-        OUTSIDE_VALID_INITIALIZATION    // Sensor running status has decayed, conditionning must be performed
+        INSIDE_MIN_INTERVAL,  // Less time than measuring interval has elapsed
+                              // since last measurement
+        INSIDE_VALID_BAND,    // May request a reading
+        OUTSIDE_VALID_INITIALIZATION  // Sensor running status has decayed,
+                                      // conditionning must be performed
     };
     timeLineRegion tlr_position = timeLineRegion::INSIDE_MIN_INTERVAL;
 
