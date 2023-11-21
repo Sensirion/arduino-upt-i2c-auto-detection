@@ -37,7 +37,7 @@
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   private:
-    const int _numSensors = 16;
+    const int _numSensors;
     SensorStateMachine** _sensors = nullptr;
 
   public:
@@ -54,9 +54,6 @@ class SensorList {
      * already full
      */
     AutoDetectorError addSensor(ISensor* pSensor);
-
-    /// @brief Resets the list
-    void reset();
 
     /**
      * @brief Counts sensors contained in the list
