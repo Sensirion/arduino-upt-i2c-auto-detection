@@ -9,10 +9,10 @@ compile_pio:
   tags: [docker, linux]
   before_script:
       - cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
-      - cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
+      - cp examples/advancedUsage/advancedUsage.ino examples/advancedUsage/advancedUsage.cpp
   parallel:
     matrix:
-      - env: [basicUsage, extendedUsage]
+      - env: [basicUsage, advancedUsage]
   script:
       - pio run --environment ${env}
 
@@ -67,6 +67,6 @@ compile_arduino:
     parallel:
       matrix:
         - boards: [esp32:esp32:esp32, esp8266:esp8266:generic]
-          examples: [basicUsage, extendedUsage]
+          examples: [basicUsage, advancedUsage]
     script:
       - arduino-cli compile --warnings all --fqbn ${boards} examples/${examples}
