@@ -37,10 +37,14 @@
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   private:
-    static const int _MAX_NUM_SENSORS = 16;
-    SensorStateMachine* _sensors[_MAX_NUM_SENSORS] = {nullptr};
+    const int _numSensors = 16;
+    SensorStateMachine** _sensors = nullptr;
 
   public:
+    explicit SensorList(int numSensors);
+
+    ~SensorList();
+
     /**
      * @brief add a sensor to the list of tracked sensors
      *

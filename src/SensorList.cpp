@@ -30,8 +30,16 @@
  */
 #include "SensorList.h"
 
+SensorList::SensorList(int numSensors) : _numSensors(numSensors) {
+    _sensors = new SensorStateMachine*[_numSensors];
+}
+
+SensorList::~SensorList() {
+    delete[] _sensors;
+}
+
 AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
-    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+    for (int i = 0; i < _numSensors; ++i) {
         if (_sensors[i] == nullptr) {
             _sensors[i] = new SensorStateMachine(pSensor);
             return NO_ERROR;
@@ -42,7 +50,7 @@ AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
 
 size_t SensorList::count() {
     size_t numberOfSensors = 0;
-    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+    for (int i = 0; i < _numSensors; ++i) {
         if (_sensors[i]) {
             ++numberOfSensors;
         }
@@ -52,7 +60,7 @@ size_t SensorList::count() {
 
 size_t SensorList::getTotalNumberOfDataPoints() {
     size_t totalNumberOfDataPoints = 0;
-    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+    for (int i = 0; i < _numSensors; ++i) {
         if (_sensors[i]) {
             totalNumberOfDataPoints +=
                 _sensors[i]->getSensor()->getNumberOfDataPoints();
@@ -62,7 +70,7 @@ size_t SensorList::getTotalNumberOfDataPoints() {
 }
 
 void SensorList::reset() {
-    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+    for (int i = 0; i < _numSensors; ++i) {
         delete _sensors[i];
         _sensors[i] = nullptr;
     }
@@ -70,7 +78,7 @@ void SensorList::reset() {
 
 uint16_t SensorList::getNumberOfSensorsLost() {
     uint16_t sensorsLost = 0;
-    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+    for (int i = 0; i < _numSensors; ++i) {
         if (_sensors[i] == nullptr) {
             continue;
         }
@@ -82,7 +90,7 @@ uint16_t SensorList::getNumberOfSensorsLost() {
 }
 
 int SensorList::getLength() const {
-    return _MAX_NUM_SENSORS;
+    return _numSensors;
 }
 
 SensorStateMachine* SensorList::getSensorStateMachine(size_t i) {
