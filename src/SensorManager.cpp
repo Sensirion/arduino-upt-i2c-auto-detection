@@ -32,33 +32,32 @@
 #include "utils.h"
 
 void SensorManager::begin() {
-    _sensorList.reset();
     _detector.findSensors(_sensorList);
-    size_t length = _sensorList.getTotalNumberOfDataPoints();
-    _data.init(length);
 }
 
-AutoDetectorError SensorManager::updateData() {
-    _data.resetWriteHead();
-    uint16_t numberOfSensorsLostBeforeUpdate =
-        _sensorList.getNumberOfSensorsLost();
+AutoDetectorError SensorManager::updateStateMachines() {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
-            ssm->update(_data);
+            ssm->update();
         }
     }
-    uint16_t numberOfSensorsLostAfterUpdate =
-        _sensorList.getNumberOfSensorsLost();
-    if (numberOfSensorsLostAfterUpdate > numberOfSensorsLostBeforeUpdate) {
-        return LOST_SENSOR_ERROR;
-    } else {
-        return NO_ERROR;
-    }
+    return NO_ERROR;
 }
 
-const Data& SensorManager::getData() const {
-    return _data;
+void SensorManager::getData(const Data** dataPack) {
+    for (size_t i = 0; i < _MAX_NUM_SENSORS; i++) {
+        dataPack[i] = nullptr;
+    }
+
+    for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
+        const SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
+        if (ssm) {
+            size_t hashIdx =
+                static_cast<size_t>(ssm->getSensor()->getSensorId());
+            dataPack[hashIdx] = ssm->getSignals();
+        }
+    }
 }
 
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
@@ -68,4 +67,8 @@ void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
             ssm->setMeasurementInterval(interval);
         }
     }
+}
+
+int SensorManager::getMaxNumberOfSensors() const {
+    return _MAX_NUM_SENSORS;
 }
