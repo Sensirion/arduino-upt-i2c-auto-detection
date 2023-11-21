@@ -43,6 +43,10 @@ class SensorList {
   public:
     explicit SensorList(int numSensors);
 
+    SensorList(const SensorList&) = delete;  // Illegal operation
+    SensorList&
+    operator=(const SensorList& other) = delete;  // Illegal operation
+
     ~SensorList();
 
     /**

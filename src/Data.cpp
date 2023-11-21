@@ -76,9 +76,3 @@ const DataPoint& Data::getDataPoint(size_t i) const {
 void Data::resetWriteHead() {
     _writeHead = 0;
 }
-
-void Data::skipDataPoints(size_t s) {
-    if (_writeHead + s < _length) {
-        _writeHead += s;
-    }
-}
