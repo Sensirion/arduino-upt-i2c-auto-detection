@@ -42,7 +42,7 @@
  * intervals */
 class SensorManager {
   private:
-    Data _data;
+    static const int _MAX_NUM_SENSORS = 16;
     SensorList _sensorList;
     IAutoDetector& _detector;
 
@@ -57,7 +57,8 @@ class SensorManager {
      * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
      * buses
      */
-    explicit SensorManager(IAutoDetector& detector_) : _detector(detector_){};
+    explicit SensorManager(IAutoDetector& detector_)
+        : _sensorList(_MAX_NUM_SENSORS), _detector(detector_){};
 
     /**
      * @brief Must be called before any other method
@@ -76,12 +77,20 @@ class SensorManager {
      * @return AutoDetectorError, LOST_SENSOR_ERROR incase one or more sensors
      * were lost during polling
      */
-    AutoDetectorError updateData();
+    AutoDetectorError updateStateMachines();
 
     /**
      * @brief getter method for _data
+     *
+     * @param[in] Data** location to which write the references to the
+     * individual state machines data, hashed by their respective SensorIDs.
+     * Size of the hashmap can be queried using
+     * SensorManager::getMaxNumberOfSensors().
+     *
+     * @note Would love to add a const qualifier (ie const Data** getData(const
+     * Data**) const) but somehow I'm unable.
      */
-    const Data& getData() const;
+    void getData(const Data**);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if
@@ -95,6 +104,11 @@ class SensorManager {
      * case the interval is not set for the sensor
      */
     void setInterval(unsigned long interval, SensorID sensorId);
+
+    /**
+     * @brief getter method for number of sensors
+     */
+    int getMaxNumberOfSensors() const;
 
     /**
      * Retrieve specific sensor driver instance T from
@@ -113,10 +127,8 @@ class SensorManager {
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
         for (int i = 0; i < _sensorList.getLength(); ++i) {
-            if (_sensorList.getSensor(i) == nullptr) {
-                continue;
-            }
-            if (_sensorList.getSensor(i)->getSensorId() == id) {
+            if (_sensorList.getSensor(i) &&
+                _sensorList.getSensor(i)->getSensorId() == id) {
                 pDriver =
                     reinterpret_cast<T*>(_sensorList.getSensor(i)->getDriver());
                 return NO_ERROR;

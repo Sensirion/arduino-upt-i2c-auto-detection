@@ -5,4 +5,4 @@ latex
 src/html/**
 src/latex/**
 examples/basicUsage/basicUsage.cpp
-examples/extendedUsage/extendedUsage.cpp
+examples/advancedUsage/advancedUsage.cpp

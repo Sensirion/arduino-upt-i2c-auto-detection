@@ -67,7 +67,7 @@ and start the Serial monitor.
 ```bash
 pio device monitor
 ```
-Available environments are `basicUsage`and `extendedUsage`.
+Available environments are `basicUsage`and `advancedUsage`.
 In case you're using some other board, it is recommended you create a new environment in the `platformio.ini` file, using the existing environments as a template.
 
 In order to use this library in your project, add it to the `lib_deps` in your `platformio.ini` file and include `Sensirion_Sensor_Auto_Detection.h`.
@@ -116,10 +116,12 @@ Begin Serial, Wire and SensorManager in void setup():
 ```
 Update and retrieve Data object in void loop():
 ```cpp
-    sensorManager.updateData();
-    const Data& currentData = sensorManager.getData();
+    sensorManager.updateStateMachines();
+    const Data* currentData[sensorManager.getMaxNumberOfSensors()];
+    sensorManager.getData(currentData);
 ```
-Sensordata is only read out at specific measurement intervals, which are more accurate with higher loop frequency. The 'SensorManager::getData()' method should thus be called with high frequency and long time delays in the main loop should be avoided. If three 3 consecutive errors occurr while trying to read the data ror a sensor, the sensor is considered lost and not read out anymore in the following to save resources.
+The sensor manager handles command dispatch to the detected sensors, to make sure minimum intervals between commands are respected. Data readout is decoupled from sensor state machine updates, but only the last recorded measurement is available. Note: some sensors have a decay time, after which a conditioning procedure must be executed before readings are available (eg. SGP41). This decay time must not be exceeded inbetween ```cpp SensorManager::updateStateMachines()``` function calls, else SensorManager is never able to provide a measurement for these sensors.
+If three 3 consecutive errors occur while trying to read the data ror a sensor, the sensor is considered lost and not read out anymore in the following to save resources.
 
 # Limitations
 

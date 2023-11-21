@@ -11,6 +11,7 @@ SensorStateMachine::SensorStateMachine(ISensor* pSensor)
         _sensorState = SensorStatus::RUNNING;
     }
     _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
+    _sensorSignals.init(_sensor->getNumberOfDataPoints());
 };
 
 SensorStatus SensorStateMachine::getSensorState() const {
@@ -27,19 +28,17 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     }
 }
 
-void SensorStateMachine::initializationRoutine(Data& dataContainer) {
+void SensorStateMachine::initializationRoutine() {
     if (_sensorState == SensorStatus::UNINITIALIZED) {
         _sensor->initializationStep();
         _lastMeasurementTimeStampMs = millis();
         _sensorState = SensorStatus::INITIALIZING;
 
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-            dataContainer.addDataPoint(
+            _sensorSignals.addDataPoint(
                 DataPoint(SignalType::UNDEFINED, 0.0, 0,
                           sensorName(_sensor->getSensorId())));
         }
-    } else {  // _sensorState == INITIALIZING
-        dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
     }
 
     if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
@@ -49,7 +48,7 @@ void SensorStateMachine::initializationRoutine(Data& dataContainer) {
     }
 }
 
-void SensorStateMachine::readSignals(Data& dataContainer) {
+void SensorStateMachine::readSignals() {
     DataPoint sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
     uint32_t currentTimeStampMs = millis();
 
@@ -70,14 +69,16 @@ void SensorStateMachine::readSignals(Data& dataContainer) {
     _measurementErrorCounter = 0;
 
     for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-        dataContainer.addDataPoint(sensorSignalsBuffer[i]);
+        _sensorSignals.addDataPoint(sensorSignalsBuffer[i]);
     }
+    _sensorSignals.resetWriteHead();
 }
 
-void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
+void SensorStateMachine::readSignalsRoutine() {
     unsigned long timeSinceLastMeasurementMs =
         millis() - _lastMeasurementTimeStampMs;
 
+    /* Determine timing relationship vs. last measurement */
     enum class timeLineRegion {
         INSIDE_MIN_INTERVAL,
         INSIDE_VALID_BAND,
@@ -94,19 +95,18 @@ void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
         tlr_position = timeLineRegion::OUTSIDE_VALID_INITIALIZATION;
     }
 
+    /* Perform appropriate action */
     switch (tlr_position) {
         case timeLineRegion::INSIDE_MIN_INTERVAL:
-            dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
             break;
 
         case timeLineRegion::INSIDE_VALID_BAND:
-            readSignals(dataContainer);
+            readSignals();
             break;
 
         case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
-            dataContainer.skipDataPoints(_sensor->getNumberOfDataPoints());
             _sensorState = SensorStatus::UNINITIALIZED;
-            initializationRoutine(dataContainer);
+            initializationRoutine();
             // throw error
             break;
 
@@ -115,21 +115,21 @@ void SensorStateMachine::readSignalsRoutine(Data& dataContainer) {
     }
 }
 
-void SensorStateMachine::update(Data& data) {
+void SensorStateMachine::update() {
     switch (_sensorState) {
         case SensorStatus::UNDEFINED:
             break;
 
         case SensorStatus::UNINITIALIZED:
-            initializationRoutine(data);
+            initializationRoutine();
             break;
 
         case SensorStatus::INITIALIZING:
-            initializationRoutine(data);
+            initializationRoutine();
             break;
 
         case SensorStatus::RUNNING:
-            readSignalsRoutine(data);
+            readSignalsRoutine();
             break;
 
         case SensorStatus::LOST:
@@ -143,4 +143,8 @@ void SensorStateMachine::update(Data& data) {
 
 ISensor* SensorStateMachine::getSensor() const {
     return _sensor;
+}
+
+const Data* SensorStateMachine::getSignals() const {
+    return &_sensorSignals;
 }

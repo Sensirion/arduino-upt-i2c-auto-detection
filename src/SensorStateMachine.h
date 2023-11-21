@@ -29,36 +29,31 @@ class SensorStateMachine {
     uint32_t _measurementIntervalMs;
 
     ISensor* _sensor;
+    Data _sensorSignals;
 
     /**
      * @brief Update state machine for sensors whose state is UNINITIALIZED or
      * INITIALIZING
      *
-     * @param[in] Data& Data container which write empty DataPoints
-     *
      * @note Toggles _sensorStatus to RUNNING incase all initialisation Steps
      * are completed
      */
-    void initializationRoutine(Data&);
+    void initializationRoutine();
 
     /**
      * @brief Update state machine for sensors whose state is RUNNING
-     *
-     * @param[in] Data& Data container which write measurement DataPoints
      *
      * @note Doesn't throw an error in case the measurement fails, but records
      * the error and increments the error counter in the state machine. Does not
      * perform a measurement if the measurement interval is too short, or too
      * long.
      */
-    void readSignalsRoutine(Data&);
+    void readSignalsRoutine();
 
     /**
      * @brief Query sensor for new signals
-     *
-     * @param[in] Data& Data container which write measurement DataPoints
      */
-    void readSignals(Data&);
+    void readSignals();
 
   public:
     SensorStateMachine()
@@ -92,11 +87,8 @@ class SensorStateMachine {
 
     /**
      * @brief update state machine
-     *
-     * @param[in] Data& to which export the signal datapoints produced by the
-     * sensors
      */
-    void update(Data&);
+    void update();
 
     /**
      * @brief getter method for sensor handled by state machine
@@ -104,6 +96,11 @@ class SensorStateMachine {
      * @note: Needed to fetch number of signal DataPoints from SensorManager
      */
     ISensor* getSensor() const;
+
+    /**
+     * @brief getter method for address of sensor signals
+     */
+    const Data* getSignals() const;
 };
 
 #endif /* _SENSOR_STATE_MACHINE_H_ */

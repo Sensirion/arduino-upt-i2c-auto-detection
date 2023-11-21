@@ -5,15 +5,14 @@ stages:
 compile_pio:
   stage: compile
   image:
-      name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
+      name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.6.0
   tags: [docker, linux]
   before_script:
-      - pip install -U platformio
       - cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
-      - cp examples/extendedUsage/extendedUsage.ino examples/extendedUsage/extendedUsage.cpp
+      - cp examples/advancedUsage/advancedUsage.ino examples/advancedUsage/advancedUsage.cpp
   parallel:
     matrix:
-      - env: [basicUsage, extendedUsage]
+      - env: [basicUsage, advancedUsage]
   script:
       - pio run --environment ${env}
 
@@ -48,7 +47,7 @@ TODO_check:
 compile_arduino:
     stage: compile
     image:
-        name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.5.0
+        name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.6.0
     tags: [docker, linux]
     needs: []
     before_script:
@@ -68,6 +67,6 @@ compile_arduino:
     parallel:
       matrix:
         - boards: [esp32:esp32:esp32, esp8266:esp8266:generic]
-          examples: [basicUsage, extendedUsage]
+          examples: [basicUsage, advancedUsage]
     script:
       - arduino-cli compile --warnings all --fqbn ${boards} examples/${examples}
