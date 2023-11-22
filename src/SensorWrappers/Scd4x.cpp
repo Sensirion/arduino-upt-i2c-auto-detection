@@ -75,6 +75,10 @@ unsigned long Scd4x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 
+bool Scd4x::requiresInitializationStep() const {
+    return true;
+}
+
 void* Scd4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

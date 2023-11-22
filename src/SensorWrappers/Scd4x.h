@@ -46,6 +46,7 @@ class Scd4x : public ISensor {
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
+    bool requiresInitializationStep() const override;
     void* getDriver() override;
 
   private:

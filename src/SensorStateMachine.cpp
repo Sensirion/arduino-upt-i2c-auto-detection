@@ -71,6 +71,13 @@ void SensorStateMachine::readSignals() {
         if (_measurementErrorCounter >=
             _sensor->getNumberOfAllowedConsecutiveErrors()) {
             _sensorState = SensorStatus::LOST;
+
+
+            Serial.print("Sensor ");
+            Serial.print(sensorName(_sensor->getSensorId()).c_str());
+            Serial.println(" was lost.");
+
+
         }
         return;
     }
@@ -145,6 +152,7 @@ void SensorStateMachine::update() {
             break;
 
         case SensorStatus::LOST:
+            Serial.println("Polling a dead sensor.");
             break;
 
         default:

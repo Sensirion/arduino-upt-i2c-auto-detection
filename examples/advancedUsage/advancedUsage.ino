@@ -8,7 +8,7 @@ initialization
 The circuit:
 Any number of sensirion (different) Sensirion sensors may be connected
 to the I2C bus. The driver retrieval expects at least the SCD4X sensor to be
-connected.
+connected. (Attempts to call sensor actions while the sensor is not connected causes a program crash)
 
 Attempts to use this feature simultaneously with the autodetect library may
 saturate the sensor with commands, thus throwing errors resulting in failure to
