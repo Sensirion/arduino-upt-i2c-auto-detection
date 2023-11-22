@@ -6,7 +6,6 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 
 - SCD30
 - SCD4X
-- SEN44
 - SEN5X
 - SFA3X
 - SGP41
