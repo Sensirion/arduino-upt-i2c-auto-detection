@@ -13,6 +13,7 @@
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
+bool isEmpty(const Data**, size_t);
 void printData(const Data**, size_t);
 
 void setup() {
@@ -23,6 +24,7 @@ void setup() {
 
 void loop() {
     delay(500);
+    sensorManager.updateSensorList();
     sensorManager.updateStateMachines();
     /*
     Data retrieval:
@@ -38,6 +40,11 @@ void loop() {
 }
 
 void printData(const Data** data, size_t maxNumDataPacks) {
+    if (isEmpty(data, maxNumDataPacks)) {
+        Serial.println("No sensors seem to be connected.");
+        return;
+    }
+
     for (size_t p = 0; p < maxNumDataPacks; p++) {
         const Data* dataPack = data[p];
         if (!dataPack) {
@@ -61,4 +68,15 @@ void printData(const Data** data, size_t maxNumDataPacks) {
     }
 
     Serial.println();
+}
+
+bool isEmpty(const Data** data, size_t numDataPacks) {
+    for (size_t p = 0; p < numDataPacks; p++){
+        const Data* dataPack = data[p];
+
+        if (dataPack && data[p]->getLength() > 0) {
+            return false;
+        }
+    }
+    return true;
 }
