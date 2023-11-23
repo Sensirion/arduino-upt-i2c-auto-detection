@@ -19,9 +19,9 @@ SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     } else {
         _sensorState = SensorStatus::RUNNING;
     }
+    _sensor->start();
     _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
     _sensorSignals.init(_sensor->getNumberOfDataPoints());
-    _sensor->start();
 };
 
 SensorStatus SensorStateMachine::getSensorState() const {
