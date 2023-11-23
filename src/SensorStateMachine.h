@@ -31,6 +31,13 @@ class SensorStateMachine {
     Data _sensorSignals;
 
     /**
+     * @brief initialize the state machine
+     * 
+     * @note Needs to be outside of constructor because state machines may decay to UNINITIALIZED
+    */
+    void initialize();
+
+    /**
      * @brief Update state machine for sensors whose state is UNINITIALIZED or
      * INITIALIZING
      *

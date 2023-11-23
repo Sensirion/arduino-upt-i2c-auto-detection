@@ -11,17 +11,10 @@ bool timeIntervalPassed(const uint32_t interval,
 }
 
 SensorStateMachine::SensorStateMachine(ISensor* pSensor)
-    : _lastMeasurementError(0), _measurementErrorCounter(0),
-      _lastMeasurementTimeStampMs(0), _measurementIntervalMs(0),
-      _sensor(pSensor) {
-    if (_sensor->requiresInitializationStep()) {
-        _sensorState = SensorStatus::UNINITIALIZED;
-    } else {
-        _sensorState = SensorStatus::RUNNING;
-    }
+    : _sensorState(SensorStatus::UNINITIALIZED), _lastMeasurementError(0),
+      _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
+      _measurementIntervalMs(0), _sensor(pSensor) {
     _sensor->start();
-    _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
-    _sensorSignals.init(_sensor->getNumberOfDataPoints());
 };
 
 SensorStatus SensorStateMachine::getSensorState() const {
@@ -38,19 +31,29 @@ void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     }
 }
 
-void SensorStateMachine::initializationRoutine() {
-    if (_sensorState == SensorStatus::UNINITIALIZED) {
+void SensorStateMachine::initialize() {
+    if (_sensor->requiresInitializationStep()) {
         _sensor->initializationStep();
         _lastMeasurementTimeStampMs = millis();
         _sensorState = SensorStatus::INITIALIZING;
+
+        _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
+        _sensorSignals.init(_sensor->getNumberOfDataPoints());
 
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
             _sensorSignals.addDataPoint(
                 DataPoint(SignalType::UNDEFINED, 0.0, 0,
                           sensorName(_sensor->getSensorId())));
         }
-    }
 
+    } else {
+        _sensorState = SensorStatus::RUNNING;
+        _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
+        _sensorSignals.init(_sensor->getNumberOfDataPoints());
+    }
+}
+
+void SensorStateMachine::initializationRoutine() {
     if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
                            _lastMeasurementTimeStampMs)) {
         _sensorState = SensorStatus::RUNNING;
@@ -122,7 +125,6 @@ void SensorStateMachine::readSignalsRoutine() {
 
         case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
             _sensorState = SensorStatus::UNINITIALIZED;
-            initializationRoutine();
             // throw error
             break;
 
@@ -137,7 +139,7 @@ void SensorStateMachine::update() {
             break;
 
         case SensorStatus::UNINITIALIZED:
-            initializationRoutine();
+            initialize();
             break;
 
         case SensorStatus::INITIALIZING:
