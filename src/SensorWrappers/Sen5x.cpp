@@ -139,33 +139,21 @@ void* Sen5x::getDriver() {
 }
 
 uint16_t Sen5x::_determineSensorVersion() {
-    uint16_t error = 0;
-    // Test measurement
-    // Read Measurement
-    float massConcentrationPm1p0;
-    float massConcentrationPm2p5;
-    float massConcentrationPm4p0;
-    float massConcentrationPm10p0;
-    float ambientHumidity;
-    float ambientTemperature;
-    float vocIndex;
-    float noxIndex;
+    uint8_t sensorNameSize = 32;
+    unsigned char sensorNameStr[sensorNameSize];
+    uint16_t error = _driver.getProductName(sensorNameStr, sensorNameSize);
 
-    error = _driver.readMeasuredValues(
-        massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
-        massConcentrationPm10p0, ambientHumidity, ambientTemperature, vocIndex,
-        noxIndex);
-
-    if (isnan(ambientHumidity)) {
+    if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50") == 0) {
         _version = SensorVersion::SEN50;
-    } else if (isnan(noxIndex)) {
+    } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54") ==
+               0) {
         _version = SensorVersion::SEN54;
+    } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN55") ==
+               0) {
+        _version = SensorVersion::SEN55;
     } else {
-        _version = SensorVersion::SEN55;  // Never triggers, noxIndex needs
-                                          // about 10s to become non-NaN (no
-                                          // mention found in sensor doc)
+        _version = SensorVersion::UNDEFINED;
     }
-
     return error;
 }
 

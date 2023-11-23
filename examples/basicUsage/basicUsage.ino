@@ -71,7 +71,7 @@ void printData(const Data** data, size_t maxNumDataPacks) {
 }
 
 bool isEmpty(const Data** data, size_t numDataPacks) {
-    for (size_t p = 0; p < numDataPacks; p++){
+    for (size_t p = 0; p < numDataPacks; p++) {
         const Data* dataPack = data[p];
 
         if (dataPack && data[p]->getLength() > 0) {

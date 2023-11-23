@@ -40,8 +40,6 @@ void SensorManager::updateSensorList() {
 }
 
 AutoDetectorError SensorManager::updateStateMachines() {
-    uint16_t numberOfSensorsLostBeforeUpdate =
-        _sensorList.getNumberOfSensorsLost();
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
