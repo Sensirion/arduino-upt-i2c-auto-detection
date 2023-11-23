@@ -38,8 +38,6 @@ uint16_t Sfa3x::start() {
 
 uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
-
-    Serial.println("SFA reading values");
     int16_t hcho;
     int16_t humi;
     int16_t temp;
@@ -61,9 +59,6 @@ uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
 }
 
 uint16_t Sfa3x::initializationStep() {
-    Serial.printf("SFA detected, maps to %i\n",
-                  static_cast<int>(SensorID::SFA3X));
-    // Stop potentially previously started measurement
     uint16_t error = _driver.stopMeasurement();
     if (error) {
         return error;

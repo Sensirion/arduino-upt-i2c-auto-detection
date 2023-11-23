@@ -117,7 +117,6 @@ void SensorList::removeLostSensors() {
             _sensors[i]->getSensorState() == SensorStatus::LOST) {
             delete _sensors[i];
             _sensors[i] = nullptr;
-            Serial.println("Something was deleted");
         }
     }
 }
