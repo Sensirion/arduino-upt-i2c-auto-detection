@@ -24,7 +24,6 @@ class SensorStateMachine {
     SensorStatus _sensorState;
     uint16_t _lastMeasurementError;
     uint16_t _measurementErrorCounter;
-    uint16_t _initStepsCounter;
     uint32_t _lastMeasurementTimeStampMs;
     uint32_t _measurementIntervalMs;
 
@@ -58,9 +57,8 @@ class SensorStateMachine {
   public:
     SensorStateMachine()
         : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),
-          _measurementErrorCounter(0), _initStepsCounter(0),
-          _lastMeasurementTimeStampMs(0), _measurementIntervalMs(0),
-          _sensor(nullptr){};
+          _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
+          _measurementIntervalMs(0), _sensor(nullptr){};
 
     /**
      * @brief constructor with ISensor pointer, used by autodetector

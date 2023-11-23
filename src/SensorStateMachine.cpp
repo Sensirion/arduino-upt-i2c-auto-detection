@@ -12,8 +12,8 @@ bool timeIntervalPassed(const uint32_t interval,
 
 SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     : _lastMeasurementError(0), _measurementErrorCounter(0),
-      _initStepsCounter(0), _lastMeasurementTimeStampMs(0),
-      _measurementIntervalMs(0), _sensor(pSensor) {
+      _lastMeasurementTimeStampMs(0), _measurementIntervalMs(0),
+      _sensor(pSensor) {
     if (_sensor->requiresInitializationStep()) {
         _sensorState = SensorStatus::UNINITIALIZED;
     } else {
@@ -72,12 +72,9 @@ void SensorStateMachine::readSignals() {
             _sensor->getNumberOfAllowedConsecutiveErrors()) {
             _sensorState = SensorStatus::LOST;
 
-
             Serial.print("Sensor ");
             Serial.print(sensorName(_sensor->getSensorId()).c_str());
             Serial.println(" was lost.");
-
-
         }
         return;
     }
