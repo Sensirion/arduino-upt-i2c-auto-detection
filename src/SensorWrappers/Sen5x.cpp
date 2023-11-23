@@ -75,31 +75,32 @@ uint16_t Sen5x::measureAndWrite(DataPoint dataPoints[],
     // Versions 50, 54 and 55
     dataPoints[0] = DataPoint(SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
                               static_cast<float>(massConcentrationPm1p0),
-                              timeStamp, sensorName(_id));
+                              timeStamp, sensorVersionName(_version));
     dataPoints[1] = DataPoint(SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
                               static_cast<float>(massConcentrationPm2p5),
-                              timeStamp, sensorName(_id));
+                              timeStamp, sensorVersionName(_version));
     dataPoints[2] = DataPoint(SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
                               static_cast<float>(massConcentrationPm4p0),
-                              timeStamp, sensorName(_id));
+                              timeStamp, sensorVersionName(_version));
     dataPoints[3] = DataPoint(SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
                               static_cast<float>(massConcentrationPm10p0),
-                              timeStamp, sensorName(_id));
+                              timeStamp, sensorVersionName(_version));
 
     // Verions 54, 55
     if (_version == SensorVersion::SEN54 or _version == SensorVersion::SEN55) {
-        dataPoints[4] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                                  ambientHumidity, timeStamp, sensorName(_id));
-        dataPoints[5] =
-            DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                      ambientTemperature, timeStamp, sensorName(_id));
+        dataPoints[4] =
+            DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, ambientHumidity,
+                      timeStamp, sensorVersionName(_version));
+        dataPoints[5] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                                  ambientTemperature, timeStamp,
+                                  sensorVersionName(_version));
         dataPoints[6] = DataPoint(SignalType::VOC_INDEX, vocIndex, timeStamp,
-                                  sensorName(_id));
+                                  sensorVersionName(_version));
     }
     // Version 55
     if (_version == SensorVersion::SEN55) {
         dataPoints[7] = DataPoint(SignalType::NOX_INDEX, noxIndex, timeStamp,
-                                  sensorName(_id));
+                                  sensorVersionName(_version));
     }
     return HighLevelError::NoError;
 }
@@ -146,16 +147,27 @@ uint16_t Sen5x::_determineSensorVersion() {
         massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
         massConcentrationPm10p0, ambientHumidity, ambientTemperature, vocIndex,
         noxIndex);
-    if (isnan(massConcentrationPm2p5)) {  // Sanity check
-        return HighLevelError::SensorSpecificError;
-    }
-    if (!isnan(noxIndex)) {  // Only SEN55 has NOX data
-        _version = SensorVersion::SEN55;
-    } else if (!isnan(vocIndex)) {
-        _version = SensorVersion::SEN54;  // Only SEN54 has VOC but no NOX
+
+    if (isnan(ambientHumidity)) {
+        _version = SensorVersion::SEN50;
+    } else if (isnan(noxIndex)) {
+        _version = SensorVersion::SEN54;
     } else {
-        _version =
-            SensorVersion::SEN50;  // SEN50 has pm values but no VOC nor NOX
+        _version = SensorVersion::SEN55; // Never triggers, noxIndex needs about 10s to become non-NaN (no mention found in sensor doc)
     }
+
     return error;
+}
+
+std::string Sen5x::sensorVersionName(SensorVersion sv) const {
+    switch (sv) {
+        case SensorVersion::SEN50:
+            return "SEN50";
+        case SensorVersion::SEN54:
+            return "SEN54";
+        case SensorVersion::SEN55:
+            return "SEN55";
+        default:
+            return "UNDEFINED";
+    }
 }

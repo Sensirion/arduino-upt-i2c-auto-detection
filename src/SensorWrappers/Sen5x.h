@@ -61,6 +61,7 @@ class Sen5x : public ISensor {
     const SensorID _id = SensorID::SEN5X;
     SensorVersion _version = SensorVersion::UNDEFINED;  // determined in start()
     uint16_t _determineSensorVersion();
+    std::string sensorVersionName(SensorVersion) const;
 };
 
 #endif /* _SEN5X_H_*/
