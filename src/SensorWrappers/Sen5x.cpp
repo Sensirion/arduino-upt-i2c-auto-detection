@@ -33,21 +33,7 @@
 
 uint16_t Sen5x::start() {
     _driver.begin(_wire);
-    // stop potentially previously started measurement
-    uint16_t error = _driver.deviceReset();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    error = _driver.startMeasurement();
-    if (error) {
-        return error;
-    }
-    delay(1000);  // Need to wait for first measurement to finish (~1s) in order
-                  // to be able to determine the sensor version.
-    // determine SEN5X version
-    error = _determineSensorVersion();
-    return error;
+    return 0;
 }
 
 uint16_t Sen5x::measureAndWrite(DataPoint dataPoints[],
@@ -105,6 +91,24 @@ uint16_t Sen5x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
+uint16_t Sen5x::initializationStep() {
+    // stop potentially previously started measurement
+    uint16_t error = _driver.deviceReset();
+    if (error) {
+        return error;
+    }
+    // Start Measurement
+    error = _driver.startMeasurement();
+    if (error) {
+        return error;
+    }
+    delay(1000);  // Need to wait for first measurement to finish (~1s) in order
+                  // to be able to determine the sensor version.
+    // determine SEN5X version
+    error = _determineSensorVersion();
+    return error;
+}
+
 SensorID Sen5x::getSensorId() const {
     return _id;
 }
@@ -124,6 +128,10 @@ size_t Sen5x::getNumberOfDataPoints() const {
 
 unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
     return 1000;
+}
+
+bool Sen5x::requiresInitializationStep() const {
+    return true;
 }
 
 void* Sen5x::getDriver() {
@@ -153,7 +161,9 @@ uint16_t Sen5x::_determineSensorVersion() {
     } else if (isnan(noxIndex)) {
         _version = SensorVersion::SEN54;
     } else {
-        _version = SensorVersion::SEN55; // Never triggers, noxIndex needs about 10s to become non-NaN (no mention found in sensor doc)
+        _version = SensorVersion::SEN55;  // Never triggers, noxIndex needs
+                                          // about 10s to become non-NaN (no
+                                          // mention found in sensor doc)
     }
 
     return error;

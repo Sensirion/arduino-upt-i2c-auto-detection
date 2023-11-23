@@ -33,11 +33,13 @@
 
 uint16_t Sfa3x::start() {
     _driver.begin(_wire);
-    return _driver.startContinuousMeasurement();
+    return 0;
 }
 
 uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
+
+    Serial.println("SFA reading values");
     int16_t hcho;
     int16_t humi;
     int16_t temp;
@@ -58,6 +60,18 @@ uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
+uint16_t Sfa3x::initializationStep() {
+    Serial.printf("SFA detected, maps to %i\n",
+                  static_cast<int>(SensorID::SFA3X));
+    // Stop potentially previously started measurement
+    uint16_t error = _driver.stopMeasurement();
+    if (error) {
+        return error;
+    }
+    error = _driver.startContinuousMeasurement();
+    return error;
+}
+
 SensorID Sfa3x::getSensorId() const {
     return _id;
 }
@@ -68,6 +82,10 @@ size_t Sfa3x::getNumberOfDataPoints() const {
 
 unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
     return 5000;
+}
+
+bool Sfa3x::requiresInitializationStep() const {
+    return true;
 }
 
 void* Sfa3x::getDriver() {

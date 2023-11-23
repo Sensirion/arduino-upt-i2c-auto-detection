@@ -34,14 +34,7 @@
 
 uint16_t Scd4x::start() {
     _driver.begin(_wire);
-    // stop potentially previously started measurement
-    uint16_t error = _driver.stopPeriodicMeasurement();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    error = _driver.startPeriodicMeasurement();
-    return error;
+    return 0;
 }
 
 uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
@@ -61,6 +54,17 @@ uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
     dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE, humi,
                               timeStamp, sensorName(_id));
     return HighLevelError::NoError;
+}
+
+uint16_t Scd4x::initializationStep() {
+    // stop potentially previously started measurement
+    uint16_t error = _driver.stopPeriodicMeasurement();
+    if (error) {
+        return error;
+    }
+    // Start Measurement
+    error = _driver.startPeriodicMeasurement();
+    return error;
 }
 
 SensorID Scd4x::getSensorId() const {

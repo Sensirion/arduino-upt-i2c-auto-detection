@@ -43,6 +43,7 @@ class Scd4x : public ISensor {
     uint16_t start() override;
     uint16_t measureAndWrite(DataPoint dataPoints[],
                              const unsigned long timeStamp) override;
+    uint16_t initializationStep() override;
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;

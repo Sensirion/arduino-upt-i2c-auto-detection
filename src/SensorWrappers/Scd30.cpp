@@ -34,15 +34,7 @@
 
 uint16_t Scd30::start() {
     _driver.begin(_wire, I2C_ADDRESS);
-    // stop potentially previously started measurement
-    _driver.stopPeriodicMeasurement();
-    uint16_t error = _driver.softReset();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    error = _driver.startPeriodicMeasurement(0);
-    return error;
+    return 0;
 }
 
 uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
@@ -64,6 +56,18 @@ uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
+uint16_t Scd30::initializationStep() {
+    // stop potentially previously started measurement
+    _driver.stopPeriodicMeasurement();
+    uint16_t error = _driver.softReset();  // Caution: costly time operation
+    if (error) {
+        return error;
+    }
+    // Start Measurement
+    error = _driver.startPeriodicMeasurement(0);
+    return error;
+}
+
 SensorID Scd30::getSensorId() const {
     return _id;
 }
@@ -74,6 +78,10 @@ size_t Scd30::getNumberOfDataPoints() const {
 
 unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
     return 1500;
+}
+
+bool Scd30::requiresInitializationStep() const {
+    return true;
 }
 
 void* Scd30::getDriver() {
