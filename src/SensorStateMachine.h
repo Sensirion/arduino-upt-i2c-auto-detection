@@ -32,10 +32,11 @@ class SensorStateMachine {
 
     /**
      * @brief initialize the state machine
-     * 
-     * @note Needs to be outside of constructor because state machines may decay to UNINITIALIZED
-    */
-    void initialize();
+     *
+     * @note Needs to be outside of constructor because state machines may decay
+     * to UNINITIALIZED
+     */
+    void _initialize();
 
     /**
      * @brief Update state machine for sensors whose state is UNINITIALIZED or
@@ -44,7 +45,7 @@ class SensorStateMachine {
      * @note Toggles _sensorStatus to RUNNING incase all initialisation Steps
      * are completed
      */
-    void initializationRoutine();
+    void _initializationRoutine();
 
     /**
      * @brief Update state machine for sensors whose state is RUNNING
@@ -54,12 +55,12 @@ class SensorStateMachine {
      * perform a measurement if the measurement interval is too short, or too
      * long.
      */
-    void readSignalsRoutine();
+    void _readSignalsRoutine();
 
     /**
      * @brief Query sensor for new signals
      */
-    void readSignals();
+    void _readSignals();
 
   public:
     SensorStateMachine()

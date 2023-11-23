@@ -17,21 +17,7 @@ SensorStateMachine::SensorStateMachine(ISensor* pSensor)
     _sensor->start();
 };
 
-SensorStatus SensorStateMachine::getSensorState() const {
-    return _sensorState;
-}
-
-void SensorStateMachine::setSensorState(SensorStatus s) {
-    _sensorState = s;
-}
-
-void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
-    if (interval > _sensor->getMinimumMeasurementIntervalMs()) {
-        _measurementIntervalMs = interval;
-    }
-}
-
-void SensorStateMachine::initialize() {
+void SensorStateMachine::_initialize() {
     if (_sensor->requiresInitializationStep()) {
         _sensor->initializationStep();
         _lastMeasurementTimeStampMs = millis();
@@ -53,7 +39,7 @@ void SensorStateMachine::initialize() {
     }
 }
 
-void SensorStateMachine::initializationRoutine() {
+void SensorStateMachine::_initializationRoutine() {
     if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
                            _lastMeasurementTimeStampMs)) {
         _sensorState = SensorStatus::RUNNING;
@@ -61,7 +47,49 @@ void SensorStateMachine::initializationRoutine() {
     }
 }
 
-void SensorStateMachine::readSignals() {
+void SensorStateMachine::_readSignalsRoutine() {
+    unsigned long timeSinceLastMeasurementMs =
+        millis() - _lastMeasurementTimeStampMs;
+
+    /* Determine timing relationship vs. last measurement */
+    enum class timeLineRegion {
+        INSIDE_MIN_INTERVAL,  // Less time than measuring interval has elapsed
+                              // since last measurement
+        INSIDE_VALID_BAND,    // May request a reading
+        OUTSIDE_VALID_INITIALIZATION  // Sensor running status has decayed,
+                                      // conditionning must be performed
+    };
+    timeLineRegion tlr_position = timeLineRegion::INSIDE_MIN_INTERVAL;
+
+    if (timeSinceLastMeasurementMs >= _measurementIntervalMs) {
+        tlr_position = timeLineRegion::INSIDE_VALID_BAND;
+    }
+
+    if (_sensor->readyStateDecayTimeMs() > 0 &&
+        timeSinceLastMeasurementMs > _sensor->readyStateDecayTimeMs()) {
+        tlr_position = timeLineRegion::OUTSIDE_VALID_INITIALIZATION;
+    }
+
+    /* Perform appropriate action */
+    switch (tlr_position) {
+        case timeLineRegion::INSIDE_MIN_INTERVAL:
+            break;
+
+        case timeLineRegion::INSIDE_VALID_BAND:
+            _readSignals();
+            break;
+
+        case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
+            _sensorState = SensorStatus::UNINITIALIZED;
+            // throw error
+            break;
+
+        default:
+            break;
+    }
+}
+
+void SensorStateMachine::_readSignals() {
     DataPoint sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
     uint32_t currentTimeStampMs = millis();
 
@@ -91,45 +119,17 @@ void SensorStateMachine::readSignals() {
     _sensorSignals.resetWriteHead();
 }
 
-void SensorStateMachine::readSignalsRoutine() {
-    unsigned long timeSinceLastMeasurementMs =
-        millis() - _lastMeasurementTimeStampMs;
+SensorStatus SensorStateMachine::getSensorState() const {
+    return _sensorState;
+}
 
-    /* Determine timing relationship vs. last measurement */
-    enum class timeLineRegion {
-        INSIDE_MIN_INTERVAL,  // Less time than measuring interval has elapsed
-                              // since last measurement
-        INSIDE_VALID_BAND,    // May request a reading
-        OUTSIDE_VALID_INITIALIZATION  // Sensor running status has decayed,
-                                      // conditionning must be performed
-    };
-    timeLineRegion tlr_position = timeLineRegion::INSIDE_MIN_INTERVAL;
+void SensorStateMachine::setSensorState(SensorStatus s) {
+    _sensorState = s;
+}
 
-    if (timeSinceLastMeasurementMs >= _measurementIntervalMs) {
-        tlr_position = timeLineRegion::INSIDE_VALID_BAND;
-    }
-
-    if (_sensor->readyStateDecayTimeMs() > 0 &&
-        timeSinceLastMeasurementMs > _sensor->readyStateDecayTimeMs()) {
-        tlr_position = timeLineRegion::OUTSIDE_VALID_INITIALIZATION;
-    }
-
-    /* Perform appropriate action */
-    switch (tlr_position) {
-        case timeLineRegion::INSIDE_MIN_INTERVAL:
-            break;
-
-        case timeLineRegion::INSIDE_VALID_BAND:
-            readSignals();
-            break;
-
-        case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
-            _sensorState = SensorStatus::UNINITIALIZED;
-            // throw error
-            break;
-
-        default:
-            break;
+void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
+    if (interval > _sensor->getMinimumMeasurementIntervalMs()) {
+        _measurementIntervalMs = interval;
     }
 }
 
@@ -139,15 +139,15 @@ void SensorStateMachine::update() {
             break;
 
         case SensorStatus::UNINITIALIZED:
-            initialize();
+            _initialize();
             break;
 
         case SensorStatus::INITIALIZING:
-            initializationRoutine();
+            _initializationRoutine();
             break;
 
         case SensorStatus::RUNNING:
-            readSignalsRoutine();
+            _readSignalsRoutine();
             break;
 
         case SensorStatus::LOST:
