@@ -60,7 +60,7 @@ uint16_t Svm4x::measureAndWrite(DataPoint dataPoints[],
 }
 
 uint16_t Svm4x::initializationStep() {
-    uint16_t error = _driver.deviceReset();
+    uint16_t error = _driver.stopMeasurement();
     if (error) {
         return error;
     }
