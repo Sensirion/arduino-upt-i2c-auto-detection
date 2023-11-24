@@ -93,7 +93,7 @@ uint16_t Sen5x::measureAndWrite(DataPoint dataPoints[],
 
 uint16_t Sen5x::initializationStep() {
     // stop potentially previously started measurement
-    uint16_t error = _driver.deviceReset();
+    uint16_t error = _driver.stopMeasurement();
     if (error) {
         return error;
     }
@@ -102,9 +102,6 @@ uint16_t Sen5x::initializationStep() {
     if (error) {
         return error;
     }
-    delay(1000);  // Need to wait for first measurement to finish (~1s) in order
-                  // to be able to determine the sensor version.
-    // determine SEN5X version
     error = _determineSensorVersion();
     return error;
 }
