@@ -39,11 +39,21 @@ uint16_t Scd30::start() {
 
 uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
+    // Check data ready
+    uint16_t dataReadyFlag = 0;
+    uint16_t error = _driver.getDataReady(dataReadyFlag);
+    if (error) {
+        return error;
+    }
+    if (!dataReadyFlag) {
+        return 1;
+    }
+
     float co2Concentration;
     float temperature;
     float humidity;
-    uint16_t error = _driver.blockingReadMeasurementData(co2Concentration,
-                                                         temperature, humidity);
+    error =
+        _driver.readMeasurementData(co2Concentration, temperature, humidity);
     if (error) {
         return error;
     }
@@ -53,6 +63,12 @@ uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
                               temperature, timeStamp, sensorName(_id));
     dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
                               humidity, timeStamp, sensorName(_id));
+
+    // Prepare next reading
+    error = _driver.getDataReady(dataReadyFlag);
+    if (error) {
+        return error;
+    }
     return HighLevelError::NoError;
 }
 
@@ -61,6 +77,12 @@ uint16_t Scd30::initializationStep() {
     _driver.stopPeriodicMeasurement();
     // Start Measurement
     uint16_t error = _driver.startPeriodicMeasurement(0);
+    if (error) {
+        return error;
+    }
+    // Prepare first reading (which apparently is done through this command?)
+    uint16_t dataReadyFlag = 0;
+    error = _driver.getDataReady(dataReadyFlag);
     return error;
 }
 
@@ -73,7 +95,7 @@ size_t Scd30::getNumberOfDataPoints() const {
 }
 
 unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
-    return 1500;
+    return 2000;
 }
 
 bool Scd30::requiresInitializationStep() const {
