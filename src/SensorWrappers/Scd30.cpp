@@ -59,12 +59,8 @@ uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
 uint16_t Scd30::initializationStep() {
     // stop potentially previously started measurement
     _driver.stopPeriodicMeasurement();
-    uint16_t error = _driver.softReset();  // Caution: costly time operation
-    if (error) {
-        return error;
-    }
     // Start Measurement
-    error = _driver.startPeriodicMeasurement(0);
+    uint16_t error = _driver.startPeriodicMeasurement(0);
     return error;
 }
 
