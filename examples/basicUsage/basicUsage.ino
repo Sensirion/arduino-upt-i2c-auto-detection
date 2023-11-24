@@ -16,10 +16,16 @@ SensorManager sensorManager(i2CAutoDetector);
 bool isEmpty(const Data**, size_t);
 void printData(const Data**, size_t);
 
+uint maxNumSensors;
+const Data** pCurrentData;
+
 void setup() {
     Serial.begin(115200);
     Wire.begin();
     sensorManager.begin();
+
+    maxNumSensors = sensorManager.getMaxNumberOfSensors();
+    pCurrentData = new const Data*[maxNumSensors];
 }
 
 void loop() {
@@ -29,14 +35,13 @@ void loop() {
     /*
     Data retrieval:
 
-    The library provides a hashmap of Data objects for each of the connected
-    sensors. The Data contains a collection of DataPoints corresponding to the
-    latest available readings from the sensor.
+    The library provides a hashmap of pointers to Data objects for each of the
+    connected sensors. The referenced Data contains a collection of DataPoints
+    corresponding to the latest available readings from the sensor.
     */
-    const Data* currentData[sensorManager.getMaxNumberOfSensors()];
-    sensorManager.getData(currentData);
+    sensorManager.getData(pCurrentData);
     // Print contents
-    printData(currentData, sensorManager.getMaxNumberOfSensors());
+    printData(pCurrentData, maxNumSensors);
 }
 
 void printData(const Data** data, size_t maxNumDataPacks) {

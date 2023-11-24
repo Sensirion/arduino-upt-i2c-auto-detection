@@ -35,6 +35,9 @@ SensorManager sensorManager(i2CAutoDetector);
 
 SensirionI2CScd4x* pScd4xDriver = nullptr;
 void printData(const Data**, size_t);
+
+uint maxNumSensors;
+const Data** pCurrentData;
 float t_incr = 0;
 
 void setup() {
@@ -49,28 +52,35 @@ void setup() {
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
     sensorManager.setInterval(7500, SensorID::SCD4X);
+
+    maxNumSensors = sensorManager.getMaxNumberOfSensors();
+    pCurrentData = new const Data*[maxNumSensors];
 }
 
 void loop() {
     delay(5000);
 
-    // Perform some action with the driver
+    if (pScd4xDriver) {
+        // Perform some action with the driver
 
-    //      CAUTION: WILL MODIFY SENSOR BEHAVIOUR AT HARDWARE LEVEL
+        //      CAUTION: WILL MODIFY SENSOR BEHAVIOUR AT HARDWARE LEVEL
 
-    pScd4xDriver->setAmbientPressure(
-        1000 + 500 * std::sin(t_incr * 2.0 * 3.1415 / 10.0 + 0.5 * 3.1415));
-    // (to reset to 1 atm run the following line:
-    // pScd4xDriver->setAmbientPressure(1013.25);
+        pScd4xDriver->setAmbientPressure(
+            1000 + 500 * std::sin(t_incr * 2.0 * 3.1415 / 10.0 + 0.5 * 3.1415));
+        // (to reset to 1 atm run the following line:
+        // pScd4xDriver->setAmbientPressure(1013.25);
 
-    t_incr++;
+        t_incr++;
 
-    // Data should update every second loop, because of the custom update
-    // interval
-    sensorManager.updateStateMachines();
-    const Data* currentData[sensorManager.getMaxNumberOfSensors()];
-    sensorManager.getData(currentData);
-    printData(currentData, sensorManager.getMaxNumberOfSensors());
+        // Data should update every second loop, because of the custom update
+        // interval
+        sensorManager.updateStateMachines();
+        sensorManager.getData(pCurrentData);
+        printData(pCurrentData, maxNumSensors);
+    } else {
+        Serial.println(
+            "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
+    }
 }
 
 void printData(const Data** data, size_t numDataPacks) {
