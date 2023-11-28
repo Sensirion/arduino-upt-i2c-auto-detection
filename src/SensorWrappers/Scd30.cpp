@@ -64,7 +64,12 @@ uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
     dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
                               humidity, timeStamp, sensorName(_id));
 
-    // Prepare next reading
+    /* Prepare next reading by querying the dataReadyFlag. We don't need the
+     * value of the flag, but the query seems to finalize setting off the
+     * measurement process, and enables much faster signal readout at the next
+     * call of this function as it then is not required to enter a wait loop
+     * (see SensirionI2cScd30::blockingReadMeasurementData()). This procedure is
+     * only required for SCD30. */
     error = _driver.getDataReady(dataReadyFlag);
     if (error) {
         return error;
@@ -80,8 +85,8 @@ uint16_t Scd30::initializationStep() {
     if (error) {
         return error;
     }
-    // Prepare first reading (which apparently is done through this command?)
-    uint16_t dataReadyFlag = 0;
+    /* See explanatory comment for measureAndWrite() */
+    uint16_t dataReadyFlag;
     error = _driver.getDataReady(dataReadyFlag);
     return error;
 }
