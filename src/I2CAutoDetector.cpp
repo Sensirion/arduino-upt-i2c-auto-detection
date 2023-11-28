@@ -33,11 +33,11 @@
 #include "DriverConfig.h"
 #include "SensirionCore.h"
 
+#ifdef INCLUDE_SCD30_DRIVER
+#include "SensorWrappers/Scd30.h"
+#endif
 #ifdef INCLUDE_SCD4X_DRIVER
 #include "SensorWrappers/Scd4x.h"
-#endif
-#ifdef INCLUDE_SEN44_DRIVER
-#include "SensorWrappers/Sen44.h"
 #endif
 #ifdef INCLUDE_SEN5X_DRIVER
 #include "SensorWrappers/Sen5x.h"
@@ -45,20 +45,17 @@
 #ifdef INCLUDE_SFA3X_DRIVER
 #include "SensorWrappers/Sfa3x.h"
 #endif
-#ifdef INCLUDE_SVM4X_DRIVER
-#include "SensorWrappers/Svm4x.h"
+#ifdef INCLUDE_SGP41_DRIVER
+#include "SensorWrappers/Sgp41.h"
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
 #include "SensorWrappers/Sht4x.h"
 #endif
-#ifdef INCLUDE_SCD30_DRIVER
-#include "SensorWrappers/Scd30.h"
-#endif
 #ifdef INCLUDE_STC3X_DRIVER
 #include "SensorWrappers/Stc3x.h"
 #endif
-#ifdef INCLUDE_SGP41_DRIVER
-#include "SensorWrappers/Sgp41.h"
+#ifdef INCLUDE_SVM4X_DRIVER
+#include "SensorWrappers/Svm4x.h"
 #endif
 
 byte I2CAutoDetector::probeAddress(const byte& address) {
@@ -69,14 +66,14 @@ byte I2CAutoDetector::probeAddress(const byte& address) {
 
 ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
     switch (address) {
+#ifdef INCLUDE_SCD30_DRIVER
+        case (Scd30::I2C_ADDRESS): {
+            return new Scd30(_wire);
+        }
+#endif
 #ifdef INCLUDE_SCD4X_DRIVER
         case (Scd4x::I2C_ADDRESS): {
             return new Scd4x(_wire);
-        }
-#endif
-#ifdef INCLUDE_SEN44_DRIVER
-        case (Sen44::I2C_ADDRESS): {
-            return new Sen44(_wire);
         }
 #endif
 #ifdef INCLUDE_SEN5X_DRIVER
@@ -89,9 +86,9 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sfa3x(_wire);
         }
 #endif
-#ifdef INCLUDE_SVM4X_DRIVER
-        case (Svm4x::I2C_ADDRESS): {
-            return new Svm4x(_wire);
+#ifdef INCLUDE_SGP41_DRIVER
+        case (Sgp41::I2C_ADDRESS): {
+            return new Sgp41(_wire);
         }
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
@@ -99,20 +96,14 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sht4x(_wire);
         }
 #endif
-#ifdef INCLUDE_SCD30_DRIVER
-        case (Scd30::I2C_ADDRESS): {
-            return new Scd30(_wire);
-        }
-#endif
 #ifdef INCLUDE_STC3X_DRIVER
         case (Stc3x::I2C_ADDRESS): {
             return new Stc3x(_wire);
         }
-        // #error STC3X included!
 #endif
-#ifdef INCLUDE_SGP41_DRIVER
-        case (Sgp41::I2C_ADDRESS): {
-            return new Sgp41(_wire);
+#ifdef INCLUDE_SVM4X_DRIVER
+        case (Svm4x::I2C_ADDRESS): {
+            return new Svm4x(_wire);
         }
 #endif
         default: {
@@ -129,15 +120,6 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         }
         ISensor* pSensor = createSensorFromAddress(address);
         if (!pSensor) {
-            continue;
-        }
-        uint16_t startFailed = pSensor->start();
-        if (startFailed) {
-            char errorMessage[256];
-            Serial.print("Error trying to start() sensor instance: ");
-            errorToString(startFailed, errorMessage, 256);
-            Serial.println(errorMessage);
-            delete pSensor;
             continue;
         }
         AutoDetectorError addFailed = sensorList.addSensor(pSensor);

@@ -34,14 +34,7 @@
 
 uint16_t Scd4x::start() {
     _driver.begin(_wire);
-    // stop potentially previously started measurement
-    uint16_t error = _driver.stopPeriodicMeasurement();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    error = _driver.startPeriodicMeasurement();
-    return error;
+    return 0;
 }
 
 uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
@@ -63,6 +56,17 @@ uint16_t Scd4x::measureAndWrite(DataPoint dataPoints[],
     return HighLevelError::NoError;
 }
 
+uint16_t Scd4x::initializationStep() {
+    // stop potentially previously started measurement
+    uint16_t error = _driver.stopPeriodicMeasurement();
+    if (error) {
+        return error;
+    }
+    // Start Measurement
+    error = _driver.startPeriodicMeasurement();
+    return error;
+}
+
 SensorID Scd4x::getSensorId() const {
     return _id;
 }
@@ -73,6 +77,10 @@ size_t Scd4x::getNumberOfDataPoints() const {
 
 unsigned long Scd4x::getMinimumMeasurementIntervalMs() const {
     return 5000;
+}
+
+bool Scd4x::requiresInitializationStep() const {
+    return true;
 }
 
 void* Scd4x::getDriver() {

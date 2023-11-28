@@ -50,9 +50,11 @@ class Sen5x : public ISensor {
     uint16_t start() override;
     uint16_t measureAndWrite(DataPoint dataPoints[],
                              const unsigned long timeStamp) override;
+    uint16_t initializationStep() override;
     SensorID getSensorId() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
+    bool requiresInitializationStep() const override;
     void* getDriver() override;
 
   private:
@@ -61,6 +63,7 @@ class Sen5x : public ISensor {
     const SensorID _id = SensorID::SEN5X;
     SensorVersion _version = SensorVersion::UNDEFINED;  // determined in start()
     uint16_t _determineSensorVersion();
+    std::string sensorVersionName(SensorVersion) const;
 };
 
 #endif /* _SEN5X_H_*/

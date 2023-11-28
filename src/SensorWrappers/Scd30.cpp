@@ -34,24 +34,26 @@
 
 uint16_t Scd30::start() {
     _driver.begin(_wire, I2C_ADDRESS);
-    // stop potentially previously started measurement
-    _driver.stopPeriodicMeasurement();
-    uint16_t error = _driver.softReset();
-    if (error) {
-        return error;
-    }
-    // Start Measurement
-    error = _driver.startPeriodicMeasurement(0);
-    return error;
+    return 0;
 }
 
 uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
                                 const unsigned long timeStamp) {
+    // Check data ready
+    uint16_t dataReadyFlag = 0;
+    uint16_t error = _driver.getDataReady(dataReadyFlag);
+    if (error) {
+        return error;
+    }
+    if (!dataReadyFlag) {
+        return 1;
+    }
+
     float co2Concentration;
     float temperature;
     float humidity;
-    uint16_t error = _driver.blockingReadMeasurementData(co2Concentration,
-                                                         temperature, humidity);
+    error =
+        _driver.readMeasurementData(co2Concentration, temperature, humidity);
     if (error) {
         return error;
     }
@@ -61,7 +63,32 @@ uint16_t Scd30::measureAndWrite(DataPoint dataPoints[],
                               temperature, timeStamp, sensorName(_id));
     dataPoints[2] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
                               humidity, timeStamp, sensorName(_id));
+
+    /* Prepare next reading by querying the dataReadyFlag. We don't need the
+     * value of the flag, but the query seems to finalize setting off the
+     * measurement process, and enables much faster signal readout at the next
+     * call of this function as it then is not required to enter a wait loop
+     * (see SensirionI2cScd30::blockingReadMeasurementData()). This procedure is
+     * only required for SCD30. */
+    error = _driver.getDataReady(dataReadyFlag);
+    if (error) {
+        return error;
+    }
     return HighLevelError::NoError;
+}
+
+uint16_t Scd30::initializationStep() {
+    // stop potentially previously started measurement
+    _driver.stopPeriodicMeasurement();
+    // Start Measurement
+    uint16_t error = _driver.startPeriodicMeasurement(0);
+    if (error) {
+        return error;
+    }
+    /* See explanatory comment for measureAndWrite() */
+    uint16_t dataReadyFlag;
+    error = _driver.getDataReady(dataReadyFlag);
+    return error;
 }
 
 SensorID Scd30::getSensorId() const {
@@ -73,7 +100,11 @@ size_t Scd30::getNumberOfDataPoints() const {
 }
 
 unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
-    return 1500;
+    return 2000;
+}
+
+bool Scd30::requiresInitializationStep() const {
+    return true;
 }
 
 void* Scd30::getDriver() {

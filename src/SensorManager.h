@@ -68,11 +68,12 @@ class SensorManager {
     void begin();
 
     /**
-     * @brief Calls measure methods on all available sensors, while respecting
-     * state and interval conditions
-     *
-     * Iterates through list of sensors identified during the scan of the I2C
-     * bus and polls them for signals
+     * @brief Remove lost sensors and check bus for connected sensors
+     */
+    void updateSensorList();
+
+    /**
+     * @brief Update all state machines and retrieve modifications to _data
      *
      * @return AutoDetectorError, LOST_SENSOR_ERROR incase one or more sensors
      * were lost during polling

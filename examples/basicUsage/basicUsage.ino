@@ -13,31 +13,43 @@
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
+bool isEmpty(const Data**, size_t);
 void printData(const Data**, size_t);
+
+uint maxNumSensors;
+const Data** pCurrentData;
 
 void setup() {
     Serial.begin(115200);
     Wire.begin();
     sensorManager.begin();
+
+    maxNumSensors = sensorManager.getMaxNumberOfSensors();
+    pCurrentData = new const Data*[maxNumSensors];
 }
 
 void loop() {
     delay(500);
+    sensorManager.updateSensorList();
     sensorManager.updateStateMachines();
     /*
     Data retrieval:
 
-    The library provides a hashmap of Data objects for each of the connected
-    sensors. The Data contains a collection of DataPoints corresponding to the
-    latest available readings from the sensor.
+    The library provides a hashmap of pointers to Data objects for each of the
+    connected sensors. The referenced Data contains a collection of DataPoints
+    corresponding to the latest available readings from the sensor.
     */
-    const Data* currentData[sensorManager.getMaxNumberOfSensors()];
-    sensorManager.getData(currentData);
+    sensorManager.getData(pCurrentData);
     // Print contents
-    printData(currentData, sensorManager.getMaxNumberOfSensors());
+    printData(pCurrentData, maxNumSensors);
 }
 
 void printData(const Data** data, size_t maxNumDataPacks) {
+    if (isEmpty(data, maxNumDataPacks)) {
+        Serial.println("No sensors seem to be connected.");
+        return;
+    }
+
     for (size_t p = 0; p < maxNumDataPacks; p++) {
         const Data* dataPack = data[p];
         if (!dataPack) {
@@ -61,4 +73,15 @@ void printData(const Data** data, size_t maxNumDataPacks) {
     }
 
     Serial.println();
+}
+
+bool isEmpty(const Data** data, size_t numDataPacks) {
+    for (size_t p = 0; p < numDataPacks; p++) {
+        const Data* dataPack = data[p];
+
+        if (dataPack && data[p]->getLength() > 0) {
+            return false;
+        }
+    }
+    return true;
 }

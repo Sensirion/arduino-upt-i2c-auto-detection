@@ -42,6 +42,10 @@ SensorList::~SensorList() {
 }
 
 AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
+    if (containsSensor(pSensor->getSensorId())) {
+        return NO_ERROR;
+    }
+
     for (int i = 0; i < _numSensors; ++i) {
         if (_sensors[i] == nullptr) {
             _sensors[i] = new SensorStateMachine(pSensor);
@@ -96,4 +100,23 @@ ISensor* SensorList::getSensor(size_t i) const {
         return _sensors[i]->getSensor();
     }
     return nullptr;
+}
+
+bool SensorList::containsSensor(SensorID sid) const {
+    for (size_t i = 0; i < _numSensors; i++) {
+        if (_sensors[i] && _sensors[i]->getSensor()->getSensorId() == sid) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void SensorList::removeLostSensors() {
+    for (size_t i = 0; i < _numSensors; i++) {
+        if (_sensors[i] &&
+            _sensors[i]->getSensorState() == SensorStatus::LOST) {
+            delete _sensors[i];
+            _sensors[i] = nullptr;
+        }
+    }
 }

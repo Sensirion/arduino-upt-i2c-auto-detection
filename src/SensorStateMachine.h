@@ -24,12 +24,19 @@ class SensorStateMachine {
     SensorStatus _sensorState;
     uint16_t _lastMeasurementError;
     uint16_t _measurementErrorCounter;
-    uint16_t _initStepsCounter;
     uint32_t _lastMeasurementTimeStampMs;
     uint32_t _measurementIntervalMs;
 
     ISensor* _sensor;
     Data _sensorSignals;
+
+    /**
+     * @brief initialize the state machine
+     *
+     * @note Needs to be outside of constructor because state machines may decay
+     * to UNINITIALIZED
+     */
+    void _initialize();
 
     /**
      * @brief Update state machine for sensors whose state is UNINITIALIZED or
@@ -38,7 +45,7 @@ class SensorStateMachine {
      * @note Toggles _sensorStatus to RUNNING incase all initialisation Steps
      * are completed
      */
-    void initializationRoutine();
+    void _initializationRoutine();
 
     /**
      * @brief Update state machine for sensors whose state is RUNNING
@@ -48,19 +55,18 @@ class SensorStateMachine {
      * perform a measurement if the measurement interval is too short, or too
      * long.
      */
-    void readSignalsRoutine();
+    void _readSignalsRoutine();
 
     /**
      * @brief Query sensor for new signals
      */
-    void readSignals();
+    void _readSignals();
 
   public:
     SensorStateMachine()
         : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),
-          _measurementErrorCounter(0), _initStepsCounter(0),
-          _lastMeasurementTimeStampMs(0), _measurementIntervalMs(0),
-          _sensor(nullptr){};
+          _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
+          _measurementIntervalMs(0), _sensor(nullptr){};
 
     /**
      * @brief constructor with ISensor pointer, used by autodetector
