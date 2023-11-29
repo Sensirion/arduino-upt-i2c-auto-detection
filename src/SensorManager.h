@@ -78,9 +78,22 @@ class SensorManager {
      * @param[in] DataPointList** location to which write the references to the
      * individual state machines data, hashed by their respective SensorIDs.
      * Size of the hashmap can be queried using
-     * SensorManager::getMaxNumberOfSensors().
+     * SensorManager::getMaxNumberOfSensors(). Existing entries are either
+     * ignored or overwritten.
      */
     void getSensorReadings(const DataPointList**);
+
+    /**
+     * @brief convenience function performing the sensor list refresh, state
+     * machine update and data window setup
+     *
+     * @param[in] DataPointList** location to which write the references to the
+     * individual state machines data, hashed by their respective SensorIDs.
+     * Size of the hashmap can be queried using
+     * SensorManager::getMaxNumberOfSensors(). Existing entries are either
+     * ignored or overwritten.
+     */
+    void refreshAndGetSensorReadings(const DataPointList**);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if

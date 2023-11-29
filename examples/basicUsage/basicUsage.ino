@@ -24,13 +24,11 @@ void setup() {
     Wire.begin();
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const DataPointList*[maxNumSensors];
+    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
     delay(500);
-    sensorManager.refreshConnectedSensors();
-    sensorManager.executeSensorCommunication();
     /*
     Data retrieval:
 
@@ -38,9 +36,13 @@ void loop() {
     of the connected sensors. The referenced Data contains a collection of
     DataPoints corresponding to the latest available readings from the sensor.
     */
-    sensorManager.getSensorReadings(pCurrentData);
+    sensorManager.refreshAndGetSensorReadings(pCurrentData);
     // Print contents
     printData(pCurrentData, maxNumSensors);
+    // Reset hashmap
+    for (size_t i = 0; i < maxNumSensors; i++) {
+        pCurrentData[i] = nullptr;
+    }
 }
 
 void printData(const DataPointList** data, size_t maxNumDataPacks) {

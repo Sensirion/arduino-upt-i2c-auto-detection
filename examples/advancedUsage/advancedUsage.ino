@@ -43,6 +43,7 @@ float t_incr = 0;
 void setup() {
     Serial.begin(115200);
     Wire.begin();
+    sensorManager.refreshConnectedSensors();
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
@@ -53,7 +54,7 @@ void setup() {
     sensorManager.setInterval(7500, SensorID::SCD4X);
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const DataPointList*[maxNumSensors];
+    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
@@ -79,6 +80,9 @@ void loop() {
     } else {
         Serial.println(
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
+        sensorManager.refreshConnectedSensors();
+        sensorManager.getSensorDriver<SensirionI2CScd4x>(pScd4xDriver,
+                                                         SensorID::SCD4X);
     }
 }
 

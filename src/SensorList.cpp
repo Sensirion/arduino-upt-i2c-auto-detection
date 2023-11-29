@@ -30,7 +30,7 @@
  */
 #include "SensorList.h"
 
-SensorList::SensorList(int numSensors) : _numSensors(numSensors) {
+SensorList::SensorList(uint8_t numSensors) : _numSensors(numSensors) {
     _sensors = new SensorStateMachine*[_numSensors];
     for (size_t i = 0; i < _numSensors; i++) {
         _sensors[i] = nullptr;

@@ -37,11 +37,11 @@
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   private:
-    const int _numSensors;
+    const uint8_t _numSensors;
     SensorStateMachine** _sensors = nullptr;
 
   public:
-    explicit SensorList(int numSensors);
+    explicit SensorList(uint8_t numSensors);
 
     SensorList(const SensorList&) = delete;  // Illegal operation
     SensorList&
