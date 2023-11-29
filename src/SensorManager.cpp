@@ -35,14 +35,13 @@ void SensorManager::refreshConnectedSensors() {
     _detector.findSensors(_sensorList);
 }
 
-AutoDetectorError SensorManager::updateStateMachines() {
+void SensorManager::executeSensorCommunication() {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
             ssm->update();
         }
     }
-    return NO_ERROR;
 }
 
 void SensorManager::getData(const Data** dataPack) {

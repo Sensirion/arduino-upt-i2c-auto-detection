@@ -43,7 +43,7 @@ float t_incr = 0;
 void setup() {
     Serial.begin(115200);
     Wire.begin();
-    
+
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
         pScd4xDriver, SensorID::SCD4X);
@@ -73,7 +73,7 @@ void loop() {
 
         // Data should update every second loop, because of the custom update
         // interval
-        sensorManager.updateStateMachines();
+        sensorManager.executeSensorCommunication();
         sensorManager.getData(pCurrentData);
         printData(pCurrentData, maxNumSensors);
     } else {

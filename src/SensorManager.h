@@ -66,12 +66,10 @@ class SensorManager {
     void refreshConnectedSensors();
 
     /**
-     * @brief Update all state machines and retrieve modifications to _data
-     *
-     * @return AutoDetectorError, LOST_SENSOR_ERROR incase one or more sensors
-     * were lost during polling
+     * @brief Updates all sensor state machines, which fetches signal updates
+     * (whenever available)
      */
-    AutoDetectorError updateStateMachines();
+    void executeSensorCommunication();
 
     /**
      * @brief getter method for _data
