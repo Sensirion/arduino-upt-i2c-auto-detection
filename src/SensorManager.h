@@ -42,7 +42,7 @@
  * intervals */
 class SensorManager {
   private:
-    static const int _MAX_NUM_SENSORS = 16;
+    static const uint8_t _MAX_NUM_SENSORS = 16;
     SensorList _sensorList;
     IAutoDetector& _detector;
 
@@ -59,13 +59,6 @@ class SensorManager {
      */
     explicit SensorManager(IAutoDetector& detector_)
         : _sensorList(_MAX_NUM_SENSORS), _detector(detector_){};
-
-    /**
-     * @brief Must be called before any other method
-     *
-     * Searches I2C bus for available sensors, initializes _data
-     */
-    void begin();
 
     /**
      * @brief Remove lost sensors and check bus for connected sensors

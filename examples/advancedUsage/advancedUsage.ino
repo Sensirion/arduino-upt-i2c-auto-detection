@@ -43,8 +43,7 @@ float t_incr = 0;
 void setup() {
     Serial.begin(115200);
     Wire.begin();
-    sensorManager.begin();
-
+    
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
         pScd4xDriver, SensorID::SCD4X);

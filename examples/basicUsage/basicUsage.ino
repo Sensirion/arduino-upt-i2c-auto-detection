@@ -22,7 +22,6 @@ const Data** pCurrentData;
 void setup() {
     Serial.begin(115200);
     Wire.begin();
-    sensorManager.begin();
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
     pCurrentData = new const Data*[maxNumSensors];
