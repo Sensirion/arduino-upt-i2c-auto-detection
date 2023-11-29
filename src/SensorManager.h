@@ -32,7 +32,7 @@
 #ifndef _SENSOR_MANAGER_H_
 #define _SENSOR_MANAGER_H_
 
-#include "Data.h"
+#include "DataPointList.h"
 #include "IAutoDetector.h"
 #include "SensirionCore.h"
 #include "SensorList.h"
@@ -82,7 +82,7 @@ class SensorManager {
      * @note Would love to add a const qualifier (ie const Data** getData(const
      * Data**) const) but somehow I'm unable.
      */
-    void getData(const Data**);
+    void getData(const DataPointList**);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if

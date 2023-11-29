@@ -1,7 +1,7 @@
 #ifndef _SENSOR_STATE_MACHINE_H_
 #define _SENSOR_STATE_MACHINE_H_
 
-#include "Data.h"
+#include "DataPointList.h"
 #include "ISensor.h"
 #include <stdint.h>
 
@@ -28,7 +28,7 @@ class SensorStateMachine {
     uint32_t _measurementIntervalMs;
 
     ISensor* _sensor;
-    Data _sensorSignals;
+    DataPointList _sensorSignals;
 
     /**
      * @brief initialize the state machine
@@ -106,7 +106,7 @@ class SensorStateMachine {
     /**
      * @brief getter method for address of sensor signals
      */
-    const Data* getSignals() const;
+    const DataPointList* getSignals() const;
 };
 
 #endif /* _SENSOR_STATE_MACHINE_H_ */

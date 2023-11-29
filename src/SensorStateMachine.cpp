@@ -159,6 +159,6 @@ ISensor* SensorStateMachine::getSensor() const {
     return _sensor;
 }
 
-const Data* SensorStateMachine::getSignals() const {
+const DataPointList* SensorStateMachine::getSignals() const {
     return &_sensorSignals;
 }

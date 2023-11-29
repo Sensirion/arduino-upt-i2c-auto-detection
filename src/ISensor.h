@@ -79,8 +79,7 @@ class ISensor {
     };
 
     /**
-     * @brief Get the number of DataPoints this sensor occupies in the Data
-     * object.
+     * @brief Get the number of signal DataPoints this sensor can deliver
      *
      * @return size_t
      */

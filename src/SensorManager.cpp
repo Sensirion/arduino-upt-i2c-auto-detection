@@ -44,7 +44,7 @@ void SensorManager::executeSensorCommunication() {
     }
 }
 
-void SensorManager::getData(const Data** dataPack) {
+void SensorManager::getData(const DataPointList** dataPack) {
     for (size_t i = 0; i < _MAX_NUM_SENSORS; i++) {
         dataPack[i] = nullptr;
     }

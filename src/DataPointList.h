@@ -28,51 +28,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Data.h"
+#ifndef _DATAPOINTLIST_H_
+#define _DATAPOINTLIST_H_
 
-void Data::init(const size_t& length) {
-    _length = length;
-    delete[] _dataPoints;
-    _dataPoints = new DataPoint[_length];
-}
+#include "DataPoint.h"
 
-size_t Data::getLength() const {
-    return _length;
-}
+/* Class handling a collection of DataPoints */
+class DataPointList {
+  public:
+    DataPointList() = default;
+    ~DataPointList();
+    DataPointList(const DataPointList&) = delete;  // Illegal operation
+    DataPointList&
+    operator=(const DataPointList&) = delete;       // Illegal operation
+    DataPointList(DataPointList&& src);             // Copy Constructor
+    DataPointList& operator=(DataPointList&& src);  // Assignment operator
 
-Data::~Data() {
-    delete[] _dataPoints;
-}
+    /**
+     * @brief Allocates memory for requested number of DataPoints
+     *
+     * @param length desired size
+     */
+    void init(const size_t& length);
 
-Data::Data(Data&& src) : _length(src._length), _dataPoints(src._dataPoints) {
-    delete[] src._dataPoints;
-    src._length = 0;
-}
+    /**
+     * @brief getter method for _length
+     */
+    size_t getLength() const;
 
-Data& Data::operator=(Data&& src) {
-    if (&src != this) {
-        delete[] _dataPoints;
+    /**
+     * @brief adds a datapoint
+     *
+     * @note Does not report a failure to perform the operation
+     */
+    void addDataPoint(const DataPoint&);
 
-        this->_dataPoints = src._dataPoints;
-        src._dataPoints = nullptr;
-        this->_length = src._length;
-        src._length = 0;
-        this->_writeHead = src._writeHead;
-    }
-    return *this;
-}
+    /**
+     * @brief getter method for stored DataPoints
+     */
+    const DataPoint& getDataPoint(size_t) const;
 
-void Data::addDataPoint(const DataPoint& dp) {
-    if (_writeHead < _length) {
-        _dataPoints[_writeHead] = dp;
-        _writeHead++;
-    }
-}
+    /**
+     * @brief reset _writeHead to start of list
+     */
+    void resetWriteHead();
 
-const DataPoint& Data::getDataPoint(size_t i) const {
-    return _dataPoints[i];
-}
+  private:
+    size_t _length = 0;
+    size_t _writeHead = 0;
+    DataPoint* _dataPoints = nullptr;
+};
 
-void Data::resetWriteHead() {
-    _writeHead = 0;
-}
+#endif /* _DATAPOINTLIST_H_ */
