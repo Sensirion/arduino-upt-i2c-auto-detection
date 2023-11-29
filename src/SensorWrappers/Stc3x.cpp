@@ -28,6 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "SensorWrappers/Stc3x.h"
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
