@@ -28,13 +28,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef _SGP41_H_
 #define _SGP41_H_
 
 #include "ISensor.h"
 #include "SensirionI2CSgp41.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
 class Sgp41 : public ISensor {
   public:

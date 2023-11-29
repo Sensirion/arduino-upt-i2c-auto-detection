@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,28 +28,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "Data.h"
 
-void Data::init(const size_t& length) {
+#include "DataPointList.h"
+
+void DataPointList::init(const size_t& length) {
     _length = length;
     delete[] _dataPoints;
     _dataPoints = new DataPoint[_length];
 }
 
-size_t Data::getLength() const {
+size_t DataPointList::getLength() const {
     return _length;
 }
 
-Data::~Data() {
+DataPointList::~DataPointList() {
     delete[] _dataPoints;
 }
 
-Data::Data(Data&& src) : _length(src._length), _dataPoints(src._dataPoints) {
+DataPointList::DataPointList(DataPointList&& src)
+    : _length(src._length), _dataPoints(src._dataPoints) {
     delete[] src._dataPoints;
     src._length = 0;
 }
 
-Data& Data::operator=(Data&& src) {
+DataPointList& DataPointList::operator=(DataPointList&& src) {
     if (&src != this) {
         delete[] _dataPoints;
 
@@ -62,17 +64,17 @@ Data& Data::operator=(Data&& src) {
     return *this;
 }
 
-void Data::addDataPoint(const DataPoint& dp) {
+void DataPointList::addDataPoint(const DataPoint& dp) {
     if (_writeHead < _length) {
         _dataPoints[_writeHead] = dp;
         _writeHead++;
     }
 }
 
-const DataPoint& Data::getDataPoint(size_t i) const {
+const DataPoint& DataPointList::getDataPoint(size_t i) const {
     return _dataPoints[i];
 }
 
-void Data::resetWriteHead() {
+void DataPointList::resetWriteHead() {
     _writeHead = 0;
 }

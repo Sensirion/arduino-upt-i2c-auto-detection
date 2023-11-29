@@ -15,8 +15,7 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 
 ### Sensor Oddities
 - SGP41. The SGP41 arduino I2C driver returns raw VOC and NOX values, as opposed to the SEN5X sensors, which internally feed the raw values through Sensirions gas index algorithm and returns a gas index in the range of [0, 500].
-- STC3X. The STC3X requires an initialization phase of 10 seconds, during which the value of the datapoints will be 0
-- SEN44/5X. As both the 44 and 5X versions share the same I2C address (which is used to detect the sensor), only one version may be used at a time. You will have to select the appropriate version by uncommenting it in the src/DriverConfig.h file.
+- STC3X. The STC3X requires a conditioning phase of up to 10 seconds (this library considers 8 sufficient), during which the value of the datapoints will be UNDEFINED/0.
 
 ## Getting Started
 
@@ -106,25 +105,36 @@ Instantiate I2CAutoDetector and SensorManager globally (before void setup()):
     I2CAutoDetector i2CAutoDetector(Wire);
     SensorManager sensorManager(i2CAutoDetector);
 ```
-Begin Serial, Wire and SensorManager in void setup():
+Begin Serial, Wire in void setup():
 
 ```cpp
     Serial.begin(115200);
     Wire.begin();
-    sensorManager.begin();
 ```
+
+Still in void setup(), fetch the maximum number of simultaneously connected sensors and allocate memory for a hashmap:
+```cpp
+    maxNumSensors = sensorManager.getMaxNumberOfSensors();
+    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
+```
+
 Update and retrieve Data object in void loop():
 ```cpp
-    sensorManager.updateStateMachines();
-    const Data* currentData[sensorManager.getMaxNumberOfSensors()];
-    sensorManager.getData(currentData);
+    sensorManager.refreshAndGetSensorReadings(pCurrentData);
 ```
+
+Alternatively, more control over the different routines (bus scan for new sensors, state machine update and reading retrieval) is provided through respective functions. The following snippet is equivalent to the above single function call:
+```cpp
+    sensorManager.refreshConnectedSensors();
+    sensorManager.executeSensorCommunication();
+    sensorManager.getSensorReadings(pCurrentData);
+```
+
 The sensor manager handles command dispatch to the detected sensors, to make sure minimum intervals between commands are respected. Data readout is decoupled from sensor state machine updates, but only the last recorded measurement is available. Note: some sensors have a decay time, after which a conditioning procedure must be executed before readings are available (eg. SGP41). This decay time must not be exceeded inbetween ```cpp SensorManager::updateStateMachines()``` function calls, else SensorManager is never able to provide a measurement for these sensors.
 If three 3 consecutive errors occur while trying to read the data ror a sensor, the sensor is considered lost and not read out anymore in the following to save resources.
 
 # Limitations
 
 - This library does not support more than one sensor of the same type at a time.
-- The I2C bus is only scanned on startup, so in order to add a new sensor, the board needs to be restarted.
+- Only a single bus is supported. Multiple SensorManager instances must be used to get data from sensors connected to different buses. We suggest using TwoWire instead of the Arduino standard ```Wire.h``` in this case, since it does not support multiple I2C buses.
 - As UPT Core, a dependency of this library, uses C++ Standard Template Library (STL), it won't run on most Arduino boards by default. ESP32s or other boards that support the STL will work more smoothly.
-- Only one instance of the Data object is allowed, copies may not be made. In order to further process the DataPoints contained in the Data object, they should be copied out manually.

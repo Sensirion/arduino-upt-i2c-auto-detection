@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@
 #ifndef _SENSOR_MANAGER_H_
 #define _SENSOR_MANAGER_H_
 
-#include "Data.h"
+#include "DataPointList.h"
 #include "IAutoDetector.h"
 #include "SensirionCore.h"
 #include "SensorList.h"
@@ -42,7 +42,7 @@
  * intervals */
 class SensorManager {
   private:
-    static const int _MAX_NUM_SENSORS = 16;
+    static const uint8_t _MAX_NUM_SENSORS = 16;
     SensorList _sensorList;
     IAutoDetector& _detector;
 
@@ -61,37 +61,39 @@ class SensorManager {
         : _sensorList(_MAX_NUM_SENSORS), _detector(detector_){};
 
     /**
-     * @brief Must be called before any other method
-     *
-     * Searches I2C bus for available sensors, initializes _data
-     */
-    void begin();
-
-    /**
      * @brief Remove lost sensors and check bus for connected sensors
      */
-    void updateSensorList();
+    void refreshConnectedSensors();
 
     /**
-     * @brief Update all state machines and retrieve modifications to _data
-     *
-     * @return AutoDetectorError, LOST_SENSOR_ERROR incase one or more sensors
-     * were lost during polling
+     * @brief Updates all sensor state machines, which fetches signal updates
+     * (whenever available)
      */
-    AutoDetectorError updateStateMachines();
+    void executeSensorCommunication();
 
     /**
-     * @brief getter method for _data
+     * @brief obtain a hashmap of read-only pointers to the sensor signal
+     * readings.
      *
-     * @param[in] Data** location to which write the references to the
+     * @param[in] DataPointList** location to which write the references to the
      * individual state machines data, hashed by their respective SensorIDs.
      * Size of the hashmap can be queried using
-     * SensorManager::getMaxNumberOfSensors().
-     *
-     * @note Would love to add a const qualifier (ie const Data** getData(const
-     * Data**) const) but somehow I'm unable.
+     * SensorManager::getMaxNumberOfSensors(). Existing entries are either
+     * ignored or overwritten.
      */
-    void getData(const Data**);
+    void getSensorReadings(const DataPointList**);
+
+    /**
+     * @brief convenience function performing the sensor list refresh, state
+     * machine update and data window setup
+     *
+     * @param[in] DataPointList** location to which write the references to the
+     * individual state machines data, hashed by their respective SensorIDs.
+     * Size of the hashmap can be queried using
+     * SensorManager::getMaxNumberOfSensors(). Existing entries are either
+     * ignored or overwritten.
+     */
+    void refreshAndGetSensorReadings(const DataPointList**);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if

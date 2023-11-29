@@ -13,45 +13,46 @@
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
-bool isEmpty(const Data**, size_t);
-void printData(const Data**, size_t);
+bool isEmpty(const DataPointList**, size_t);
+void printData(const DataPointList**, size_t);
 
 uint maxNumSensors;
-const Data** pCurrentData;
+const DataPointList** pCurrentData;
 
 void setup() {
     Serial.begin(115200);
     Wire.begin();
-    sensorManager.begin();
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const Data*[maxNumSensors];
+    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
     delay(500);
-    sensorManager.updateSensorList();
-    sensorManager.updateStateMachines();
     /*
     Data retrieval:
 
-    The library provides a hashmap of pointers to Data objects for each of the
-    connected sensors. The referenced Data contains a collection of DataPoints
-    corresponding to the latest available readings from the sensor.
+    The library provides a hashmap of pointers to DataPointList objects for each
+    of the connected sensors. The referenced Data contains a collection of
+    DataPoints corresponding to the latest available readings from the sensor.
     */
-    sensorManager.getData(pCurrentData);
+    sensorManager.refreshAndGetSensorReadings(pCurrentData);
     // Print contents
     printData(pCurrentData, maxNumSensors);
+    // Reset hashmap
+    for (size_t i = 0; i < maxNumSensors; i++) {
+        pCurrentData[i] = nullptr;
+    }
 }
 
-void printData(const Data** data, size_t maxNumDataPacks) {
+void printData(const DataPointList** data, size_t maxNumDataPacks) {
     if (isEmpty(data, maxNumDataPacks)) {
         Serial.println("No sensors seem to be connected.");
         return;
     }
 
     for (size_t p = 0; p < maxNumDataPacks; p++) {
-        const Data* dataPack = data[p];
+        const DataPointList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
@@ -75,9 +76,9 @@ void printData(const Data** data, size_t maxNumDataPacks) {
     Serial.println();
 }
 
-bool isEmpty(const Data** data, size_t numDataPacks) {
+bool isEmpty(const DataPointList** data, size_t numDataPacks) {
     for (size_t p = 0; p < numDataPacks; p++) {
-        const Data* dataPack = data[p];
+        const DataPointList* dataPack = data[p];
 
         if (dataPack && data[p]->getLength() > 0) {
             return false;

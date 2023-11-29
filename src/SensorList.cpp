@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "SensorList.h"
 
-SensorList::SensorList(int numSensors) : _numSensors(numSensors) {
+SensorList::SensorList(uint8_t numSensors) : _numSensors(numSensors) {
     _sensors = new SensorStateMachine*[_numSensors];
     for (size_t i = 0; i < _numSensors; i++) {
         _sensors[i] = nullptr;
@@ -65,7 +66,7 @@ size_t SensorList::count() {
     return numberOfSensors;
 }
 
-size_t SensorList::getTotalNumberOfDataPoints() {
+size_t SensorList::getTotalNumberOfDataPoints() const {
     size_t totalNumberOfDataPoints = 0;
     for (int i = 0; i < _numSensors; ++i) {
         if (_sensors[i]) {
@@ -74,17 +75,6 @@ size_t SensorList::getTotalNumberOfDataPoints() {
         }
     }
     return totalNumberOfDataPoints;
-}
-
-uint16_t SensorList::getNumberOfSensorsLost() {
-    uint16_t sensorsLost = 0;
-    for (int i = 0; i < _numSensors; ++i) {
-        if (_sensors[i] &&
-            _sensors[i]->getSensorState() == SensorStatus::LOST) {
-            ++sensorsLost;
-        }
-    }
-    return sensorsLost;
 }
 
 int SensorList::getLength() const {

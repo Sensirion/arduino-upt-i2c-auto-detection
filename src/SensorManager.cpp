@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,40 +28,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "SensorManager.h"
 
-void SensorManager::begin() {
-    _detector.findSensors(_sensorList);
-}
-
-void SensorManager::updateSensorList() {
+void SensorManager::refreshConnectedSensors() {
     _sensorList.removeLostSensors();
     _detector.findSensors(_sensorList);
 }
 
-AutoDetectorError SensorManager::updateStateMachines() {
+void SensorManager::executeSensorCommunication() {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
             ssm->update();
         }
     }
-    return NO_ERROR;
 }
 
-void SensorManager::getData(const Data** dataPack) {
-    for (size_t i = 0; i < _MAX_NUM_SENSORS; i++) {
-        dataPack[i] = nullptr;
-    }
-
+void SensorManager::getSensorReadings(const DataPointList** dataHashmap) {
     for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
         const SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
             size_t hashIdx =
                 static_cast<size_t>(ssm->getSensor()->getSensorId());
-            dataPack[hashIdx] = ssm->getSignals();
+            dataHashmap[hashIdx] = ssm->getSignals();
         }
     }
+}
+
+void SensorManager::refreshAndGetSensorReadings(
+    const DataPointList** dataHashmap) {
+    refreshConnectedSensors();
+    executeSensorCommunication();
+    getSensorReadings(dataHashmap);
 }
 
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {

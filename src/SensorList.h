@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef _SENSOR_LIST_H
 #define _SENSOR_LIST_H
 
@@ -37,11 +38,11 @@
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   private:
-    const int _numSensors;
+    const uint8_t _numSensors;
     SensorStateMachine** _sensors = nullptr;
 
   public:
-    explicit SensorList(int numSensors);
+    explicit SensorList(uint8_t numSensors);
 
     SensorList(const SensorList&) = delete;  // Illegal operation
     SensorList&
@@ -74,14 +75,7 @@ class SensorList {
      * @param[out] size_t number of DataPoints returned by the sensors in the
      * list
      */
-    size_t getTotalNumberOfDataPoints();
-
-    /**
-     * @brief Counts number of sensors whose state is SensorState::LOST
-     *
-     * @param[out] uint16_t number of lost sensors
-     */
-    uint16_t getNumberOfSensorsLost();
+    size_t getTotalNumberOfDataPoints() const;
 
     /**
      * @brief getter method for list size

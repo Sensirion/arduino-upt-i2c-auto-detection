@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef _SHT4X_H_
 #define _SHT4X_H_
 
 #include "ISensor.h"
 #include "SensirionI2CSht4x.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
 class Sht4x : public ISensor {
   public:

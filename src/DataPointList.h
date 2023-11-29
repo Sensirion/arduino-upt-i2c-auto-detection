@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Sensirion AG
+ * Copyright (c) 2023, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _DATA_H_
-#define _DATA_H_
+
+#ifndef _DATAPOINTLIST_H_
+#define _DATAPOINTLIST_H_
 
 #include "DataPoint.h"
 
 /* Class handling a collection of DataPoints */
-class Data {
+class DataPointList {
   public:
-    Data() = default;
-    ~Data();
-    Data(const Data&) = delete;             // Illegal operation
-    Data& operator=(const Data&) = delete;  // Illegal operation
-    Data(Data&& src);                       // Copy Constructor
-    Data& operator=(Data&& src);            // Assignment operator
+    DataPointList() = default;
+    ~DataPointList();
+    DataPointList(const DataPointList&) = delete;  // Illegal operation
+    DataPointList&
+    operator=(const DataPointList&) = delete;       // Illegal operation
+    DataPointList(DataPointList&& src);             // Copy Constructor
+    DataPointList& operator=(DataPointList&& src);  // Assignment operator
 
     /**
      * @brief Allocates memory for requested number of DataPoints
@@ -78,4 +80,4 @@ class Data {
     DataPoint* _dataPoints = nullptr;
 };
 
-#endif /* _DATA_H_ */
+#endif /* _DATAPOINTLIST_H_ */

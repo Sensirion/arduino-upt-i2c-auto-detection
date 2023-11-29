@@ -28,13 +28,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef _SEN5X_H_
 #define _SEN5X_H_
 
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSen5x.h>
-#include <Wire.h>
 
 enum class SensorVersion {
     UNDEFINED,

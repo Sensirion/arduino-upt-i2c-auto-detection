@@ -34,16 +34,16 @@ SensorManager sensorManager(i2CAutoDetector);
 // accordingly.
 
 SensirionI2CScd4x* pScd4xDriver = nullptr;
-void printData(const Data**, size_t);
+void printData(const DataPointList**, size_t);
 
 uint maxNumSensors;
-const Data** pCurrentData;
+const DataPointList** pCurrentData;
 float t_incr = 0;
 
 void setup() {
     Serial.begin(115200);
     Wire.begin();
-    sensorManager.begin();
+    sensorManager.refreshConnectedSensors();
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
@@ -54,7 +54,7 @@ void setup() {
     sensorManager.setInterval(7500, SensorID::SCD4X);
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const Data*[maxNumSensors];
+    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
@@ -74,19 +74,22 @@ void loop() {
 
         // Data should update every second loop, because of the custom update
         // interval
-        sensorManager.updateStateMachines();
-        sensorManager.getData(pCurrentData);
+        sensorManager.executeSensorCommunication();
+        sensorManager.getSensorReadings(pCurrentData);
         printData(pCurrentData, maxNumSensors);
     } else {
         Serial.println(
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
+        sensorManager.refreshConnectedSensors();
+        sensorManager.getSensorDriver<SensirionI2CScd4x>(pScd4xDriver,
+                                                         SensorID::SCD4X);
     }
 }
 
-void printData(const Data** data, size_t numDataPacks) {
+void printData(const DataPointList** data, size_t numDataPacks) {
     Serial.println("Data retrieved via sensor manager:");
     for (size_t p = 0; p < numDataPacks; p++) {
-        const Data* dataPack = data[p];
+        const DataPointList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
