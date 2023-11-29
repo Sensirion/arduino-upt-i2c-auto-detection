@@ -30,7 +30,7 @@
  */
 #include "SensorManager.h"
 
-void SensorManager::updateSensorList() {
+void SensorManager::refreshConnectedSensors() {
     _sensorList.removeLostSensors();
     _detector.findSensors(_sensorList);
 }

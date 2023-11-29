@@ -63,7 +63,7 @@ class SensorManager {
     /**
      * @brief Remove lost sensors and check bus for connected sensors
      */
-    void updateSensorList();
+    void refreshConnectedSensors();
 
     /**
      * @brief Update all state machines and retrieve modifications to _data

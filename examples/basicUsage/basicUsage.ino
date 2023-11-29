@@ -29,7 +29,7 @@ void setup() {
 
 void loop() {
     delay(500);
-    sensorManager.updateSensorList();
+    sensorManager.refreshConnectedSensors();
     sensorManager.updateStateMachines();
     /*
     Data retrieval:
