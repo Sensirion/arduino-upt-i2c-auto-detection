@@ -34,7 +34,6 @@
 #include "ISensor.h"
 #include "SensirionI2CSgp41.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
 class Sgp41 : public ISensor {
   public:

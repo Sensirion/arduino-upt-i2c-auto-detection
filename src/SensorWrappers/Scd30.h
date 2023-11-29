@@ -34,7 +34,6 @@
 #include "ISensor.h"
 #include "SensirionI2cScd30.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
 class Scd30 : public ISensor {
   public:

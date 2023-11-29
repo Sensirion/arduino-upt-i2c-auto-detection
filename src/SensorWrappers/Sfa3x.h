@@ -34,7 +34,6 @@
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSfa3x.h>
-#include <Wire.h>
 
 class Sfa3x : public ISensor {
   public:

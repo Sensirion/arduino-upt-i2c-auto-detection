@@ -34,7 +34,6 @@
 #include "ISensor.h"
 #include "SensirionI2CSht4x.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
 class Sht4x : public ISensor {
   public:

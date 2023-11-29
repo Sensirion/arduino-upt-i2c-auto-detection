@@ -34,7 +34,6 @@
 #include "ISensor.h"
 #include "SensirionI2CSvm41.h"
 #include "Sensirion_UPT_Core.h"
-#include <Wire.h>
 
 class Svm4x : public ISensor {
   public:

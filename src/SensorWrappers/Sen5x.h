@@ -34,7 +34,6 @@
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSen5x.h>
-#include <Wire.h>
 
 enum class SensorVersion {
     UNDEFINED,
