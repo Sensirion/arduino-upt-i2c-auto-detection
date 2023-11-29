@@ -74,14 +74,7 @@ class SensorList {
      * @param[out] size_t number of DataPoints returned by the sensors in the
      * list
      */
-    size_t getTotalNumberOfDataPoints();
-
-    /**
-     * @brief Counts number of sensors whose state is SensorState::LOST
-     *
-     * @param[out] uint16_t number of lost sensors
-     */
-    uint16_t getNumberOfSensorsLost();
+    size_t getTotalNumberOfDataPoints() const;
 
     /**
      * @brief getter method for list size
