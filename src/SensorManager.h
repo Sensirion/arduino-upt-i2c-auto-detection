@@ -72,17 +72,15 @@ class SensorManager {
     void executeSensorCommunication();
 
     /**
-     * @brief getter method for _data
+     * @brief obtain a hashmap of read-only pointers to the sensor signal
+     * readings.
      *
-     * @param[in] Data** location to which write the references to the
+     * @param[in] DataPointList** location to which write the references to the
      * individual state machines data, hashed by their respective SensorIDs.
      * Size of the hashmap can be queried using
      * SensorManager::getMaxNumberOfSensors().
-     *
-     * @note Would love to add a const qualifier (ie const Data** getData(const
-     * Data**) const) but somehow I'm unable.
      */
-    void getData(const DataPointList**);
+    void getSensorReadings(const DataPointList**);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if

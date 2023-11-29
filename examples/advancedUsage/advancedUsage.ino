@@ -74,7 +74,7 @@ void loop() {
         // Data should update every second loop, because of the custom update
         // interval
         sensorManager.executeSensorCommunication();
-        sensorManager.getData(pCurrentData);
+        sensorManager.getSensorReadings(pCurrentData);
         printData(pCurrentData, maxNumSensors);
     } else {
         Serial.println(

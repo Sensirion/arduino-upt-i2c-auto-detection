@@ -38,7 +38,7 @@ void loop() {
     of the connected sensors. The referenced Data contains a collection of
     DataPoints corresponding to the latest available readings from the sensor.
     */
-    sensorManager.getData(pCurrentData);
+    sensorManager.getSensorReadings(pCurrentData);
     // Print contents
     printData(pCurrentData, maxNumSensors);
 }
