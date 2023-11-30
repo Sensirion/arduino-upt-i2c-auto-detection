@@ -59,6 +59,7 @@ cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/
 As of november 2, 2023 platformIO does not correctly convert `.ino` files to `.cpp` files in subdirectories of the project. We must do so manually with the following commands, 
 for platformio does not compile .ino files.
 ```bash
+cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
 pio run -e basicUsage -t upload
 ```
 and start the Serial monitor.
@@ -75,9 +76,9 @@ In order to use this library in your project, add it to the `lib_deps` in your `
 This library uses the following dependencies.
 
 * [Sensirion Core](https://github.com/Sensirion/arduino-core)
+* [Sensirion UPT Core](https://github.com/Sensirion/upt-core)
 * [SCD30](https://github.com/Sensirion/arduino-i2c-scd30)
 * [SCD4X](https://github.com/Sensirion/arduino-i2c-scd4x)
-* [SEN44](https://github.com/Sensirion/arduino-i2c-sen44)
 * [SEN5X](https://github.com/Sensirion/arduino-i2c-sen5x)
 * [SFA3X](https://github.com/Sensirion/arduino-i2c-sfa3x)
 * [SGP41](https://github.com/Sensirion/arduino-i2c-sgp41)
