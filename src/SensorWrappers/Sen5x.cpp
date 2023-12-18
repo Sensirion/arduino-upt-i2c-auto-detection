@@ -155,7 +155,7 @@ uint16_t Sen5x::_determineSensorVersion() {
     return error;
 }
 
-std::string Sen5x::sensorVersionName(SensorVersion sv) const {
+const char* Sen5x::sensorVersionName(SensorVersion sv) const {
     switch (sv) {
         case SensorVersion::SEN50:
             return "SEN50";

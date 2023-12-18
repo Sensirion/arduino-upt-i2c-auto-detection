@@ -97,14 +97,14 @@ void printData(const DataPointList** data, size_t numDataPacks) {
         for (size_t i = 0; i < dataPack->getLength(); ++i) {
             const DataPoint& dp = dataPack->getDataPoint(i);
             // Get SensorId string using SensorId enum as index
-            Serial.print(dp.sourceDevice.c_str());
+            Serial.print(dp.sourceDevice);
             Serial.print("-");
-            Serial.print(quantityOf(dp.signalType).c_str());
+            Serial.print(quantityOf(dp.signalType));
             Serial.print(":\t ");
             Serial.print(dp.value);
             Serial.print(" ");
             // Get Unit string using Unit enum as index
-            Serial.print(unitOf(dp.signalType).c_str());
+            Serial.print(unitOf(dp.signalType));
             Serial.print(" \t@");
             Serial.println(dp.timeStamp);
         }
