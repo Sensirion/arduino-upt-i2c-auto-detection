@@ -45,7 +45,7 @@ void SensorManager::executeSensorCommunication() {
     }
 }
 
-void SensorManager::getSensorReadings(const DataPointList** dataHashmap) {
+void SensorManager::getSensorReadings(const MeasurementList** dataHashmap) {
     for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
         const SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
@@ -57,13 +57,13 @@ void SensorManager::getSensorReadings(const DataPointList** dataHashmap) {
 }
 
 void SensorManager::refreshAndGetSensorReadings(
-    const DataPointList** dataHashmap) {
+    const MeasurementList** dataHashmap) {
     refreshConnectedSensors();
     executeSensorCommunication();
     getSensorReadings(dataHashmap);
 }
 
-void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
+void SensorManager::setInterval(unsigned long interval, SensorType sensorId) {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm && ssm->getSensor()->getSensorType() == sensorId) {

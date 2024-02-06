@@ -32,8 +32,8 @@
 #ifndef _SENSOR_STATE_MACHINE_H_
 #define _SENSOR_STATE_MACHINE_H_
 
-#include "DataPointList.h"
 #include "ISensor.h"
+#include "MeasurementList.h"
 #include <stdint.h>
 
 enum class SensorStatus {
@@ -59,7 +59,7 @@ class SensorStateMachine {
     uint32_t _measurementIntervalMs;
 
     ISensor* _sensor;
-    DataPointList _sensorSignals;
+    MeasurementList _sensorSignals;
 
     /**
      * @brief initialize the state machine
@@ -137,7 +137,7 @@ class SensorStateMachine {
     /**
      * @brief getter method for address of sensor signals
      */
-    const DataPointList* getSignals() const;
+    const MeasurementList* getSignals() const;
 };
 
 #endif /* _SENSOR_STATE_MACHINE_H_ */

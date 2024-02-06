@@ -34,10 +34,11 @@ SensorManager sensorManager(i2CAutoDetector);
 // accordingly.
 
 SensirionI2CScd4x* pScd4xDriver = nullptr;
-void printData(const DataPointList**, size_t);
+void printData(const MeasurementList**, size_t);
+void printMeasurement(const Measurement&);
 
 uint maxNumSensors;
-const DataPointList** pCurrentData;
+const MeasurementList** pCurrentData;
 float t_incr = 0;
 
 void setup() {
@@ -47,14 +48,14 @@ void setup() {
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
-        pScd4xDriver, SensorID::SCD4X);
+        pScd4xDriver, SensorType::SCD4X);
 
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
-    sensorManager.setInterval(7500, SensorID::SCD4X);
+    sensorManager.setInterval(7500, SensorType::SCD4X);
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
+    pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
@@ -82,33 +83,78 @@ void loop() {
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
         sensorManager.refreshConnectedSensors();
         sensorManager.getSensorDriver<SensirionI2CScd4x>(pScd4xDriver,
-                                                         SensorID::SCD4X);
+                                                         SensorType::SCD4X);
     }
 }
 
-void printData(const DataPointList** data, size_t numDataPacks) {
+void printData(const MeasurementList** data, size_t numDataPacks) {
     Serial.println("Data retrieved via sensor manager:");
     for (size_t p = 0; p < numDataPacks; p++) {
-        const DataPointList* dataPack = data[p];
+        const MeasurementList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
 
         for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            const DataPoint& dp = dataPack->getDataPoint(i);
-            // Get SensorId string using SensorId enum as index
-            Serial.print(dp.sourceDevice);
-            Serial.print("-");
-            Serial.print(quantityOf(dp.signalType));
-            Serial.print(":\t ");
-            Serial.print(dp.value);
-            Serial.print(" ");
-            // Get Unit string using Unit enum as index
-            Serial.print(unitOf(dp.signalType));
-            Serial.print(" \t@");
-            Serial.println(dp.timeStamp);
+            printMeasurement(dataPack->getMeasurement(i));
         }
     }
 
     Serial.println();
+}
+
+void printMeasurement(const Measurement &measurement) {
+    // Get device and platform descriptive labels
+    const char *platformLbl = devicePlatformLabel(
+        measurement.metadata.platform, measurement.metadata.devicetype);
+    const char *deviceLbl = deviceLabel(measurement.metadata.platform,
+                                          measurement.metadata.devicetype);
+
+    // Get deviceID in string representation
+    char deviceIDStr[64];
+    if (measurement.metadata.platform == DevicePlatform::BLE) {
+        sprintf(deviceIDStr, "0x%llx", measurement.metadata.deviceID);
+    } else {
+        sprintf(deviceIDStr, "%llu", measurement.metadata.deviceID);
+    }
+
+    Serial.printf("\nShowing Measurement:\n");
+
+    Serial.printf("  Data Point:\n");
+    Serial.printf("    Measured at:\t%lus\n",
+                  measurement.datapoint.t_offset / 1000);
+    Serial.printf("    Value:\t\t");
+    switch (measurement.signaltype) {
+    case SignalType::TEMPERATURE_DEGREES_CELSIUS:
+    case SignalType::RELATIVE_HUMIDITY_PERCENTAGE:
+    case SignalType::VELOCITY_METERS_PER_SECOND:
+        Serial.printf("%.1f\n", measurement.datapoint.value);
+        break;
+    case SignalType::CO2_PARTS_PER_MILLION:
+    case SignalType::HCHO_PARTS_PER_BILLION:
+    case SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER:
+    case SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER:
+    case SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER:
+    case SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER:
+    case SignalType::VOC_INDEX:
+    case SignalType::NOX_INDEX:
+    case SignalType::GAS_CONCENTRATION:
+        Serial.printf("%i\n", static_cast<int>(measurement.datapoint.value));
+        break;
+    default:
+        Serial.printf("%i\n", static_cast<int>(measurement.datapoint.value));
+        break;
+    }
+
+    Serial.printf("  SignalType:\n");
+    Serial.printf("    Physical Quantity:\t%s\n",
+                  quantityOf(measurement.signaltype));
+    Serial.printf("    Units:\t\t%s\n", unitOf(measurement.signaltype));
+
+    Serial.printf("  Metadata:\n");
+    Serial.printf("    Platform:\t\t%s\n", platformLbl);
+    Serial.printf("    deviceID:\t\t%s\n", deviceIDStr);
+    Serial.printf("    Device Type:\t%s\n", deviceLbl);
+
+    return;
 }

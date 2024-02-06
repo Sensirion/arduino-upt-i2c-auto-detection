@@ -92,7 +92,7 @@ ISensor* SensorList::getSensor(size_t i) const {
     return nullptr;
 }
 
-bool SensorList::containsSensor(SensorID sid) const {
+bool SensorList::containsSensor(SensorType sid) const {
     for (size_t i = 0; i < _numSensors; i++) {
         if (_sensors[i] && _sensors[i]->getSensor()->getSensorType() == sid) {
             return true;

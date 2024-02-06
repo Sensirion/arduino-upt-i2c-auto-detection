@@ -98,11 +98,11 @@ class SensorList {
     /**
      * @brief check if the given Sensor is contained in the list.
      *
-     * @param[in] SensorID of the sensor to be checked for in the list
+     * @param[in] SensorType of the sensor to be checked for in the list
      *
      * @param[out] bool: True if the sensor is found, false otherwise.
      */
-    bool containsSensor(SensorID) const;
+    bool containsSensor(SensorType) const;
 
     /**
      * @brief remove lost sensors from list

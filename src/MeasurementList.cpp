@@ -29,55 +29,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _DATAPOINTLIST_H_
-#define _DATAPOINTLIST_H_
+#include "MeasurementList.h"
 
-#include "DataPoint.h"
+void MeasurementList::init(const size_t& length) {
+    _length = length;
+    delete[] _measurements;
+    _measurements = new Measurement[_length];
+}
 
-/* Class handling a collection of DataPoints */
-class DataPointList {
-  public:
-    DataPointList() = default;
-    ~DataPointList();
-    DataPointList(const DataPointList&) = delete;  // Illegal operation
-    DataPointList&
-    operator=(const DataPointList&) = delete;       // Illegal operation
-    DataPointList(DataPointList&& src);             // Copy Constructor
-    DataPointList& operator=(DataPointList&& src);  // Assignment operator
+size_t MeasurementList::getLength() const {
+    return _length;
+}
 
-    /**
-     * @brief Allocates memory for requested number of DataPoints
-     *
-     * @param length desired size
-     */
-    void init(const size_t& length);
+MeasurementList::~MeasurementList() {
+    delete[] _measurements;
+}
 
-    /**
-     * @brief getter method for _length
-     */
-    size_t getLength() const;
+MeasurementList::MeasurementList(MeasurementList&& src)
+    : _length(src._length), _measurements(src._measurements) {
+    delete[] src._measurements;
+    src._length = 0;
+}
 
-    /**
-     * @brief adds a datapoint
-     *
-     * @note Does not report a failure to perform the operation
-     */
-    void addDataPoint(const DataPoint&);
+MeasurementList& MeasurementList::operator=(MeasurementList&& src) {
+    if (&src != this) {
+        delete[] _measurements;
 
-    /**
-     * @brief getter method for stored DataPoints
-     */
-    const DataPoint& getDataPoint(size_t) const;
+        this->_measurements = src._measurements;
+        src._measurements = nullptr;
+        this->_length = src._length;
+        src._length = 0;
+        this->_writeHead = src._writeHead;
+    }
+    return *this;
+}
 
-    /**
-     * @brief reset _writeHead to start of list
-     */
-    void resetWriteHead();
+void MeasurementList::addMeasurement(const Measurement& m) {
+    if (_writeHead < _length) {
+        _measurements[_writeHead] = m;
+        _writeHead++;
+    }
+}
 
-  private:
-    size_t _length = 0;
-    size_t _writeHead = 0;
-    DataPoint* _dataPoints = nullptr;
-};
+Measurement MeasurementList::getMeasurement(size_t i) const {
+    return _measurements[i];
+}
 
-#endif /* _DATAPOINTLIST_H_ */
+void MeasurementList::resetWriteHead() {
+    _writeHead = 0;
+}
