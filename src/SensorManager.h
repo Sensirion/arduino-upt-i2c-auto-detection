@@ -131,7 +131,7 @@ class SensorManager {
     AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
         for (int i = 0; i < _sensorList.getLength(); ++i) {
             if (_sensorList.getSensor(i) &&
-                _sensorList.getSensor(i)->getSensorId() == id) {
+                _sensorList.getSensor(i)->getSensorType() == id) {
                 pDriver =
                     reinterpret_cast<T*>(_sensorList.getSensor(i)->getDriver());
                 return NO_ERROR;

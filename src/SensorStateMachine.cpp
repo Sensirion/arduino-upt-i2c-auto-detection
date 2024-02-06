@@ -60,7 +60,7 @@ void SensorStateMachine::_initialize() {
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
             _sensorSignals.addDataPoint(
                 DataPoint(SignalType::UNDEFINED, 0.0, 0,
-                          sensorName(_sensor->getSensorId())));
+                          sensorName(_sensor->getSensorType())));
         }
 
     } else {

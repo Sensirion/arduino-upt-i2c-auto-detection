@@ -36,22 +36,15 @@
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSen5x.h>
 
-enum class SensorVersion {
-    UNDEFINED,
-    SEN50,
-    SEN54,
-    SEN55,
-};
-
 class Sen5x : public ISensor {
   public:
     static const uint16_t I2C_ADDRESS = 0x69;
     explicit Sen5x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measureAndWrite(DataPoint dataPoints[],
+    uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
-    SensorID getSensorId() const override;
+    SensorType getSensorType() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     bool requiresInitializationStep() const override;
@@ -60,10 +53,10 @@ class Sen5x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSen5x _driver;
-    const SensorID _id = SensorID::SEN5X;
-    SensorVersion _version = SensorVersion::UNDEFINED;  // determined in start()
+    SensorType _sensorType =
+        SensorType::SEN5X;  // determined more precisely in initializationStep()
+    uint64_t _sensorID = 0;
     uint16_t _determineSensorVersion();
-    const char* sensorVersionName(SensorVersion) const;
 };
 
 #endif /* _SEN5X_H_*/

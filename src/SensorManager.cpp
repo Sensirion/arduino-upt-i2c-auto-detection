@@ -50,7 +50,7 @@ void SensorManager::getSensorReadings(const DataPointList** dataHashmap) {
         const SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
             size_t hashIdx =
-                static_cast<size_t>(ssm->getSensor()->getSensorId());
+                static_cast<size_t>(ssm->getSensor()->getSensorType());
             dataHashmap[hashIdx] = ssm->getSignals();
         }
     }
@@ -66,7 +66,7 @@ void SensorManager::refreshAndGetSensorReadings(
 void SensorManager::setInterval(unsigned long interval, SensorID sensorId) {
     for (int i = 0; i < _sensorList.getLength(); ++i) {
         SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
-        if (ssm && ssm->getSensor()->getSensorId() == sensorId) {
+        if (ssm && ssm->getSensor()->getSensorType() == sensorId) {
             ssm->setMeasurementInterval(interval);
         }
     }

@@ -29,65 +29,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SensorWrappers/Sgp41.h"
-#include "SensirionCore.h"
+#ifndef _SGP4X_H_
+#define _SGP4X_H_
+
+#include "ISensor.h"
+#include "SensirionI2CSgp41.h"
 #include "Sensirion_UPT_Core.h"
 
-uint16_t Sgp41::start() {
-    _driver.begin(_wire);
-    return 0;
-}
+class Sgp41 : public ISensor {
+  public:
+    static const uint16_t I2C_ADDRESS = 0x59;
+    explicit Sgp41(TwoWire& wire) : _wire(wire){};
+    uint16_t start() override;
+    uint16_t measureAndWrite(Measurement measurements[],
+                             const unsigned long timeStamp) override;
+    uint16_t initializationStep() override;
+    SensorType getSensorType() const override;
+    size_t getNumberOfDataPoints() const override;
+    unsigned long getMinimumMeasurementIntervalMs() const override;
+    bool requiresInitializationStep() const override;
 
-uint16_t Sgp41::measureAndWrite(DataPoint dataPoints[],
-                                const unsigned long timeStamp) {
-    uint16_t srawVoc = 0;
-    uint16_t srawNox = 0;
+    // Typical: 10s
+    unsigned long getInitializationIntervalMs() const override;
+    void* getDriver() override;
 
-    uint16_t error =
-        _driver.measureRawSignals(_defaultRh, _defaultT, srawVoc, srawNox);
-    if (error) {
-        return error;
-    }
-    dataPoints[0] =
-        DataPoint(SignalType::VOC_INDEX, static_cast<float>(srawVoc), timeStamp,
-                  sensorName(_id));
-    dataPoints[1] =
-        DataPoint(SignalType::NOX_INDEX, static_cast<float>(srawNox), timeStamp,
-                  sensorName(_id));
-    return HighLevelError::NoError;
-}
+    // Typical measurement interval: 1s
+    long readyStateDecayTimeMs() const override;
 
-uint16_t Sgp41::initializationStep() {
-    uint16_t srawVoc;  // discarded during initialization
-    uint16_t error =
-        _driver.executeConditioning(_defaultRh, _defaultT, srawVoc);
-    return error;
-}
+  private:
+    TwoWire& _wire;
+    SensirionI2CSgp41 _driver;
+    const SensorType _sensorType = SensorType::SGP4X;
+    uint64_t _sensorID = 0;
+    uint16_t _defaultRh = 0x8000;
+    uint16_t _defaultT = 0x6666;
+};
 
-SensorID Sgp41::getSensorId() const {
-    return _id;
-}
-
-size_t Sgp41::getNumberOfDataPoints() const {
-    return 2;
-}
-
-unsigned long Sgp41::getMinimumMeasurementIntervalMs() const {
-    return 1000;
-}
-
-bool Sgp41::requiresInitializationStep() const {
-    return true;
-}
-
-unsigned long Sgp41::getInitializationIntervalMs() const {
-    return 8000;
-}
-
-void* Sgp41::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
-}
-
-long Sgp41::readyStateDecayTimeMs() const {
-    return 2000;
-}
+#endif /* _SGP4X_H_ */

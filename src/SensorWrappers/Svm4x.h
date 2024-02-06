@@ -41,10 +41,10 @@ class Svm4x : public ISensor {
     static const uint16_t I2C_ADDRESS = 0x6A;
     explicit Svm4x(TwoWire& wire) : _wire(wire){};
     uint16_t start() override;
-    uint16_t measureAndWrite(DataPoint dataPoints[],
+    uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
-    SensorID getSensorId() const override;
+    SensorType getSensorType() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     bool requiresInitializationStep() const override;
@@ -53,7 +53,8 @@ class Svm4x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSvm41 _driver;
-    const SensorID _id = SensorID::SVM4X;
+    const SensorType _sensorType = SensorType::SVM4X;
+    uint64_t _sensorID = 0;
 };
 
 #endif /* _SVM40_H_ */

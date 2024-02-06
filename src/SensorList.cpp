@@ -43,7 +43,7 @@ SensorList::~SensorList() {
 }
 
 AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
-    if (containsSensor(pSensor->getSensorId())) {
+    if (containsSensor(pSensor->getSensorType())) {
         return NO_ERROR;
     }
 
@@ -94,7 +94,7 @@ ISensor* SensorList::getSensor(size_t i) const {
 
 bool SensorList::containsSensor(SensorID sid) const {
     for (size_t i = 0; i < _numSensors; i++) {
-        if (_sensors[i] && _sensors[i]->getSensor()->getSensorId() == sid) {
+        if (_sensors[i] && _sensors[i]->getSensor()->getSensorType() == sid) {
             return true;
         }
     }

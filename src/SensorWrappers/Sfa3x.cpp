@@ -37,7 +37,7 @@ uint16_t Sfa3x::start() {
     return 0;
 }
 
-uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
+uint16_t Sfa3x::measureAndWrite(Measurement measurements[],
                                 const unsigned long timeStamp) {
     int16_t hcho;
     int16_t humi;
@@ -47,15 +47,27 @@ uint16_t Sfa3x::measureAndWrite(DataPoint dataPoints[],
     if (error) {
         return error;
     }
-    dataPoints[0] =
-        DataPoint(SignalType::HCHO_PARTS_PER_BILLION,
-                  static_cast<float>(hcho) / 5.0f, timeStamp, sensorName(_id));
-    dataPoints[1] = DataPoint(SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-                              static_cast<float>(humi) / 100.0f, timeStamp,
-                              sensorName(_id));
-    dataPoints[2] = DataPoint(SignalType::TEMPERATURE_DEGREES_CELSIUS,
-                              static_cast<float>(temp) / 200.0f, timeStamp,
-                              sensorName(_id));
+
+    MetaData metaData;
+    metaData.deviceID = _sensorID;
+    metaData.deviceType.sensorType = _sensorType;
+    metaData.platform = DevicePlatform::WIRED;
+
+    measurements[0].signalType = SignalType::HCHO_PARTS_PER_BILLION;
+    measurements[0].dataPoint.t_offset = timeStamp;
+    measurements[0].dataPoint.value = static_cast<float>(hcho) / 5.0f;
+    measurements[0].metaData = metaData;
+
+    measurements[1].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
+    measurements[1].dataPoint.t_offset = timeStamp;
+    measurements[1].dataPoint.value = static_cast<float>(humi) / 100.0f;
+    measurements[1].metaData = metaData;
+
+    measurements[2].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
+    measurements[2].dataPoint.t_offset = timeStamp;
+    measurements[2].dataPoint.value = static_cast<float>(temp) / 200.0f;
+    measurements[2].metaData = metaData;
+
     return HighLevelError::NoError;
 }
 
@@ -64,12 +76,29 @@ uint16_t Sfa3x::initializationStep() {
     if (error) {
         return error;
     }
+
+    uint8_t serialNumberSize = 32;
+    unsigned char serialNumber[serialNumberSize];
+    error = _driver.getDeviceMarking(serialNumber, serialNumberSize);
+    if (error) {
+        return error;
+    }
+    size_t actualLen = strlen((const char*)serialNumber);
+    size_t numBytesToCopy = min(8, (int)actualLen);
+
+    _sensorID = 0;
+    for (int i = 0; i < numBytesToCopy - 1; i++) {
+        _sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
+        _sensorID = _sensorID << 8;
+    }
+    _sensorID |= serialNumber[actualLen - 1];
+
     error = _driver.startContinuousMeasurement();
     return error;
 }
 
-SensorID Sfa3x::getSensorId() const {
-    return _id;
+SensorType Sfa3x::getSensorType() const {
+    return _sensorType;
 }
 
 size_t Sfa3x::getNumberOfDataPoints() const {
