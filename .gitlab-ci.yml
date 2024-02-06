@@ -7,9 +7,6 @@ compile_pio:
   image:
       name: registry.gitlab.sensirion.lokal/sensirion/docker/docker-arduino:0.6.0
   tags: [docker, linux]
-  before_script:
-      - cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
-      - cp examples/advancedUsage/advancedUsage.ino examples/advancedUsage/advancedUsage.cpp
   parallel:
     matrix:
       - env: [basicUsage, advancedUsage]

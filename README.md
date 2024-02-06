@@ -52,7 +52,7 @@ To install this library (in `~/.platformio/lib`), execute the following command 
 ```bash
 pio lib --global install "Sensirion_Sensor_Auto_Detection"
 ```
-To test an example (e.g `basicUsage`), use the corresponding platformio environment from the project directory:
+To test the default example (`basicUsage`), use the following platformio command from the project directory:
 ```bash
 cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/
 ```
@@ -64,7 +64,11 @@ and start the Serial monitor with
 ```bash
 pio device monitor
 ```
-Available environments are `basicUsage`and `advancedUsage`.
+The second example can be run by specifying the build environement `advancedUsage`, as such:
+```bash
+pio run -e advancedUsage -t upload && pio device monitor
+```
+Available environments are `basicUsage`, `advancedUsage` and `check`.
 In case you're using some other board, it is recommended you create a new environment in the `platformio.ini` file, using the existing environments as a template.
 
 In order to use this library in your project, add it to the `lib_deps` in your `platformio.ini` file and include `Sensirion_Sensor_Auto_Detection.h`.
