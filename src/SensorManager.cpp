@@ -49,9 +49,7 @@ void SensorManager::getSensorReadings(const MeasurementList** dataHashmap) {
     for (int i = 0; i < _MAX_NUM_SENSORS; ++i) {
         const SensorStateMachine* ssm = _sensorList.getSensorStateMachine(i);
         if (ssm) {
-            size_t hashIdx =
-                static_cast<size_t>(ssm->getSensor()->getSensorType());
-            dataHashmap[hashIdx] = ssm->getSignals();
+            dataHashmap[i] = ssm->getSignals();
         }
     }
 }

@@ -124,10 +124,5 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
             continue;
         }
         AutoDetectorError addFailed = sensorList.addSensor(pSensor);
-        if (addFailed) {
-            Serial.println("Error trying to add sensor instance "
-                           "to sensorList.");
-            delete pSensor;
-        }
     }
 }

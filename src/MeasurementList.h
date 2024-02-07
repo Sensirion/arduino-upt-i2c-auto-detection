@@ -39,8 +39,9 @@ class MeasurementList {
   public:
     MeasurementList() = default;
     ~MeasurementList();
-    MeasurementList(const MeasurementList& other);             // Copy Constructor
-    MeasurementList& operator=(const MeasurementList& other);  // Assignment operator
+    MeasurementList(const MeasurementList& other);  // Copy Constructor
+    MeasurementList&
+    operator=(const MeasurementList& other);  // Assignment operator
 
     /**
      * @brief Allocates memory for requested number of Measurements

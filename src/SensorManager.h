@@ -42,7 +42,8 @@
  * maximal polling intervals */
 class SensorManager {
   private:
-    static const uint8_t _MAX_NUM_SENSORS = 16;
+    // Number of sensors is limited by size of hash in _sensorList.
+    static const uint8_t _MAX_NUM_SENSORS = 8;
     SensorList _sensorList;
     IAutoDetector& _detector;
 
@@ -129,16 +130,14 @@ class SensorManager {
      * be called. e.g.: pDriver->driverMethod()
      */
     template <class T>
-    AutoDetectorError getSensorDriver(T*& pDriver, SensorType id) {
-        for (int i = 0; i < _sensorList.getLength(); ++i) {
-            if (_sensorList.getSensor(i) &&
-                _sensorList.getSensor(i)->getSensorType() == id) {
-                pDriver =
-                    reinterpret_cast<T*>(_sensorList.getSensor(i)->getDriver());
-                return NO_ERROR;
-            }
+    AutoDetectorError getSensorDriver(T*& pDriver, SensorType sensorType) {
+        if (!_sensorList.containsSensor(sensorType)) {
+            return DRIVER_NOT_FOUND_ERROR;
+        } else {
+            pDriver = reinterpret_cast<T*>(
+                _sensorList.getSensor(sensorType)->getDriver());
         }
-        return DRIVER_NOT_FOUND_ERROR;
+        return NO_ERROR;
     };
 };
 

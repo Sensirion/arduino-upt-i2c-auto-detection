@@ -35,11 +35,30 @@
 #include "AutoDetectorErrors.h"
 #include "SensorStateMachine.h"
 
+/**
+ * @note We reduce the size of the sensor universe for the purposes of
+ * autodetection, since we cannot communicate with two sensors sharing the same
+ * I2C-address. This allows us to use the address as an effective hash (using
+ * SensorType would leave "holes" in the hashmap).
+ */
+enum class SensorHash {
+    _UNDEFINED,
+    _SCD4X,  // 0x62
+    _SFA3X,  // 0x5D
+    _SVM4X,  // 0x6A
+    _SHT4X,  // 0x44
+    _SEN5X,  // 0x69
+    _SCD30,  // 0x61
+    _STC3X,  // 0x29
+    _SGP4X,  // 0x59
+};
+
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   private:
     const uint8_t _numSensors;
     SensorStateMachine** _sensors = nullptr;
+    size_t _hashSensorType(SensorType sensorType) const;
 
   public:
     explicit SensorList(uint8_t numSensors);
@@ -56,8 +75,10 @@ class SensorList {
      *
      * @param[in] ISensor* pointer to the sensor to be added to the list
      *
-     * @param[out] AutoDetectorError::FULL_SENSOR_LIST_ERROR in case the list is
-     * already full
+     * @param[out] AutoDetectorError
+     *          SENSOR_LIST_ALREADY_CONTAINS_SENSOR_ERROR in case the list is
+     *          already full
+     *          NO_ERROR on success
      */
     AutoDetectorError addSensor(ISensor* pSensor);
 
@@ -93,7 +114,7 @@ class SensorList {
     /**
      * @brief getter method for a stored sensor
      */
-    ISensor* getSensor(size_t) const;
+    ISensor* getSensor(SensorType sensorType) const;
 
     /**
      * @brief check if the given Sensor is contained in the list.
