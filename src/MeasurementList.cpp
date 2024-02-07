@@ -45,21 +45,24 @@ MeasurementList::~MeasurementList() {
     delete[] _measurements;
 }
 
-MeasurementList::MeasurementList(MeasurementList&& src)
-    : _length(src._length), _measurements(src._measurements) {
-    delete[] src._measurements;
-    src._length = 0;
+MeasurementList::MeasurementList(const MeasurementList& other)
+    : _length(other._length) {
+    _measurements = new Measurement[_length];
+    for (size_t i = 0; i < _length; i++) {
+        _measurements[i] = other._measurements[i];
+    }
 }
 
-MeasurementList& MeasurementList::operator=(MeasurementList&& src) {
-    if (&src != this) {
+MeasurementList& MeasurementList::operator=(const MeasurementList& other) {
+    if (&other != this) {
         delete[] _measurements;
 
-        this->_measurements = src._measurements;
-        src._measurements = nullptr;
-        this->_length = src._length;
-        src._length = 0;
-        this->_writeHead = src._writeHead;
+        _length = other._length;
+        _measurements = new Measurement[_length];
+        for (size_t i = 0; i < _length; i++) {
+            _measurements[i] = other._measurements[i];
+        }
+        _writeHead = other._writeHead;
     }
     return *this;
 }
