@@ -35,7 +35,8 @@ SensorManager sensorManager(i2CAutoDetector);
 
 SensirionI2CScd4x* pScd4xDriver = nullptr;
 void printData(const MeasurementList**, size_t);
-void printMeasurement(const Measurement&);
+void printMetaData(const MetaData& metaData);
+void printMeasurementDataPointAndSignalType(const Measurement&);
 
 uint maxNumSensors;
 const MeasurementList** pCurrentData;
@@ -88,6 +89,7 @@ void loop() {
 }
 
 void printData(const MeasurementList** data, size_t numDataPacks) {
+    Serial.println("===========================================");
     Serial.println("Data retrieved via sensor manager:");
     for (size_t p = 0; p < numDataPacks; p++) {
         const MeasurementList* dataPack = data[p];
@@ -95,66 +97,73 @@ void printData(const MeasurementList** data, size_t numDataPacks) {
             continue;
         }
 
+        printMetaData(dataPack->getMeasurement(0).metaData);
         for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            printMeasurement(dataPack->getMeasurement(i));
+            printMeasurementDataPointAndSignalType(dataPack->getMeasurement(i));
         }
     }
 
     Serial.println();
 }
 
-void printMeasurement(const Measurement &measurement) {
+void printMetaData(const MetaData& metaData) {
     // Get device and platform descriptive labels
-    const char *platformLbl = devicePlatformLabel(
-        measurement.metadata.platform, measurement.metadata.devicetype);
-    const char *deviceLbl = deviceLabel(measurement.metadata.platform,
-                                          measurement.metadata.devicetype);
+    const char* platformLbl =
+        devicePlatformLabel(metaData.platform, metaData.deviceType);
+    const char* deviceLbl = deviceLabel(metaData.platform, metaData.deviceType);
 
     // Get deviceID in string representation
     char deviceIDStr[64];
-    if (measurement.metadata.platform == DevicePlatform::BLE) {
-        sprintf(deviceIDStr, "0x%llx", measurement.metadata.deviceID);
+    if (metaData.platform == DevicePlatform::BLE) {
+        sprintf(deviceIDStr, "0x%llx", metaData.deviceID);
     } else {
-        sprintf(deviceIDStr, "%llu", measurement.metadata.deviceID);
+        sprintf(deviceIDStr, "%llu", metaData.deviceID);
     }
 
-    Serial.printf("\nShowing Measurement:\n");
+    Serial.println("-------------------------------------------");
+    Serial.printf("Device metadata:\n");
+    Serial.printf("  Platform:\t\t%s\n", platformLbl);
+    Serial.printf("  DeviceID:\t\t%s\n", deviceIDStr);
+    Serial.printf("  Device Type:\t\t%s\n", deviceLbl);
+    Serial.println("-------------------------------------------");
+}
 
+void printMeasurementDataPointAndSignalType(const Measurement& measurement) {
+    Serial.printf("\nShowing Measurement:\n");
     Serial.printf("  Data Point:\n");
     Serial.printf("    Measured at:\t%lus\n",
-                  measurement.datapoint.t_offset / 1000);
+                  measurement.dataPoint.t_offset / 1000);
     Serial.printf("    Value:\t\t");
-    switch (measurement.signaltype) {
-    case SignalType::TEMPERATURE_DEGREES_CELSIUS:
-    case SignalType::RELATIVE_HUMIDITY_PERCENTAGE:
-    case SignalType::VELOCITY_METERS_PER_SECOND:
-        Serial.printf("%.1f\n", measurement.datapoint.value);
-        break;
-    case SignalType::CO2_PARTS_PER_MILLION:
-    case SignalType::HCHO_PARTS_PER_BILLION:
-    case SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER:
-    case SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER:
-    case SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER:
-    case SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER:
-    case SignalType::VOC_INDEX:
-    case SignalType::NOX_INDEX:
-    case SignalType::GAS_CONCENTRATION:
-        Serial.printf("%i\n", static_cast<int>(measurement.datapoint.value));
-        break;
-    default:
-        Serial.printf("%i\n", static_cast<int>(measurement.datapoint.value));
-        break;
+    switch (measurement.signalType) {
+        case SignalType::TEMPERATURE_DEGREES_CELSIUS:
+        case SignalType::RELATIVE_HUMIDITY_PERCENTAGE:
+        case SignalType::VELOCITY_METERS_PER_SECOND:
+        case SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE:
+            Serial.printf("%.1f\n", measurement.dataPoint.value);
+            break;
+        case SignalType::CO2_PARTS_PER_MILLION:
+        case SignalType::HCHO_PARTS_PER_BILLION:
+        case SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER:
+        case SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER:
+        case SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER:
+        case SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER:
+        case SignalType::RAW_VOC_INDEX:
+        case SignalType::RAW_NOX_INDEX:
+        case SignalType::VOC_INDEX:
+        case SignalType::NOX_INDEX:
+            Serial.printf("%i\n",
+                          static_cast<int>(measurement.dataPoint.value));
+            break;
+        default:
+            Serial.printf("%i\n",
+                          static_cast<int>(measurement.dataPoint.value));
+            break;
     }
 
     Serial.printf("  SignalType:\n");
     Serial.printf("    Physical Quantity:\t%s\n",
-                  quantityOf(measurement.signaltype));
-    Serial.printf("    Units:\t\t%s\n", unitOf(measurement.signaltype));
-
-    Serial.printf("  Metadata:\n");
-    Serial.printf("    Platform:\t\t%s\n", platformLbl);
-    Serial.printf("    deviceID:\t\t%s\n", deviceIDStr);
-    Serial.printf("    Device Type:\t%s\n", deviceLbl);
+                  quantityOf(measurement.signalType));
+    Serial.printf("    Units:\t\t%s\n", unitOf(measurement.signalType));
 
     return;
 }
