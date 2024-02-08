@@ -16,6 +16,7 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 ### Sensor Oddities
 - SGP41. The SGP41 arduino I2C driver returns raw VOC and NOX values, as opposed to the SEN5X sensors, which internally feed the raw values through Sensirions gas index algorithm and returns a gas index in the range of [0, 500].
 - STC3X. The STC3X requires a conditioning phase of up to 10 seconds (this library considers 8 sufficient), during which the value of the datapoints will be UNDEFINED/0.
+- SVM40. The SVM40 Evaluation Kit Board is deprecated and **not** supported by sensor autodetection.
 
 ## Getting Started
 
