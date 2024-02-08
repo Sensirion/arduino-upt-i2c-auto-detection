@@ -97,73 +97,13 @@ void printData(const MeasurementList** data, size_t numDataPacks) {
             continue;
         }
 
-        printMetaData(dataPack->getMeasurement(0).metaData);
+        Serial.println("-------------------------------------------");
+        printMeasurementMetaData(dataPack->getMeasurement(0));
+        Serial.println("-------------------------------------------");
         for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            printMeasurementDataPointAndSignalType(dataPack->getMeasurement(i));
+            printMeasurementWithoutMetaData(dataPack->getMeasurement(i));
         }
     }
 
     Serial.println();
-}
-
-void printMetaData(const MetaData& metaData) {
-    // Get device and platform descriptive labels
-    const char* platformLbl =
-        devicePlatformLabel(metaData.platform, metaData.deviceType);
-    const char* deviceLbl = deviceLabel(metaData.platform, metaData.deviceType);
-
-    // Get deviceID in string representation
-    char deviceIDStr[64];
-    if (metaData.platform == DevicePlatform::BLE) {
-        sprintf(deviceIDStr, "0x%llx", metaData.deviceID);
-    } else {
-        sprintf(deviceIDStr, "%llu", metaData.deviceID);
-    }
-
-    Serial.println("-------------------------------------------");
-    Serial.printf("Device metadata:\n");
-    Serial.printf("  Platform:\t\t%s\n", platformLbl);
-    Serial.printf("  DeviceID:\t\t%s\n", deviceIDStr);
-    Serial.printf("  Device Type:\t\t%s\n", deviceLbl);
-    Serial.println("-------------------------------------------");
-}
-
-void printMeasurementDataPointAndSignalType(const Measurement& measurement) {
-    Serial.printf("\nShowing Measurement:\n");
-    Serial.printf("  Data Point:\n");
-    Serial.printf("    Measured at:\t%lus\n",
-                  measurement.dataPoint.t_offset / 1000);
-    Serial.printf("    Value:\t\t");
-    switch (measurement.signalType) {
-        case SignalType::TEMPERATURE_DEGREES_CELSIUS:
-        case SignalType::RELATIVE_HUMIDITY_PERCENTAGE:
-        case SignalType::VELOCITY_METERS_PER_SECOND:
-        case SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE:
-            Serial.printf("%.1f\n", measurement.dataPoint.value);
-            break;
-        case SignalType::CO2_PARTS_PER_MILLION:
-        case SignalType::HCHO_PARTS_PER_BILLION:
-        case SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER:
-        case SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER:
-        case SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER:
-        case SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER:
-        case SignalType::RAW_VOC_INDEX:
-        case SignalType::RAW_NOX_INDEX:
-        case SignalType::VOC_INDEX:
-        case SignalType::NOX_INDEX:
-            Serial.printf("%i\n",
-                          static_cast<int>(measurement.dataPoint.value));
-            break;
-        default:
-            Serial.printf("%i\n",
-                          static_cast<int>(measurement.dataPoint.value));
-            break;
-    }
-
-    Serial.printf("  SignalType:\n");
-    Serial.printf("    Physical Quantity:\t%s\n",
-                  quantityOf(measurement.signalType));
-    Serial.printf("    Units:\t\t%s\n", unitOf(measurement.signalType));
-
-    return;
 }
