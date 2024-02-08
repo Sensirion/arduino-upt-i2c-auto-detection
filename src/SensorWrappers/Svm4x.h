@@ -53,7 +53,7 @@ class Svm4x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSvm41 _driver;
-    const SensorType _sensorType = SensorType::SVM4X;
+    const SensorType _sensorType = SensorType::SVM41;
     uint64_t _sensorID = 0;
 };
 
