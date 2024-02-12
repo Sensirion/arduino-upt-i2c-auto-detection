@@ -123,6 +123,6 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
         if (!pSensor) {
             continue;
         }
-        AutoDetectorError addFailed = sensorList.addSensor(pSensor);
+        sensorList.addSensor(pSensor);
     }
 }

@@ -32,8 +32,10 @@
 #ifndef _SENSOR_STATE_MACHINE_H_
 #define _SENSOR_STATE_MACHINE_H_
 
+#include "AutoDetectorErrors.h"
 #include "ISensor.h"
 #include "MeasurementList.h"
+#include "SensirionErrors.h"
 #include <stdint.h>
 
 enum class SensorStatus {
@@ -53,8 +55,8 @@ enum class SensorStatus {
 class SensorStateMachine {
   private:
     SensorStatus _sensorState;
-    uint16_t _lastMeasurementError;
-    uint16_t _measurementErrorCounter;
+    uint8_t _initErrorCounter;
+    uint8_t _measurementErrorCounter;
     uint32_t _lastMeasurementTimeStampMs;
     uint32_t _measurementIntervalMs;
 
@@ -62,16 +64,20 @@ class SensorStateMachine {
     MeasurementList _sensorSignals;
 
     /**
-     * @brief initialize the state machine
+     * @brief initialize the state machine. Promotes sensor state to
+     * INITIALIZING or RUNNING when appropriate.
      *
      * @note Needs to be outside of constructor because state machines may decay
      * to UNINITIALIZED
+     *
+     * @return  I2C_ERROR if ISensor::initializationStep() fails (in which case
+     *            the driver error is decoded and printed to console)
+     *          NO_ERROR on success
      */
-    void _initialize();
+    AutoDetectorError _initialize();
 
     /**
-     * @brief Update state machine for sensors whose state is UNINITIALIZED or
-     * INITIALIZING
+     * @brief Update state machine for sensors whose state is INITIALIZING
      *
      * @note Toggles _sensorStatus to RUNNING incase all initialisation Steps
      * are completed
@@ -81,21 +87,28 @@ class SensorStateMachine {
     /**
      * @brief Update state machine for sensors whose state is RUNNING
      *
-     * @note Doesn't throw an error in case the measurement fails, but records
-     * the error and increments the error counter in the state machine. Does not
-     * perform a measurement if the measurement interval is too short, or too
-     * long.
+     * @note Does not perform a measurement if the measurement interval is too
+     * short, or too long.
+     *
+     * @return  I2C_ERROR if _readSignals() fails (in which case the driver
+     *            error is decoded and printed to console)
+     *          SENSOR_READY_STATE_DECAYED_ERROR if too much time has elapsed
+     *            since last measurement was performed NO_ERROR on success
      */
-    void _readSignalsRoutine();
+    AutoDetectorError _readSignalsRoutine();
 
     /**
      * @brief Query sensor for new signals
+     *
+     * @return  I2C_ERROR if ISensor::measureAndWrite() fails (in which case the
+     *            error is decoded and printed to console)
+     *          NO_ERROR on success
      */
-    void _readSignals();
+    AutoDetectorError _readSignals();
 
   public:
     SensorStateMachine()
-        : _sensorState(SensorStatus::UNDEFINED), _lastMeasurementError(0),
+        : _sensorState(SensorStatus::UNDEFINED), _initErrorCounter(0),
           _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
           _measurementIntervalMs(0), _sensor(nullptr){};
 
@@ -110,27 +123,37 @@ class SensorStateMachine {
     SensorStatus getSensorState() const;
 
     /**
-     * @brief setter method for _sensorState
-     */
-    void setSensorState(SensorStatus);
-
-    /**
      * @brief setter method for _measurementIntervalMs.
      *
      * @note Function call has no effect if the requested measurement interval
      * is smaller than the sensor's minimum measurement interval.
+     *
+     * @return  1 if the specified interval is shorter than the minimum
+     *            measurement interval allowed for the sensor
+     *          NO_ERROR on success
      */
-    void setMeasurementInterval(uint32_t);
+    uint16_t setMeasurementInterval(uint32_t);
 
     /**
      * @brief update state machine
+     *
+     * @note May print I2C Communication error messages to console via Arduino
+     * Serial, but such errors may not be fatal.
+     *
+     * @return  I2C_ERROR if bus communication fails (in which case the
+     *            driver error is decoded and printed to console)
+     *          SENSOR_LOST_ERROR if allowable number of consecutive operation
+     *            errors was exceeded during update
+     *          SENSOR_READY_STATE_DECAYED_ERROR if too much time has elapsed
+     *            since last measurement was performed
+     *          NO_ERROR on success
      */
-    void update();
+    AutoDetectorError update();
 
     /**
      * @brief getter method for sensor handled by state machine
      *
-     * @note: Needed to fetch number of signal DataPoints from SensorManager
+     * @note: Needed to fetch number of signal Measurements from SensorManager
      */
     ISensor* getSensor() const;
 

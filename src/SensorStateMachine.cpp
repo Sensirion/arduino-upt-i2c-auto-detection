@@ -42,19 +42,26 @@ bool timeIntervalPassed(const uint32_t interval,
 }
 
 SensorStateMachine::SensorStateMachine(ISensor* pSensor)
-    : _sensorState(SensorStatus::UNINITIALIZED), _lastMeasurementError(0),
+    : _sensorState(SensorStatus::UNINITIALIZED), _initErrorCounter(0),
       _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
       _measurementIntervalMs(0), _sensor(pSensor) {
     _sensor->start();
 };
 
-void SensorStateMachine::_initialize() {
+AutoDetectorError SensorStateMachine::_initialize() {
     if (_sensor->requiresInitializationStep()) {
-        _sensor->initializationStep();
+        uint16_t error = _sensor->initializationStep();
+        if (error) {
+            char errorMsg[256];
+            errorToString(error, errorMsg, 256);
+            Serial.printf("Failed to perform initialization step: %s\n",
+                          errorMsg);
+            return I2C_ERROR;
+        }
+
         _lastMeasurementTimeStampMs = millis();
         _sensorState = SensorStatus::INITIALIZING;
 
-        _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
         _sensorSignals.init(_sensor->getNumberOfDataPoints());
 
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
@@ -64,9 +71,12 @@ void SensorStateMachine::_initialize() {
 
     } else {
         _sensorState = SensorStatus::RUNNING;
-        _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
         _sensorSignals.init(_sensor->getNumberOfDataPoints());
     }
+
+    _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
+
+    return NO_ERROR;
 }
 
 void SensorStateMachine::_initializationRoutine() {
@@ -77,7 +87,7 @@ void SensorStateMachine::_initializationRoutine() {
     }
 }
 
-void SensorStateMachine::_readSignalsRoutine() {
+AutoDetectorError SensorStateMachine::_readSignalsRoutine() {
     unsigned long timeSinceLastMeasurementMs =
         millis() - _lastMeasurementTimeStampMs;
 
@@ -100,71 +110,78 @@ void SensorStateMachine::_readSignalsRoutine() {
     }
 
     /* Perform appropriate action */
+    AutoDetectorError error = NO_ERROR;
     switch (tlr_position) {
         case timeLineRegion::INSIDE_MIN_INTERVAL:
             break;
 
         case timeLineRegion::INSIDE_VALID_BAND:
-            _readSignals();
+            error = _readSignals();
+            if (error) {
+                return error;
+            }
             break;
 
         case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
             _sensorState = SensorStatus::UNINITIALIZED;
-            // throw error
-            break;
+            return SENSOR_READY_STATE_DECAYED_ERROR;
 
         default:
             break;
     }
+
+    return NO_ERROR;
 }
 
-void SensorStateMachine::_readSignals() {
-    Measurement sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
-    uint32_t currentTimeStampMs = millis();
+AutoDetectorError SensorStateMachine::_readSignals() {
+    Measurement signalsBuf[_sensor->getNumberOfDataPoints()];
+    uint32_t nowMS = millis();
 
-    uint16_t measureAndWriteError =
-        _sensor->measureAndWrite(sensorSignalsBuffer, currentTimeStampMs);
-    _lastMeasurementError = measureAndWriteError;
+    uint16_t error = _sensor->measureAndWrite(signalsBuf, nowMS);
 
-    if (measureAndWriteError) {
-        _measurementErrorCounter++;
-        if (_measurementErrorCounter >=
-            _sensor->getNumberOfAllowedConsecutiveErrors()) {
-            _sensorState = SensorStatus::LOST;
-        }
-        return;
+    if (error) {
+        char errorMsg[256];
+        errorToString(error, errorMsg, 256);
+        Serial.printf("Failed to read measurements for sensor %s: %s\n",
+                      sensorLabel(_sensor->getSensorType()), errorMsg);
+        return I2C_ERROR;
     }
 
-    _lastMeasurementTimeStampMs = currentTimeStampMs;
-    _measurementErrorCounter = 0;
+    _lastMeasurementTimeStampMs = nowMS;
 
     for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-        _sensorSignals.addMeasurement(sensorSignalsBuffer[i]);
+        _sensorSignals.addMeasurement(signalsBuf[i]);
     }
     _sensorSignals.resetWriteHead();
+
+    return NO_ERROR;
 }
 
 SensorStatus SensorStateMachine::getSensorState() const {
     return _sensorState;
 }
 
-void SensorStateMachine::setSensorState(SensorStatus s) {
-    _sensorState = s;
-}
-
-void SensorStateMachine::setMeasurementInterval(uint32_t interval) {
+uint16_t SensorStateMachine::setMeasurementInterval(uint32_t interval) {
     if (interval > _sensor->getMinimumMeasurementIntervalMs()) {
         _measurementIntervalMs = interval;
+        return NO_ERROR;
     }
+    return 1;
 }
 
-void SensorStateMachine::update() {
+AutoDetectorError SensorStateMachine::update() {
+    AutoDetectorError error = NO_ERROR;
     switch (_sensorState) {
         case SensorStatus::UNDEFINED:
             break;
 
         case SensorStatus::UNINITIALIZED:
-            _initialize();
+            error = _initialize();
+            if (error) {
+                _initErrorCounter++;
+            } else {
+                _initErrorCounter = 0;
+            }
             break;
 
         case SensorStatus::INITIALIZING:
@@ -172,7 +189,12 @@ void SensorStateMachine::update() {
             break;
 
         case SensorStatus::RUNNING:
-            _readSignalsRoutine();
+            error = _readSignalsRoutine();
+            if (error) {
+                _measurementErrorCounter++;
+            } else {
+                _measurementErrorCounter = 0;
+            }
             break;
 
         case SensorStatus::LOST:
@@ -181,7 +203,14 @@ void SensorStateMachine::update() {
         default:
             break;
     }
-    return;
+
+    uint16_t nAllowed = _sensor->getNumberOfAllowedConsecutiveErrors();
+    if (_initErrorCounter > nAllowed || _measurementErrorCounter > nAllowed) {
+        _sensorState = SensorStatus::LOST;
+        return LOST_SENSOR_ERROR;
+    }
+
+    return error;
 }
 
 ISensor* SensorStateMachine::getSensor() const {

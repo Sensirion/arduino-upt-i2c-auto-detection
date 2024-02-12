@@ -71,16 +71,12 @@ class SensorList {
 
     /**
      * @brief add a sensor to the list of tracked sensors. Ignores sensors that
-     * are already in the list
+     * are already in the list. Causes program abort if unknown sensor is
+     * encountered.
      *
      * @param[in] ISensor* pointer to the sensor to be added to the list
-     *
-     * @param[out] AutoDetectorError
-     *          SENSOR_LIST_ALREADY_CONTAINS_SENSOR_ERROR in case the list is
-     *          already full
-     *          NO_ERROR on success
      */
-    AutoDetectorError addSensor(ISensor* pSensor);
+    void addSensor(ISensor* pSensor);
 
     /**
      * @brief Counts sensors contained in the list
