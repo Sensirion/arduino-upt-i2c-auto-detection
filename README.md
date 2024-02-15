@@ -56,13 +56,11 @@ To test an example (e.g `basicUsage`), use the corresponding platformio environm
 ```bash
 cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/
 ```
-As of november 2, 2023 platformIO does not correctly convert `.ino` files to `.cpp` files in subdirectories of the project. We must do so manually with the following commands, 
-for platformio does not compile .ino files.
+To run the examples, input into the command line:
 ```bash
-cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
 pio run -e basicUsage -t upload
 ```
-and start the Serial monitor.
+and start the Serial monitor with
 ```bash
 pio device monitor
 ```
