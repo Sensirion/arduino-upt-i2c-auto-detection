@@ -62,7 +62,7 @@ compile_arduino:
         - ln -s $PWD ~/Arduino/libraries/
     parallel:
       matrix:
-        - boards: [esp32:esp32:esp32, esp8266:esp8266:generic]
+        - boards: [esp32:esp32:esp32]
           examples: [basicUsage, advancedUsage]
     script:
       - arduino-cli compile --warnings all --fqbn ${boards} examples/${examples}
