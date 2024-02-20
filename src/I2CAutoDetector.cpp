@@ -46,8 +46,8 @@
 #ifdef INCLUDE_SFA3X_DRIVER
 #include "SensorWrappers/Sfa3x.h"
 #endif
-#ifdef INCLUDE_SGP41_DRIVER
-#include "SensorWrappers/Sgp41.h"
+#ifdef INCLUDE_SGP4X_DRIVER
+#include "SensorWrappers/Sgp4x.h"
 #endif
 #ifdef INCLUDE_SHT4X_DRIVER
 #include "SensorWrappers/Sht4x.h"
@@ -87,7 +87,7 @@ ISensor* I2CAutoDetector::createSensorFromAddress(const byte& address) {
             return new Sfa3x(_wire);
         }
 #endif
-#ifdef INCLUDE_SGP41_DRIVER
+#ifdef INCLUDE_SGP4X_DRIVER
         case (Sgp41::I2C_ADDRESS): {
             return new Sgp41(_wire);
         }
@@ -124,10 +124,5 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
             continue;
         }
         AutoDetectorError addFailed = sensorList.addSensor(pSensor);
-        if (addFailed) {
-            Serial.println("Error trying to add sensor instance "
-                           "to sensorList.");
-            delete pSensor;
-        }
     }
 }

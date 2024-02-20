@@ -13,18 +13,20 @@
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
-bool isEmpty(const DataPointList**, size_t);
-void printData(const DataPointList**, size_t);
+bool isEmpty(const MeasurementList**, size_t);
+void printData(const MeasurementList**, size_t);
+void printMetaData(const MetaData& metaData);
+void printMeasurementDataPointAndSignalType(const Measurement&);
 
 uint maxNumSensors;
-const DataPointList** pCurrentData;
+const MeasurementList** pCurrentData;
 
 void setup() {
     Serial.begin(115200);
     Wire.begin();
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
+    pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
@@ -32,9 +34,12 @@ void loop() {
     /*
     Data retrieval:
 
-    The library provides a hashmap of pointers to DataPointList objects for each
-    of the connected sensors. The referenced Data contains a collection of
-    DataPoints corresponding to the latest available readings from the sensor.
+    The library provides a hashmap of pointers to MeasurementList objects for
+    each of the connected sensors. The referenced Data contains a collection of
+    Measurements corresponding to the latest available readings from the sensor.
+    The hashmap has a lower resolution than SensorType, because it treats
+    sensors sharing the same I2C address as equals. Read out the detected
+    sensorType from the metadata in the Measurements.
     */
     sensorManager.refreshAndGetSensorReadings(pCurrentData);
     // Print contents
@@ -45,40 +50,32 @@ void loop() {
     }
 }
 
-void printData(const DataPointList** data, size_t maxNumDataPacks) {
+void printData(const MeasurementList** data, size_t maxNumDataPacks) {
     if (isEmpty(data, maxNumDataPacks)) {
         Serial.println("No sensors seem to be connected.");
         return;
     }
 
+    Serial.println("===========================================");
     for (size_t p = 0; p < maxNumDataPacks; p++) {
-        const DataPointList* dataPack = data[p];
+        const MeasurementList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
-
+        Serial.println("-------------------------------------------");
+        printMeasurementMetaData(dataPack->getMeasurement(0));
+        Serial.println("-------------------------------------------");
         for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            const DataPoint& dp = dataPack->getDataPoint(i);
-            // Get SensorId string using SensorId enum as index
-            Serial.print(dp.sourceDevice);
-            Serial.print("-");
-            Serial.print(quantityOf(dp.signalType));
-            Serial.print(":\t ");
-            Serial.print(dp.value);
-            Serial.print(" ");
-            // Get Unit string using Unit enum as index
-            Serial.print(unitOf(dp.signalType));
-            Serial.print(" \t@");
-            Serial.println(dp.timeStamp);
+            printMeasurementWithoutMetaData(dataPack->getMeasurement(i));
         }
     }
 
     Serial.println();
 }
 
-bool isEmpty(const DataPointList** data, size_t numDataPacks) {
+bool isEmpty(const MeasurementList** data, size_t numDataPacks) {
     for (size_t p = 0; p < numDataPacks; p++) {
-        const DataPointList* dataPack = data[p];
+        const MeasurementList* dataPack = data[p];
 
         if (dataPack && data[p]->getLength() > 0) {
             return false;

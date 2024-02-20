@@ -58,9 +58,8 @@ void SensorStateMachine::_initialize() {
         _sensorSignals.init(_sensor->getNumberOfDataPoints());
 
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-            _sensorSignals.addDataPoint(
-                DataPoint(SignalType::UNDEFINED, 0.0, 0,
-                          sensorName(_sensor->getSensorId())));
+            Measurement measurement;
+            _sensorSignals.addMeasurement(measurement);
         }
 
     } else {
@@ -84,9 +83,8 @@ void SensorStateMachine::_readSignalsRoutine() {
 
     /* Determine timing relationship vs. last measurement */
     enum class timeLineRegion {
-        INSIDE_MIN_INTERVAL,  // Less time than measuring interval has elapsed
-                              // since last measurement
-        INSIDE_VALID_BAND,    // May request a reading
+        INSIDE_MIN_INTERVAL,          // Measurement not yet due to be performed
+        INSIDE_VALID_BAND,            // May request a reading
         OUTSIDE_VALID_INITIALIZATION  // Sensor running status has decayed,
                                       // conditionning must be performed
     };
@@ -121,7 +119,7 @@ void SensorStateMachine::_readSignalsRoutine() {
 }
 
 void SensorStateMachine::_readSignals() {
-    DataPoint sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
+    Measurement sensorSignalsBuffer[_sensor->getNumberOfDataPoints()];
     uint32_t currentTimeStampMs = millis();
 
     uint16_t measureAndWriteError =
@@ -141,7 +139,7 @@ void SensorStateMachine::_readSignals() {
     _measurementErrorCounter = 0;
 
     for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-        _sensorSignals.addDataPoint(sensorSignalsBuffer[i]);
+        _sensorSignals.addMeasurement(sensorSignalsBuffer[i]);
     }
     _sensorSignals.resetWriteHead();
 }
@@ -190,6 +188,6 @@ ISensor* SensorStateMachine::getSensor() const {
     return _sensor;
 }
 
-const DataPointList* SensorStateMachine::getSignals() const {
+const MeasurementList* SensorStateMachine::getSignals() const {
     return &_sensorSignals;
 }

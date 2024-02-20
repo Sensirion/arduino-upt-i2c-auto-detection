@@ -32,17 +32,18 @@
 #ifndef _SENSOR_MANAGER_H_
 #define _SENSOR_MANAGER_H_
 
-#include "DataPointList.h"
 #include "IAutoDetector.h"
+#include "MeasurementList.h"
 #include "SensirionCore.h"
 #include "SensorList.h"
 
 /* Class to manage the sensors connected to the board's I2C bus. Handles
- * detection and signal polling in accordance to the sensor's minimal polling
- * intervals */
+ * detection and signal polling in accordance to the sensor's minimal and
+ * maximal polling intervals */
 class SensorManager {
   private:
-    static const uint8_t _MAX_NUM_SENSORS = 16;
+    // Number of sensors is limited by size of hash in _sensorList.
+    static const uint8_t _MAX_NUM_SENSORS = 8;
     SensorList _sensorList;
     IAutoDetector& _detector;
 
@@ -55,7 +56,8 @@ class SensorManager {
      *
      * @note With this construction we by default limit ourselves to one I2C
      * bus, ie. it is not possible to seek for sensors on both the 3.3V and 5V
-     * buses
+     * buses. Users may start another instance of Sensormanager to handle such
+     * use cases.
      */
     explicit SensorManager(IAutoDetector& detector_)
         : _sensorList(_MAX_NUM_SENSORS), _detector(detector_){};
@@ -81,19 +83,19 @@ class SensorManager {
      * SensorManager::getMaxNumberOfSensors(). Existing entries are either
      * ignored or overwritten.
      */
-    void getSensorReadings(const DataPointList**);
+    void getSensorReadings(const MeasurementList**);
 
     /**
      * @brief convenience function performing the sensor list refresh, state
      * machine update and data window setup
      *
-     * @param[in] DataPointList** location to which write the references to the
-     * individual state machines data, hashed by their respective SensorIDs.
-     * Size of the hashmap can be queried using
+     * @param[in] MeasurementList** location to which write the references to
+     * the individual state machines data, hashed by their respective
+     * SensorTypes. Size of the hashmap can be queried using
      * SensorManager::getMaxNumberOfSensors(). Existing entries are either
      * ignored or overwritten.
      */
-    void refreshAndGetSensorReadings(const DataPointList**);
+    void refreshAndGetSensorReadings(const MeasurementList**);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if
@@ -101,12 +103,12 @@ class SensorManager {
      *
      * @param[in] interval desired measurement interval
      *
-     * @param[in] SensorID target sensor
+     * @param[in] SensorType target sensor
      *
      * @note Does not return an error in case the validity checks fail, in which
      * case the interval is not set for the sensor
      */
-    void setInterval(unsigned long interval, SensorID sensorId);
+    void setInterval(unsigned long interval, SensorType sensorId);
 
     /**
      * @brief getter method for number of sensors
@@ -120,7 +122,7 @@ class SensorManager {
      * @param[in] pDriver nullptr initialized pointer to specific Sensirion
      * sensor driver class T.
      *
-     * @param[in] id SensorId corresponding to ISensor implementation for sensor
+     * @param[in] SensorType corresponding to ISensor implementation for sensor
      * driver class T.
      *
      * @param[out] AutodDetectorError::DRIVER_NOT_FOUND_ERROR in case of failure
@@ -128,16 +130,14 @@ class SensorManager {
      * be called. e.g.: pDriver->driverMethod()
      */
     template <class T>
-    AutoDetectorError getSensorDriver(T*& pDriver, SensorID id) {
-        for (int i = 0; i < _sensorList.getLength(); ++i) {
-            if (_sensorList.getSensor(i) &&
-                _sensorList.getSensor(i)->getSensorId() == id) {
-                pDriver =
-                    reinterpret_cast<T*>(_sensorList.getSensor(i)->getDriver());
-                return NO_ERROR;
-            }
+    AutoDetectorError getSensorDriver(T*& pDriver, SensorType sensorType) {
+        if (!_sensorList.containsSensor(sensorType)) {
+            return DRIVER_NOT_FOUND_ERROR;
+        } else {
+            pDriver = reinterpret_cast<T*>(
+                _sensorList.getSensor(sensorType)->getDriver());
         }
-        return DRIVER_NOT_FOUND_ERROR;
+        return NO_ERROR;
     };
 };
 

@@ -29,39 +29,55 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SGP41_H_
-#define _SGP41_H_
+#include "MeasurementList.h"
 
-#include "ISensor.h"
-#include "SensirionI2CSgp41.h"
-#include "Sensirion_UPT_Core.h"
+void MeasurementList::init(const size_t& length) {
+    _length = length;
+    delete[] _measurements;
+    _measurements = new Measurement[_length];
+}
 
-class Sgp41 : public ISensor {
-  public:
-    static const uint16_t I2C_ADDRESS = 0x59;
-    explicit Sgp41(TwoWire& wire) : _wire(wire){};
-    uint16_t start() override;
-    uint16_t measureAndWrite(DataPoint dataPoints[],
-                             const unsigned long timeStamp) override;
-    uint16_t initializationStep() override;
-    SensorID getSensorId() const override;
-    size_t getNumberOfDataPoints() const override;
-    unsigned long getMinimumMeasurementIntervalMs() const override;
-    bool requiresInitializationStep() const override;
+size_t MeasurementList::getLength() const {
+    return _length;
+}
 
-    // Typical: 10s
-    unsigned long getInitializationIntervalMs() const override;
-    void* getDriver() override;
+MeasurementList::~MeasurementList() {
+    delete[] _measurements;
+}
 
-    // Typical measurement interval: 1s
-    long readyStateDecayTimeMs() const override;
+MeasurementList::MeasurementList(const MeasurementList& other)
+    : _length(other._length) {
+    _measurements = new Measurement[_length];
+    for (size_t i = 0; i < _length; i++) {
+        _measurements[i] = other._measurements[i];
+    }
+}
 
-  private:
-    TwoWire& _wire;
-    SensirionI2CSgp41 _driver;
-    SensorID _id = SensorID::SGP41;
-    uint16_t _defaultRh = 0x8000;
-    uint16_t _defaultT = 0x6666;
-};
+MeasurementList& MeasurementList::operator=(const MeasurementList& other) {
+    if (&other != this) {
+        delete[] _measurements;
 
-#endif /* _SGP41_H_ */
+        _length = other._length;
+        _measurements = new Measurement[_length];
+        for (size_t i = 0; i < _length; i++) {
+            _measurements[i] = other._measurements[i];
+        }
+        _writeHead = other._writeHead;
+    }
+    return *this;
+}
+
+void MeasurementList::addMeasurement(const Measurement& m) {
+    if (_writeHead < _length) {
+        _measurements[_writeHead] = m;
+        _writeHead++;
+    }
+}
+
+Measurement MeasurementList::getMeasurement(size_t i) const {
+    return _measurements[i];
+}
+
+void MeasurementList::resetWriteHead() {
+    _writeHead = 0;
+}

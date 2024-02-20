@@ -89,7 +89,7 @@ class ISensor {
     /**
      * @brief Call driver methods to perform measurement and update DataPoints
      *
-     * @param dataPoints argument must be at least getNumberOfDataPoints()
+     * @param measurements argument must be at least getNumberOfDataPoints()
      * long
      *
      * @param timeStamp at time of function call, represents milliseconds
@@ -98,7 +98,7 @@ class ISensor {
      * @return A uint16_t error corresponding to SensirionErrors.h of
      * SensirionCore, where 0 value corresponds to no error.
      */
-    virtual uint16_t measureAndWrite(DataPoint dataPoints[],
+    virtual uint16_t measureAndWrite(Measurement measurements[],
                                      const unsigned long timeStamp) = 0;
 
     /**
@@ -131,7 +131,7 @@ class ISensor {
      *
      * @return SensorId
      */
-    virtual SensorID getSensorId() const = 0;
+    virtual SensorType getSensorType() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS

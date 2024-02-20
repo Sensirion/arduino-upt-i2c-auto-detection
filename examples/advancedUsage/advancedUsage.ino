@@ -34,10 +34,12 @@ SensorManager sensorManager(i2CAutoDetector);
 // accordingly.
 
 SensirionI2CScd4x* pScd4xDriver = nullptr;
-void printData(const DataPointList**, size_t);
+void printData(const MeasurementList**, size_t);
+void printMetaData(const MetaData& metaData);
+void printMeasurementDataPointAndSignalType(const Measurement&);
 
 uint maxNumSensors;
-const DataPointList** pCurrentData;
+const MeasurementList** pCurrentData;
 float t_incr = 0;
 
 void setup() {
@@ -47,14 +49,14 @@ void setup() {
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
-        pScd4xDriver, SensorID::SCD4X);
+        pScd4xDriver, SensorType::SCD4X);
 
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
-    sensorManager.setInterval(7500, SensorID::SCD4X);
+    sensorManager.setInterval(7500, SensorType::SCD4X);
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const DataPointList* [maxNumSensors] { nullptr };
+    pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
@@ -82,31 +84,24 @@ void loop() {
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
         sensorManager.refreshConnectedSensors();
         sensorManager.getSensorDriver<SensirionI2CScd4x>(pScd4xDriver,
-                                                         SensorID::SCD4X);
+                                                         SensorType::SCD4X);
     }
 }
 
-void printData(const DataPointList** data, size_t numDataPacks) {
+void printData(const MeasurementList** data, size_t numDataPacks) {
+    Serial.println("===========================================");
     Serial.println("Data retrieved via sensor manager:");
     for (size_t p = 0; p < numDataPacks; p++) {
-        const DataPointList* dataPack = data[p];
+        const MeasurementList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
 
+        Serial.println("-------------------------------------------");
+        printMeasurementMetaData(dataPack->getMeasurement(0));
+        Serial.println("-------------------------------------------");
         for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            const DataPoint& dp = dataPack->getDataPoint(i);
-            // Get SensorId string using SensorId enum as index
-            Serial.print(dp.sourceDevice);
-            Serial.print("-");
-            Serial.print(quantityOf(dp.signalType));
-            Serial.print(":\t ");
-            Serial.print(dp.value);
-            Serial.print(" ");
-            // Get Unit string using Unit enum as index
-            Serial.print(unitOf(dp.signalType));
-            Serial.print(" \t@");
-            Serial.println(dp.timeStamp);
+            printMeasurementWithoutMetaData(dataPack->getMeasurement(i));
         }
     }
 

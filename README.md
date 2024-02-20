@@ -16,6 +16,7 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 ### Sensor Oddities
 - SGP41. The SGP41 arduino I2C driver returns raw VOC and NOX values, as opposed to the SEN5X sensors, which internally feed the raw values through Sensirions gas index algorithm and returns a gas index in the range of [0, 500].
 - STC3X. The STC3X requires a conditioning phase of up to 10 seconds (this library considers 8 sufficient), during which the value of the datapoints will be UNDEFINED/0.
+- SVM40. The SVM40 Evaluation Kit Board is deprecated and **not** supported by sensor autodetection.
 
 ## Getting Started
 
@@ -52,21 +53,23 @@ To install this library (in `~/.platformio/lib`), execute the following command 
 ```bash
 pio lib --global install "Sensirion_Sensor_Auto_Detection"
 ```
-To test an example (e.g `basicUsage`), use the corresponding platformio environment from the project directory:
+To test the default example (`basicUsage`), use the following platformio command from the project directory:
 ```bash
 cd ~/.platformio/lib/Sensirion_Sensor_Auto_Detection/
 ```
-As of november 2, 2023 platformIO does not correctly convert `.ino` files to `.cpp` files in subdirectories of the project. We must do so manually with the following commands, 
-for platformio does not compile .ino files.
+To run the examples, input into the command line:
 ```bash
-cp examples/basicUsage/basicUsage.ino examples/basicUsage/basicUsage.cpp
 pio run -e basicUsage -t upload
 ```
-and start the Serial monitor.
+and start the Serial monitor with
 ```bash
 pio device monitor
 ```
-Available environments are `basicUsage`and `advancedUsage`.
+The second example can be run by specifying the build environement `advancedUsage`, as such:
+```bash
+pio run -e advancedUsage -t upload && pio device monitor
+```
+Available environments are `basicUsage`, `advancedUsage` and `check`.
 In case you're using some other board, it is recommended you create a new environment in the `platformio.ini` file, using the existing environments as a template.
 
 In order to use this library in your project, add it to the `lib_deps` in your `platformio.ini` file and include `Sensirion_Sensor_Auto_Detection.h`.
