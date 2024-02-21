@@ -93,21 +93,21 @@ SensorList::~SensorList() {
     delete[] _sensors;
 }
 
-AutoDetectorError SensorList::addSensor(ISensor* pSensor) {
+void SensorList::addSensor(ISensor* pSensor) {
     // Check if we already have it
     SensorType newSensorType = pSensor->getSensorType();
     if (containsSensor(newSensorType)) {
-        return NO_ERROR;
+        return;
     }
     // Hash
     size_t hashIndex = _hashSensorType(newSensorType);
     // Insert
     if (_sensors[hashIndex] == nullptr) {
         _sensors[hashIndex] = new SensorStateMachine(pSensor);
-        return NO_ERROR;
+        return;
     }
 
-    return SENSOR_LIST_ALREADY_CONTAINS_SENSOR_ERROR;
+    return;
 }
 
 size_t SensorList::count() {
