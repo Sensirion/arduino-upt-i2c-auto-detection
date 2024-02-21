@@ -17,26 +17,25 @@ perform commands. Thus, only use the driver to perform actions not handled by
 the sensor manager.
 */
 
-#include "Arduino.h"
-#include "SensirionI2CScd4x.h"
 #include "Sensirion_Sensor_Auto_Detection.h"
-#include "Sensirion_UPT_Core.h"
+#include "SensirionI2CScd4x.h"
+#include "Arduino.h"
 #include <cmath>
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
 
-// Pointer to sensor driver to be retrieved from sensorManager
-// To retrieve the drivers of other sensors, change:
-// - the type of the pointer below
-// - the SensorManager::getSensorDriver template argument
-// - the sensorId argument
-// accordingly.
+/*
+Pointer to sensor driver to be retrieved from sensorManager
+To retrieve the drivers of other sensors, change:
+    - the type of the pointer below
+    - the SensorManager::getSensorDriver template argument
+    - the sensorId argument
+accordingly.
+*/
 
 SensirionI2CScd4x* pScd4xDriver = nullptr;
 void printData(const MeasurementList**, size_t);
-void printMetaData(const MetaData& metaData);
-void printMeasurementDataPointAndSignalType(const Measurement&);
 
 uint maxNumSensors;
 const MeasurementList** pCurrentData;
@@ -44,7 +43,10 @@ float t_incr = 0;
 
 void setup() {
     Serial.begin(115200);
-    Wire.begin();
+
+    int sda_pin = 21;  // Default on esp32 boards
+    int scl_pin = 22;
+    Wire.begin(sda_pin, scl_pin);
     sensorManager.refreshConnectedSensors();
 
     // Retrieval of sensor driver

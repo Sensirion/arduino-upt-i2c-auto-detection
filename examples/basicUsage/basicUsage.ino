@@ -1,13 +1,12 @@
-/*
-    Basic Usage
-
-    This sketch shows the minimum required code to be able to
-    access sensor readings.
-
-    The circuit:
-    A single Sensirion sensor should (at least) be connected
-    for this sketch to give sensible output.
-    */
+/**
+ * Basic Usage
+ * This sketch shows the minimum required code to be able to access sensor
+ * readings.
+ *
+ *  The circuit:
+ *  A single Sensirion sensor should (at least) be connected for this sketch to
+ *  give sensible output.
+ */
 
 #include "Sensirion_Sensor_Auto_Detection.h"
 
@@ -15,15 +14,16 @@ I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
 bool isEmpty(const MeasurementList**, size_t);
 void printData(const MeasurementList**, size_t);
-void printMetaData(const MetaData& metaData);
-void printMeasurementDataPointAndSignalType(const Measurement&);
 
 uint maxNumSensors;
 const MeasurementList** pCurrentData;
 
 void setup() {
     Serial.begin(115200);
-    Wire.begin();
+
+    int sda_pin = 21;  // Default on esp32 boards
+    int scl_pin = 22;
+    Wire.begin(sda_pin, scl_pin);
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
     pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
