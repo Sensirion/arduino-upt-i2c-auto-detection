@@ -1,4 +1,4 @@
-# Arduino Sensor Auto Detection
+# Arduino Sensirion UPT I2C Auto Detection
 
 Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It allows for easy read-out of the data of Sensirion Sensors using an ESP32 board.
 
@@ -34,7 +34,7 @@ Start the [Arduino IDE](http://www.arduino.cc/en/main/software) and open the Lib
 
     Sketch => Include Library => Manage Libraries...
 
-Search for the `Sensririon Sensor Auto Detection` library in the `Filter your search...` field and install it by clicking the `install` button. Make sure to click "Install All", lest you'll have to manually search for and install the following:
+Search for the `Sensirion UPT I2C Auto Detection` library in the `Filter your search...` field and install it by clicking the `install` button. Make sure to click "Install All", lest you'll have to manually search for and install the following:
 * [Sensirion Arduino Core](https://www.arduino.cc/reference/en/libraries/sensirion-core/)
 * [Sensirion UPT Core](https://www.arduino.cc/reference/en/libraries/sensirion-upt-core/)
 * [Sensirion I2C SCD4x](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-scd4x/)
@@ -110,7 +110,7 @@ In case automatic dependency installation doesn't work, you will have to install
 
 For example code showing how to use the user API, look at `examples/basicUsage/basicUsage.ino` in this directory. It may also be opened from the Arduino IDE via
 
-```File => Examples => Sensirion Sensor Auto Detection => basicUsage```
+    File => Examples => Sensirion Sensor Auto Detection => basicUsage
 
 In any case, the following steps are essential.
 

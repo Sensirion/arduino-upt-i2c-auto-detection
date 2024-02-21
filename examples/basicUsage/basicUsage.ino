@@ -8,7 +8,7 @@
  *  give sensible output.
  */
 
-#include "Sensirion_Sensor_Auto_Detection.h"
+#include "Sensirion_upt_i2c_auto_detection.h"
 
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
