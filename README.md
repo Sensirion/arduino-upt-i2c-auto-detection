@@ -86,7 +86,9 @@ The second example can be run by specifying the build environement `advancedUsag
 ```bash
 pio run -e advancedUsage -t upload && pio device monitor
 ```
-Available environments are `basicUsage` and `advancedUsage`. Environment `basicUsage` is default and will be used if you omit the `-e` flag.
+Available environments are `basicUsage`, `advancedUsage` and `hacksterExample`. Environment `basicUsage` is default and will be used if you omit the `-e` flag.
+Please refer to the README in `examples/hacksterExample` for more information about this environment, as it is designed to accompany an example published to [Hackster.io](https://www.hackster.io/sensirion-software/easily-read-out-sensirion-sensor-measurements-on-arduino-9c1862).
+
 In case you're using some other board, it is recommended you create a new environment in the `platformio.ini` file, using the existing environments as a template. Find your `board` parameter [here](https://docs.platformio.org/en/latest/boards/index.html).
 
 ## Dependencies

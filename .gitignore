@@ -4,5 +4,4 @@ html
 latex
 src/html/**
 src/latex/**
-examples/basicUsage/basicUsage.cpp
-examples/advancedUsage/advancedUsage.cpp
+examples/**/*.cpp
