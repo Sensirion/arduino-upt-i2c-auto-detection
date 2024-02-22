@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+I2CAutoDetector	KEYWORD1
+SensorManager	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+getMaxNumberOfSensors	KEYWORD2
+refreshAndGetSensorReadings	KEYWORD2
+refreshConnectedSensors	KEYWORD2
+executeSensorCommunication	KEYWORD2
+getSensorReadings	KEYWORD2
+setInterval	KEYWORD2
+getSensorDriver	KEYWORD2
+
+######################################
+# Constants (LITERAL1)
+#######################################
