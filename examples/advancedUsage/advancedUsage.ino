@@ -17,9 +17,9 @@ perform commands. Thus, only use the driver to perform actions not handled by
 the sensor manager.
 */
 
-#include "Sensirion_upt_i2c_auto_detection.h"
-#include "SensirionI2CScd4x.h"
 #include "Arduino.h"
+#include "SensirionI2CScd4x.h"
+#include "Sensirion_upt_i2c_auto_detection.h"
 #include <cmath>
 
 I2CAutoDetector i2CAutoDetector(Wire);
@@ -52,6 +52,12 @@ void setup() {
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
         pScd4xDriver, SensorType::SCD4X);
+
+    if (error != NO_ERROR) {
+        Serial.print("Encountered error while getting sensor driver (code ");
+        Serial.print(error);
+        Serial.println(")");
+    }
 
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
