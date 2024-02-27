@@ -8,12 +8,13 @@
 class Scd4x : public ISensor {
   public:
     static const uint16_t I2C_ADDRESS = 0x62;
-    explicit Scd4x(TwoWire& wire) : _wire(wire){};
+    explicit Scd4x(TwoWire& wire);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     SensorType getSensorType() const override;
+    MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     bool requiresInitializationStep() const override;
@@ -22,8 +23,7 @@ class Scd4x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CScd4x _driver;
-    const SensorType _sensorType = SensorType::SCD4X;
-    uint64_t _sensorID = 0;
+    MetaData _metaData;
 };
 
 #endif /* _SCD4X_H_ */

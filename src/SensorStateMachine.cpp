@@ -35,6 +35,7 @@ AutoDetectorError SensorStateMachine::_initialize() {
 
         for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
             Measurement measurement;
+            measurement.metaData = _sensor->getMetaData();
             _sensorSignals.addMeasurement(measurement);
         }
 

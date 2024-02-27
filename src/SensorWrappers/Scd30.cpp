@@ -2,6 +2,11 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+Scd30::Scd30(TwoWire& wire) : _wire(wire) {
+    _metaData.deviceType.sensorType = SensorType::SCD30;
+    _metaData.platform = DevicePlatform::WIRED;
+};
+
 uint16_t Scd30::start() {
     _driver.begin(_wire, I2C_ADDRESS);
     return 0;
@@ -28,25 +33,20 @@ uint16_t Scd30::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    MetaData metaData;
-    metaData.deviceID = _sensorID;
-    metaData.deviceType.sensorType = _sensorType;
-    metaData.platform = DevicePlatform::WIRED;
-
     measurements[0].signalType = SignalType::CO2_PARTS_PER_MILLION;
     measurements[0].dataPoint.t_offset = timeStamp;
     measurements[0].dataPoint.value = co2Concentration;
-    measurements[0].metaData = metaData;
+    measurements[0].metaData = _metaData;
 
     measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
     measurements[1].dataPoint.t_offset = timeStamp;
     measurements[1].dataPoint.value = temperature;
-    measurements[1].metaData = metaData;
+    measurements[1].metaData = _metaData;
 
     measurements[2].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
     measurements[2].dataPoint.t_offset = timeStamp;
     measurements[2].dataPoint.value = humidity;
-    measurements[2].metaData = metaData;
+    measurements[2].metaData = _metaData;
 
     /* Prepare next reading by querying the dataReadyFlag. We don't need the
      * value of the flag, but the query seems to finalize setting off the
@@ -71,10 +71,11 @@ uint16_t Scd30::initializationStep() {
     }
 
     // SCD30 does not support serial no. retrieval via driver
-    _sensorID = 0;
+    uint64_t sensorID = 0;
     for (size_t i = 0; i < 64; i++) {
-        _sensorID |= (random(2) << i);
+        sensorID |= (random(2) << i);
     }
+    _metaData.deviceID = sensorID;
 
     /* See explanatory comment for measureAndWrite() */
     uint16_t dataReadyFlag;
@@ -83,7 +84,12 @@ uint16_t Scd30::initializationStep() {
 }
 
 SensorType Scd30::getSensorType() const {
-    return _sensorType;
+    return _metaData.deviceType.sensorType;
+    ;
+}
+
+MetaData Scd30::getMetaData() const {
+    return _metaData;
 }
 
 size_t Scd30::getNumberOfDataPoints() const {

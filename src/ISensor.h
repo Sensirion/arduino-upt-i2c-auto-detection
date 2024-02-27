@@ -96,11 +96,18 @@ class ISensor {
     }
 
     /**
-     * @brief Get the specific SensorId of the ISensor realization
+     * @brief Get the specific SensorType of the ISensor realization
      *
-     * @return SensorId
+     * @return SensorType
      */
     virtual SensorType getSensorType() const = 0;
+
+    /**
+     * @brief Get the MetaData of the ISensor realization
+     * 
+     * @return MetaData
+    */
+    virtual MetaData getMetaData() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS

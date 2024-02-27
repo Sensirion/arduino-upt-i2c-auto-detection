@@ -8,12 +8,13 @@
 class Sen5x : public ISensor {
   public:
     static const uint16_t I2C_ADDRESS = 0x69;
-    explicit Sen5x(TwoWire& wire) : _wire(wire){};
+    explicit Sen5x(TwoWire& wire);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     SensorType getSensorType() const override;
+    MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     bool requiresInitializationStep() const override;
@@ -22,9 +23,7 @@ class Sen5x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSen5x _driver;
-    SensorType _sensorType =
-        SensorType::SEN5X;  // determined more precisely in initializationStep()
-    uint64_t _sensorID = 0;
+    MetaData _metaData;
     uint16_t _determineSensorVersion();
 };
 
