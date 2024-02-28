@@ -18,32 +18,30 @@ SensorStateMachine::SensorStateMachine(ISensor* pSensor)
 };
 
 AutoDetectorError SensorStateMachine::_initialize() {
-    if (_sensor->requiresInitializationStep()) {
-        uint16_t error = _sensor->initializationStep();
-        if (error) {
-            char errorMsg[256];
-            errorToString(error, errorMsg, 256);
-            Serial.printf("Failed to perform initialization step: %s\n",
-                          errorMsg);
-            return I2C_ERROR;
-        }
-
-        _lastMeasurementTimeStampMs = millis();
-        _sensorState = SensorStatus::INITIALIZING;
-
-        _sensorSignals.init(_sensor->getNumberOfDataPoints());
-
-        for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-            Measurement measurement;
-            _sensorSignals.addMeasurement(measurement);
-        }
-
-    } else {
-        _sensorState = SensorStatus::RUNNING;
-        _sensorSignals.init(_sensor->getNumberOfDataPoints());
+    uint16_t error = _sensor->initializationStep();
+    if (error) {
+        char errorMsg[256];
+        errorToString(error, errorMsg, 256);
+        Serial.printf("Failed to perform initialization step: %s\n", errorMsg);
+        return I2C_ERROR;
     }
 
+    _sensorSignals.init(_sensor->getNumberOfDataPoints());
     _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
+    _lastMeasurementTimeStampMs = millis();
+
+    if (_sensor->getInitializationIntervalMs() > 0) {
+        // SGP4X, SCD4X
+        _sensorState = SensorStatus::INITIALIZING;
+    } else {
+        _sensorState = SensorStatus::RUNNING;
+    }
+
+    for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
+        Measurement measurement;
+        measurement.metaData = _sensor->getMetaData();
+        _sensorSignals.addMeasurement(measurement);
+    }
 
     return NO_ERROR;
 }

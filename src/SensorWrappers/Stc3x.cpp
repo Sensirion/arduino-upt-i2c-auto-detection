@@ -2,6 +2,12 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+Stc3x::Stc3x(TwoWire& wire) : _wire(wire) {
+    _metaData.deviceType.sensorType =
+        SensorType::STC3X;  // Determined more precisely at initializationStep()
+    _metaData.platform = DevicePlatform::WIRED;
+};
+
 uint16_t Stc3x::start() {
     _driver.begin(_wire);
     uint16_t error = _driver.setBinaryGas(0x0001);
@@ -19,23 +25,18 @@ uint16_t Stc3x::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    MetaData metaData;
-    metaData.deviceID = _sensorID;
-    metaData.deviceType.sensorType = _sensorType;
-    metaData.platform = DevicePlatform::WIRED;
-
     measurements[0].signalType =
         SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE;
     measurements[0].dataPoint.t_offset = timeStamp;
     measurements[0].dataPoint.value =
         100 * (static_cast<float>(gasTicks) - 16384.0) / 32768.0;
-    measurements[0].metaData = metaData;
+    measurements[0].metaData = _metaData;
 
     measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
     measurements[1].dataPoint.t_offset = timeStamp;
     measurements[1].dataPoint.value =
         static_cast<float>(temperatureTicks) / 200.0;
-    measurements[1].metaData = metaData;
+    measurements[1].metaData = _metaData;
 
     return HighLevelError::NoError;
 }
@@ -66,19 +67,20 @@ uint16_t Stc3x::initializationStep() {
     const uint32_t maskedProductNo = productNumber & mask;
     const uint32_t maskedSTC31ProductNo = stc31ProductNumber & mask;
     if (maskedSTC31ProductNo == maskedProductNo) {
-        _sensorType = SensorType::STC31;
+        _metaData.deviceType.sensorType = SensorType::STC31;
     }  // else keep default STC3X
 
     // Sensor Serial No
-    _sensorID = 0;
-    _sensorID |= (uint64_t)serialNumberRaw[0] << 56 |
-                 (uint64_t)serialNumberRaw[1] << 48 |
-                 (uint64_t)serialNumberRaw[2] << 40 |
-                 (uint64_t)serialNumberRaw[3] << 32 |
-                 (uint64_t)serialNumberRaw[4] << 24 |
-                 (uint64_t)serialNumberRaw[5] << 16 |
-                 (uint64_t)serialNumberRaw[6] << 8 |
-                 (uint64_t)serialNumberRaw[7];
+    uint64_t sensorID = 0;
+    sensorID |= (uint64_t)serialNumberRaw[0] << 56 |
+                (uint64_t)serialNumberRaw[1] << 48 |
+                (uint64_t)serialNumberRaw[2] << 40 |
+                (uint64_t)serialNumberRaw[3] << 32 |
+                (uint64_t)serialNumberRaw[4] << 24 |
+                (uint64_t)serialNumberRaw[5] << 16 |
+                (uint64_t)serialNumberRaw[6] << 8 |
+                (uint64_t)serialNumberRaw[7];
+    _metaData.deviceID = sensorID;
 
     // Select gas mode
     /**
@@ -101,7 +103,11 @@ uint16_t Stc3x::initializationStep() {
 }
 
 SensorType Stc3x::getSensorType() const {
-    return _sensorType;
+    return _metaData.deviceType.sensorType;
+}
+
+MetaData Stc3x::getMetaData() const {
+    return _metaData;
 }
 
 size_t Stc3x::getNumberOfDataPoints() const {
@@ -110,10 +116,6 @@ size_t Stc3x::getNumberOfDataPoints() const {
 
 unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
     return 1000;
-}
-
-bool Stc3x::requiresInitializationStep() const {
-    return 1;
 }
 
 void* Stc3x::getDriver() {

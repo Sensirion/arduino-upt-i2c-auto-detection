@@ -2,6 +2,11 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+Sgp41::Sgp41(TwoWire& wire) : _wire(wire) {
+    _metaData.deviceType.sensorType = SensorType::SGP4X;
+    _metaData.platform = DevicePlatform::WIRED;
+};
+
 uint16_t Sgp41::start() {
     _driver.begin(_wire);
     return 0;
@@ -17,20 +22,16 @@ uint16_t Sgp41::measureAndWrite(Measurement measurements[],
     if (error) {
         return error;
     }
-    MetaData metaData;
-    metaData.deviceID = _sensorID;
-    metaData.deviceType.sensorType = _sensorType;
-    metaData.platform = DevicePlatform::WIRED;
 
     measurements[0].signalType = SignalType::RAW_VOC_INDEX;
     measurements[0].dataPoint.t_offset = timeStamp;
     measurements[0].dataPoint.value = static_cast<float>(srawVoc);
-    measurements[0].metaData = metaData;
+    measurements[0].metaData = _metaData;
 
     measurements[1].signalType = SignalType::RAW_NOX_INDEX;
     measurements[1].dataPoint.t_offset = timeStamp;
     measurements[1].dataPoint.value = static_cast<float>(srawNox);
-    measurements[1].metaData = metaData;
+    measurements[1].metaData = _metaData;
 
     return HighLevelError::NoError;
 }
@@ -42,9 +43,10 @@ uint16_t Sgp41::initializationStep() {
     if (error) {
         return error;
     }
-    _sensorID = 0;
-    _sensorID |= (static_cast<uint64_t>(serialNo[0]) << 16 * 2) |
-                 (serialNo[1] << 16) | serialNo[2];
+    uint64_t sensorID = 0;
+    sensorID |= (static_cast<uint64_t>(serialNo[0]) << 16 * 2) |
+                (serialNo[1] << 16) | serialNo[2];
+    _metaData.deviceID = sensorID;
 
     uint16_t srawVoc;  // discarded during initialization
     error = _driver.executeConditioning(_defaultRh, _defaultT, srawVoc);
@@ -52,7 +54,11 @@ uint16_t Sgp41::initializationStep() {
 }
 
 SensorType Sgp41::getSensorType() const {
-    return _sensorType;
+    return _metaData.deviceType.sensorType;
+}
+
+MetaData Sgp41::getMetaData() const {
+    return _metaData;
 }
 
 size_t Sgp41::getNumberOfDataPoints() const {
@@ -61,10 +67,6 @@ size_t Sgp41::getNumberOfDataPoints() const {
 
 unsigned long Sgp41::getMinimumMeasurementIntervalMs() const {
     return 1000;
-}
-
-bool Sgp41::requiresInitializationStep() const {
-    return true;
 }
 
 unsigned long Sgp41::getInitializationIntervalMs() const {

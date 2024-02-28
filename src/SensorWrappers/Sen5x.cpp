@@ -1,6 +1,12 @@
 #include "SensorWrappers/Sen5x.h"
 #include "SensirionCore.h"
 
+Sen5x::Sen5x(TwoWire& wire) : _wire(wire) {
+    _metaData.deviceType.sensorType =
+        SensorType::SEN5X;  // determined more precisely in initializationStep()
+    _metaData.platform = DevicePlatform::WIRED;
+};
+
 uint16_t Sen5x::start() {
     _driver.begin(_wire);
     return 0;
@@ -29,55 +35,51 @@ uint16_t Sen5x::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    MetaData metaData;
-    metaData.deviceID = _sensorID;
-    metaData.deviceType.sensorType = _sensorType;
-    metaData.platform = DevicePlatform::WIRED;
-
     // Versions 50, 54 and 55
     measurements[0].signalType = SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER;
     measurements[0].dataPoint.t_offset = timeStamp;
     measurements[0].dataPoint.value = massConcentrationPm1p0;
-    measurements[0].metaData = metaData;
+    measurements[0].metaData = _metaData;
 
     measurements[1].signalType = SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER;
     measurements[1].dataPoint.t_offset = timeStamp;
     measurements[1].dataPoint.value = massConcentrationPm2p5;
-    measurements[1].metaData = metaData;
+    measurements[1].metaData = _metaData;
 
     measurements[2].signalType = SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER;
     measurements[2].dataPoint.t_offset = timeStamp;
     measurements[2].dataPoint.value = massConcentrationPm4p0;
-    measurements[2].metaData = metaData;
+    measurements[2].metaData = _metaData;
 
     measurements[3].signalType = SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER;
     measurements[3].dataPoint.t_offset = timeStamp;
     measurements[3].dataPoint.value = massConcentrationPm10p0;
-    measurements[3].metaData = metaData;
+    measurements[3].metaData = _metaData;
 
     // Verions 54, 55
-    if (_sensorType == SensorType::SEN54 or _sensorType == SensorType::SEN55) {
+    if (getSensorType() == SensorType::SEN54 or
+        getSensorType() == SensorType::SEN55) {
         measurements[4].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
         measurements[4].dataPoint.t_offset = timeStamp;
         measurements[4].dataPoint.value = ambientHumidity;
-        measurements[4].metaData = metaData;
+        measurements[4].metaData = _metaData;
 
         measurements[5].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
         measurements[5].dataPoint.t_offset = timeStamp;
         measurements[5].dataPoint.value = ambientTemperature;
-        measurements[5].metaData = metaData;
+        measurements[5].metaData = _metaData;
 
         measurements[6].signalType = SignalType::VOC_INDEX;
         measurements[6].dataPoint.t_offset = timeStamp;
         measurements[6].dataPoint.value = vocIndex;
-        measurements[6].metaData = metaData;
+        measurements[6].metaData = _metaData;
     }
     // Version 55
-    if (_sensorType == SensorType::SEN55) {
+    if (getSensorType() == SensorType::SEN55) {
         measurements[7].signalType = SignalType::NOX_INDEX;
         measurements[7].dataPoint.t_offset = timeStamp;
         measurements[7].dataPoint.value = noxIndex;
-        measurements[7].metaData = metaData;
+        measurements[7].metaData = _metaData;
     }
     return HighLevelError::NoError;
 }
@@ -104,12 +106,14 @@ uint16_t Sen5x::initializationStep() {
     }
     size_t actualLen = strlen((const char*)serialNumber);
     size_t numBytesToCopy = min(8, (int)actualLen);
-    _sensorID = 0;
+    uint64_t sensorID = 0;
     for (int i = 0; i < numBytesToCopy - 1; i++) {
-        _sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
-        _sensorID = _sensorID << 8;
+        sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
+        sensorID = sensorID << 8;
     }
-    _sensorID |= serialNumber[actualLen - 1];
+    sensorID |= serialNumber[actualLen - 1];
+
+    _metaData.deviceID = sensorID;
 
     // Start Measurement
     error = _driver.startMeasurement();
@@ -121,11 +125,15 @@ uint16_t Sen5x::initializationStep() {
 }
 
 SensorType Sen5x::getSensorType() const {
-    return _sensorType;
+    return _metaData.deviceType.sensorType;
+}
+
+MetaData Sen5x::getMetaData() const {
+    return _metaData;
 }
 
 size_t Sen5x::getNumberOfDataPoints() const {
-    switch (_sensorType) {
+    switch (getSensorType()) {
         case SensorType::SEN5X:
             return 4;
         case SensorType::SEN50:
@@ -143,10 +151,6 @@ unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-bool Sen5x::requiresInitializationStep() const {
-    return true;
-}
-
 void* Sen5x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
@@ -161,15 +165,15 @@ uint16_t Sen5x::_determineSensorVersion() {
     }
 
     if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50") == 0) {
-        _sensorType = SensorType::SEN50;
+        _metaData.deviceType.sensorType = SensorType::SEN50;
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54") ==
                0) {
-        _sensorType = SensorType::SEN54;
+        _metaData.deviceType.sensorType = SensorType::SEN54;
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN55") ==
                0) {
-        _sensorType = SensorType::SEN55;
+        _metaData.deviceType.sensorType = SensorType::SEN55;
     } else {
-        _sensorType = SensorType::SEN5X;
+        _metaData.deviceType.sensorType = SensorType::SEN5X;
     }
     return 0;
 }

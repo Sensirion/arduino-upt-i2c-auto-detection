@@ -22,22 +22,10 @@ class ISensor {
     virtual uint16_t start() = 0;
 
     /**
-     * @brief Query sensor whether an initialization step is required or not.
-     *
-     * @param[out] bool true if either a conditioning or initialization command
-     * must be called before measurements are available
+     * @brief Perform extended sensor initialization (if applicable) and
+     * determines sensor metadata.
      */
-    virtual bool requiresInitializationStep() const {
-        return false;
-    };
-
-    /**
-     * @brief Perform extended sensor initialization.
-     * As most sensors don't require this, overriding this method is optional.
-     */
-    virtual uint16_t initializationStep() {
-        return 0;
-    };
+    virtual uint16_t initializationStep() = 0;
 
     /**
      * @brief Get the duration of the conditioning period
@@ -96,11 +84,18 @@ class ISensor {
     }
 
     /**
-     * @brief Get the specific SensorId of the ISensor realization
+     * @brief Get the specific SensorType of the ISensor realization
      *
-     * @return SensorId
+     * @return SensorType
      */
     virtual SensorType getSensorType() const = 0;
+
+    /**
+     * @brief Get the MetaData of the ISensor realization
+     *
+     * @return MetaData
+     */
+    virtual MetaData getMetaData() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
