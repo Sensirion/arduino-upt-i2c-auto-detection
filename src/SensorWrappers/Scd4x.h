@@ -17,7 +17,8 @@ class Scd4x : public ISensor {
     MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
-    bool requiresInitializationStep() const override;
+    // Same as measurement interval
+    unsigned long getInitializationIntervalMs() const override;
     void* getDriver() override;
 
   private:

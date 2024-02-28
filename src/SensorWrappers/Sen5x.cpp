@@ -151,10 +151,6 @@ unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-bool Sen5x::requiresInitializationStep() const {
-    return true;
-}
-
 void* Sen5x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

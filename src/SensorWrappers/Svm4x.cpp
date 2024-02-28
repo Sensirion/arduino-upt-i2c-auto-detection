@@ -91,10 +91,6 @@ unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-bool Svm4x::requiresInitializationStep() const {
-    return true;
-}
-
 void* Svm4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

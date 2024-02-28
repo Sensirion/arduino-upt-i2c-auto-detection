@@ -14,13 +14,6 @@ uint16_t Sht4x::start() {
 
 uint16_t Sht4x::measureAndWrite(Measurement measurements[],
                                 const unsigned long timeStamp) {
-    if (_metaData.deviceID == 0) {
-        // Read sensor identifier at first measurement retrieval
-        uint32_t serialNo;
-        _driver.serialNumber(serialNo);
-        _metaData.deviceID = static_cast<uint64_t>(serialNo);
-    }
-
     float temp;
     float humi;
     uint16_t error = _driver.measureHighPrecision(temp, humi);
@@ -39,6 +32,16 @@ uint16_t Sht4x::measureAndWrite(Measurement measurements[],
     measurements[1].metaData = _metaData;
 
     return HighLevelError::NoError;
+}
+
+uint16_t Sht4x::initializationStep() {
+    uint32_t serialNo;
+    uint16_t error = _driver.serialNumber(serialNo);
+    if (error) {
+        return error;
+    }
+    _metaData.deviceID = static_cast<uint64_t>(serialNo);
+    return error;
 }
 
 SensorType Sht4x::getSensorType() const {

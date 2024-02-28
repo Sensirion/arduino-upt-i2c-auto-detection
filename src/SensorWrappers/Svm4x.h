@@ -17,7 +17,6 @@ class Svm4x : public ISensor {
     MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
-    bool requiresInitializationStep() const override;
     void* getDriver() override;
 
   private:

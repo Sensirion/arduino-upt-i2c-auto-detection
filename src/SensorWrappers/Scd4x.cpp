@@ -79,8 +79,10 @@ unsigned long Scd4x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 
-bool Scd4x::requiresInitializationStep() const {
-    return true;
+unsigned long Scd4x::getInitializationIntervalMs() const {
+    // Sensor does not produce measurements for ~12s after
+    // startPeriodicMeasurement() is called
+    return 12 * 1000;
 }
 
 void* Scd4x::getDriver() {

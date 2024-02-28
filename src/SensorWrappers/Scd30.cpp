@@ -100,10 +100,6 @@ unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
     return 2000;
 }
 
-bool Scd30::requiresInitializationStep() const {
-    return true;
-}
-
 void* Scd30::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

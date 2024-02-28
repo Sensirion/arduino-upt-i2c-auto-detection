@@ -17,7 +17,6 @@ class Sgp41 : public ISensor {
     MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
-    bool requiresInitializationStep() const override;
 
     // Typical: 10s
     unsigned long getInitializationIntervalMs() const override;

@@ -69,10 +69,6 @@ unsigned long Sgp41::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-bool Sgp41::requiresInitializationStep() const {
-    return true;
-}
-
 unsigned long Sgp41::getInitializationIntervalMs() const {
     return 8000;
 }

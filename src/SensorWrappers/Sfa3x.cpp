@@ -84,10 +84,6 @@ unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 
-bool Sfa3x::requiresInitializationStep() const {
-    return true;
-}
-
 void* Sfa3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }

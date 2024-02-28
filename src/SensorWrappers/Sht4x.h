@@ -12,6 +12,7 @@ class Sht4x : public ISensor {
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
+    uint16_t initializationStep() override;
     SensorType getSensorType() const override;
     MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;

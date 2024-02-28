@@ -118,10 +118,6 @@ unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-bool Stc3x::requiresInitializationStep() const {
-    return 1;
-}
-
 void* Stc3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
