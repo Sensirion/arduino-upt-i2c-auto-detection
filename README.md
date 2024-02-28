@@ -14,6 +14,7 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 - SVM4X
 
 ### Sensor Oddities
+- SCD30. This sensor has a particular method of retrieveing measurements, which typically enters a waiting loop until the measurement is ready. To avoid this blocking call, the library uses an alternative method, that sometimes yields I2C errors. These errors are not fatal and can be ignored.
 - SGP41. The SGP41 arduino I2C driver returns raw VOC and NOX values, as opposed to the SEN5X sensors, which internally feed the raw values through [Sensirion's gas index algorithm](https://github.com/Sensirion/gas-index-algorithm) and returns a gas index in the range of [0, 500].
 - STC3X. The STC3X requires a conditioning phase of up to 10 seconds (this library considers 8 sufficient), during which the value of the data points will be UNDEFINED/0.
 - SVM40. The SVM40 Evaluation Kit Board is deprecated and **not** supported by sensor autodetection.
@@ -65,13 +66,13 @@ To use the library, add the following dependencies to your `platformio.ini`'s `l
 
 ```control
 lib_deps =
-    Sensirion UPT I2C Auto Detection
+    Sensirion/Sensirion UPT I2C Auto Detection
 ```
 PlatformIO will automatically fetch the latest version of the dependencies during the build process.
 
 Alternatively, to install this library in your project environment execute the following command in a terminal:
 ```bash
-pio pkg install --library "Sensirion UPT I2C Auto Detection"
+pio pkg install --library "Sensirion/Sensirion UPT I2C Auto Detection"
 ```
 
 To test the default example (`basicUsage`), use the following platformio command from the project's root directory (the one containing the `platformio.ini` file):
@@ -118,7 +119,7 @@ In any case, the following steps are essential.
 
 Include the library:
 ```cpp
-    #include "Sensirion_Sensor_Auto_Detection.h"
+    #include "Sensirion_upt_i2c_auto_detection.h"
 ```
 Instantiate I2CAutoDetector and SensorManager globally (before void setup()):
 
