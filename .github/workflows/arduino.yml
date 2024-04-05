@@ -1,4 +1,4 @@
-name: Arduino Lib
+name: Arduino Library
 
 on:
   pull_request:
@@ -6,18 +6,8 @@ on:
       - master
 
 jobs:
-  arduino-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: arduino/arduino-lint-action@v1
-        with:
-          library-manager: update
-
-  arduino-ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: Arduino-CI/action@stable-1.x
-        env:
-          EXPECT_EXAMPLES: true
+  Arduino-Checks:
+    uses: sensirion/.github/.github/workflows/upt.arduino.check.yml@main
+    with:
+      expect-arduino-examples: true
+      lint-lib-manager-check: update

@@ -1,4 +1,4 @@
-name: PIO Lib
+name: PlatformIO Library
 
 on:
   pull_request:
@@ -12,12 +12,12 @@ on:
 
 jobs:
   PlatformIO-Check:
-    uses: sensirion/.github/.github/workflows/platformio_check.yml@main
+    uses: sensirion/.github/.github/workflows/upt.platformio.check.yml@main
     with:
       pio-environment-list: '["basicUsage", "advancedUsage", "hacksterExample"]'
 
   PlatformIO-Build:
-    uses: sensirion/.github/.github/workflows/platformio_build.yml@main
+    uses: sensirion/.github/.github/workflows/upt.platformio.build.yml@main
     needs: PlatformIO-Check
     with:
       pio-environment-list: '["basicUsage", "advancedUsage", "hacksterExample"]'
@@ -25,12 +25,12 @@ jobs:
   PlatformIO-Package:
     if: ${{ (github.ref_type != 'tag') && (github.ref_name == 'master') }}
     needs: PlatformIO-Build
-    uses: sensirion/.github/.github/workflows/platformio_publish.yml@main
+    uses: sensirion/.github/.github/workflows/upt.platformio.publish.yml@main
     with:
       should-publish: false
 
   PlatformIO-Publish:
-    uses: sensirion/.github/.github/workflows/platformio_publish.yml@main
+    uses: sensirion/.github/.github/workflows/upt.platformio.publish.yml@main
     if: github.ref_type == 'tag'
     needs: PlatformIO-Build
     with:
