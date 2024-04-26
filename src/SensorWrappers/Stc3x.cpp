@@ -9,18 +9,18 @@ Stc3x::Stc3x(TwoWire& wire) : _wire(wire) {
 };
 
 uint16_t Stc3x::start() {
-    _driver.begin(_wire);
+    _driver.begin(_wire, I2C_ADDRESS);
     uint16_t error = _driver.setBinaryGas(0x0001);
     return error;
 }
 
 uint16_t Stc3x::measureAndWrite(Measurement measurements[],
                                 const unsigned long timeStamp) {
-    uint16_t gasTicks;
-    uint16_t temperatureTicks;
+    float gasValue;
+    float temperatureValue;
 
     uint16_t error =
-        _driver.measureGasConcentration(gasTicks, temperatureTicks);
+        _driver.measureGasConcentration(gasValue, temperatureValue);
     if (error) {
         return error;
     }
@@ -28,14 +28,12 @@ uint16_t Stc3x::measureAndWrite(Measurement measurements[],
     measurements[0].signalType =
         SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE;
     measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value =
-        100 * (static_cast<float>(gasTicks) - 16384.0) / 32768.0;
+    measurements[0].dataPoint.value = gasValue;
     measurements[0].metaData = _metaData;
 
     measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
     measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value =
-        static_cast<float>(temperatureTicks) / 200.0;
+    measurements[1].dataPoint.value = temperatureValue;
     measurements[1].metaData = _metaData;
 
     return HighLevelError::NoError;
@@ -48,11 +46,12 @@ uint16_t Stc3x::initializationStep() {
     }
 
     uint32_t productNumber;
-    uint8_t serialNumberRaw[32];
-    uint8_t serialNumberSize = 32;
+    uint32_t serialNumberRawLow;
+    uint32_t serialNumberRawHigh;
 
-    error = _driver.readProductIdentifier(productNumber, serialNumberRaw,
-                                          serialNumberSize);
+    error = _driver.readProductIdentifier(productNumber, serialNumberRawHigh,
+                                          serialNumberRawLow);
+
     if (error) {
         return error;
     }
@@ -72,14 +71,8 @@ uint16_t Stc3x::initializationStep() {
 
     // Sensor Serial No
     uint64_t sensorID = 0;
-    sensorID |= (uint64_t)serialNumberRaw[0] << 56 |
-                (uint64_t)serialNumberRaw[1] << 48 |
-                (uint64_t)serialNumberRaw[2] << 40 |
-                (uint64_t)serialNumberRaw[3] << 32 |
-                (uint64_t)serialNumberRaw[4] << 24 |
-                (uint64_t)serialNumberRaw[5] << 16 |
-                (uint64_t)serialNumberRaw[6] << 8 |
-                (uint64_t)serialNumberRaw[7];
+    sensorID |=
+        (uint64_t)serialNumberRawHigh << 32 | (uint64_t)serialNumberRawLow;
     _metaData.deviceID = sensorID;
 
     // Select gas mode

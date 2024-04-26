@@ -2,7 +2,7 @@
 #define _SHT4X_H_
 
 #include "ISensor.h"
-#include "SensirionI2CSht4x.h"
+#include "SensirionI2cSht4x.h"
 #include "Sensirion_UPT_Core.h"
 
 class Sht4x : public ISensor {
@@ -21,7 +21,7 @@ class Sht4x : public ISensor {
 
   private:
     TwoWire& _wire;
-    SensirionI2CSht4x _driver;
+    SensirionI2cSht4x _driver;
     MetaData _metaData;
 };
 
