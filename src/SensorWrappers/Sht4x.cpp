@@ -8,7 +8,7 @@ Sht4x::Sht4x(TwoWire& wire) : _wire(wire) {
 };
 
 uint16_t Sht4x::start() {
-    _driver.begin(_wire);
+    _driver.begin(_wire, I2C_ADDRESS);
     return HighLevelError::NoError;
 }
 

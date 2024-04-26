@@ -3,7 +3,7 @@
 
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
-#include <SensirionI2CStc3x.h>
+#include <SensirionI2cStc3x.h>
 
 class Stc3x : public ISensor {
   public:
@@ -21,7 +21,7 @@ class Stc3x : public ISensor {
 
   private:
     TwoWire& _wire;
-    SensirionI2CStc3x _driver;
+    SensirionI2cStc3x _driver;
     MetaData _metaData;
 };
 
