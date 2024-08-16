@@ -92,6 +92,20 @@ uint16_t Stc3x::initializationStep() {
         return error;
     }
 
+    // Set relative humidity
+    /**
+     * See
+     * https://sensirion.com/media/documents/7B1D0EA7/61652CD0/Sensirion_Thermal_Conductivity_Datasheet_STC31_D1_1.pdf
+     * Section 3.3.3
+     *
+     * Sensor would assume a relative humidity of 0% if we would not set this explicitly, which could
+     * lead to negative gas concentration values.
+     */
+    error = _driver.setRelativeHumidity(50);
+    if (error) {
+        return error;
+    }
+
     return HighLevelError::NoError;
 }
 
