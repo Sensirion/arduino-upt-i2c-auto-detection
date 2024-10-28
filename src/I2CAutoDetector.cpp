@@ -28,6 +28,28 @@
 #include "SensorWrappers/Svm4x.h"
 #endif
 
+void I2CAutoDetector::findSensors(SensorList& sensorList) {
+    for (byte address = 1; address < 127; address++) {
+        auto st = probeAddress(address);
+        if (st == SensorType::UNDEFINED) {
+            continue;
+        }
+        if (sensorList.containsSensor(st)) {
+            continue;
+        }
+
+        ISensor* pSensor = createSensorFromSensorType(st);
+        if (!pSensor) {
+            continue;
+        }
+        sensorList.addSensor(pSensor);
+    }
+}
+
+/**
+ * Private methods
+ */
+
 SensorType I2CAutoDetector::probeAddress(const byte& address) {
     _wire.beginTransmission(address);
     byte error = _wire.endTransmission();
@@ -120,20 +142,3 @@ SensorType I2CAutoDetector::getSensorTypeFromAddress(const byte address) {
 }
 
 
-void I2CAutoDetector::findSensors(SensorList& sensorList) {
-    for (byte address = 1; address < 127; address++) {
-        auto st = probeAddress(address);
-        if (st == SensorType::UNDEFINED) {
-            continue;
-        }
-        if (sensorList.containsSensor(st)) {
-            continue;
-        }
-
-        ISensor* pSensor = createSensorFromSensorType(st);
-        if (!pSensor) {
-            continue;
-        }
-        sensorList.addSensor(pSensor);
-    }
-}
