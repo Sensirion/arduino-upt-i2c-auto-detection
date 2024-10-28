@@ -63,19 +63,13 @@ SensorList::~SensorList() {
 }
 
 void SensorList::addSensor(ISensor* pSensor) {
-    // Check if we already have it
-    SensorType newSensorType = pSensor->getSensorType();
-    if (containsSensor(newSensorType)) {
-        return;
-    }
     // Hash
-    size_t hashIndex = _hashSensorType(newSensorType);
+    size_t hashIndex = _hashSensorType(pSensor->getSensorType());
     // Insert
     if (_sensors[hashIndex] == nullptr) {
         _sensors[hashIndex] = new SensorStateMachine(pSensor);
         return;
     }
-
     return;
 }
 
