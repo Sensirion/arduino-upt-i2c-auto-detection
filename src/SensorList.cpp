@@ -1,5 +1,7 @@
 #include "SensorList.h"
 
+static const char* TAG = "SensorList";
+
 size_t SensorList::_hashSensorType(SensorType sensorType) const {
     SensorHash sensorHash = SensorHash::_UNDEFINED;
     switch (sensorType) {
@@ -41,8 +43,7 @@ size_t SensorList::_hashSensorType(SensorType sensorType) const {
     }
 
     if (sensorHash == SensorHash::_UNDEFINED) {
-        Serial.printf("Error: invalid sensor type %s encountered. Aborting!\n",
-                      sensorLabel(sensorType));
+        ESP_LOGE(TAG, "Error: invalid sensor type %s encountered. Aborting!", sensorLabel(sensorType));
         assert(0);
     }
 
