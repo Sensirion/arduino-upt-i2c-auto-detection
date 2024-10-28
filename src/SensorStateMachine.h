@@ -40,7 +40,7 @@ class SensorStateMachine {
      * to UNINITIALIZED
      *
      * @return  I2C_ERROR if ISensor::initializationStep() fails (in which case
-     *            the driver error is decoded and printed to console)
+     *            the driver error is decoded and printed to logs)
      *          NO_ERROR on success
      */
     AutoDetectorError _initialize();
@@ -60,7 +60,7 @@ class SensorStateMachine {
      * short, or too long.
      *
      * @return  I2C_ERROR if _readSignals() fails (in which case the driver
-     *            error is decoded and printed to console)
+     *            error is decoded and printed to logs)
      *          SENSOR_READY_STATE_DECAYED_ERROR if too much time has elapsed
      *            since last measurement was performed NO_ERROR on success
      */
@@ -70,7 +70,7 @@ class SensorStateMachine {
      * @brief Query sensor for new signals
      *
      * @return  I2C_ERROR if ISensor::measureAndWrite() fails (in which case the
-     *            error is decoded and printed to console)
+     *            error is decoded and printed to logs)
      *          NO_ERROR on success
      */
     AutoDetectorError _readSignals();
@@ -110,7 +110,7 @@ class SensorStateMachine {
      * Serial, but such errors may not be fatal.
      *
      * @return  I2C_ERROR if bus communication fails (in which case the
-     *            driver error is decoded and printed to console)
+     *            driver error is decoded and printed to logs)
      *          SENSOR_LOST_ERROR if allowable number of consecutive operation
      *            errors was exceeded during update
      *          SENSOR_READY_STATE_DECAYED_ERROR if too much time has elapsed

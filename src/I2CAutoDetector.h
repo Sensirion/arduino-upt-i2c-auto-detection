@@ -14,11 +14,12 @@ class I2CAutoDetector : public IAutoDetector {
      * @param SensorList& SensorList to which add the found sensors
      */
     void findSensors(SensorList& sensorList) override;
-
+    
   private:
     TwoWire& _wire;
-    byte probeAddress(const byte& address);
-    ISensor* createSensorFromAddress(const byte& address);
+    SensorType probeAddress(const byte& address);
+    ISensor* createSensorFromSensorType(SensorType sensor_type);
+    SensorType getSensorTypeFromAddress(const byte address);
 };
 
 #endif /* _I2C_AUTO_DETECTOR_H_ */

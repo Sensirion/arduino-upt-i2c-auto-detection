@@ -1,5 +1,7 @@
 #include "SensorStateMachine.h"
 
+static const char* TAG = "SensorStateMachine";
+
 bool timeIntervalPassed(const uint32_t interval,
                         const uint32_t currentTimeStamp,
                         const uint32_t latestUpdateTimeStamp) {
@@ -22,7 +24,7 @@ AutoDetectorError SensorStateMachine::_initialize() {
     if (error) {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
-        Serial.printf("Failed to perform initialization step: %s\n", errorMsg);
+        ESP_LOGE(TAG, "Failed to perform initialization step of sensor %s: %s", sensorLabel(_sensor->getSensorType()), errorMsg);
         return I2C_ERROR;
     }
 
@@ -109,8 +111,7 @@ AutoDetectorError SensorStateMachine::_readSignals() {
     if (error) {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
-        Serial.printf("Failed to read measurements for sensor %s: %s\n",
-                      sensorLabel(_sensor->getSensorType()), errorMsg);
+        ESP_LOGE(TAG, "Failed to read measurements for sensor %s: %s", sensorLabel(_sensor->getSensorType()), errorMsg);
         return I2C_ERROR;
     }
 
