@@ -1,6 +1,6 @@
 # Arduino Sensirion UPT I2C Auto Detection
 
-![arduino badge](https://img.shields.io/badge/Arduino-00979D?style=flat&logo=Arduino&logoColor=white) [![platform-io-badge](https://badges.registry.platformio.org/packages/sensirion/library/Sensirion%20UPT%20I2C%20Auto%20Detection.svg)](https://registry.platformio.org/libraries/sensirion/Sensirion20UPT20I2C20Auto20Detection)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/Sensirion%20UPT%20I2C%20Auto%20Detection.svg?)](https://www.ardu-badge.com/Sensirion%20UPT%20I2C%20Auto%20Detection) [![platform-io-badge](https://badges.registry.platformio.org/packages/sensirion/library/Sensirion%20UPT%20I2C%20Auto%20Detection.svg)](https://registry.platformio.org/libraries/sensirion/Sensirion20UPT20I2C20Auto20Detection)
 
 Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It allows for easy read-out of the data of Sensirion Sensors using an ESP32 board.
 
