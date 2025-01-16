@@ -1,9 +1,9 @@
-#ifndef _SENSIRION_UPT_I2C_AUTO_DETECTION_H_
-#define _SENSIRION_UPT_I2C_AUTO_DETECTION_H_
+#ifndef SENSIRION_UPT_I2C_AUTO_DETECTION_H
+#define SENSIRION_UPT_I2C_AUTO_DETECTION_H
 
 #include "I2CAutoDetector.h"
 #include "Sensirion_UPT_Core.h"
 #include "SensorManager.h"
 #include <Arduino.h>
 
-#endif /* _SENSIRION_UPT_I2C_AUTO_DETECTION_H_ */
+#endif /* SENSIRION_UPT_I2C_AUTO_DETECTION_H */

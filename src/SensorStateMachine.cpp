@@ -1,5 +1,7 @@
 #include "SensorStateMachine.h"
 
+#include <SensirionErrors.h>
+
 static const char* TAG = "SensorStateMachine";
 
 bool timeIntervalPassed(const uint32_t interval,
@@ -13,68 +15,69 @@ bool timeIntervalPassed(const uint32_t interval,
 }
 
 SensorStateMachine::SensorStateMachine(ISensor* pSensor)
-    : _sensorState(SensorStatus::UNINITIALIZED), _initErrorCounter(0),
-      _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
-      _measurementIntervalMs(0), _sensor(pSensor) {
-    _sensor->start();
+    : mSensorState(SensorStatus::UNINITIALIZED), mInitErrorCounter(0),
+      mMeasurementErrorCounter(0), mLastMeasurementTimeStampMs(0),
+      mMeasurementIntervalMs(0), mSensor(pSensor) {
+    mSensor->start();
 };
 
 AutoDetectorError SensorStateMachine::_initialize() {
-    uint16_t error = _sensor->initializationStep();
+    uint16_t error = mSensor->initializationStep();
     if (error) {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
-        ESP_LOGE(TAG, "Failed to perform initialization step of sensor %s: %s", sensorLabel(_sensor->getSensorType()), errorMsg);
+        ESP_LOGE(TAG, "Failed to perform initialization step of sensor %s: %s",
+                 sensorLabel(mSensor->getSensorType()), errorMsg);
         return I2C_ERROR;
     }
 
-    _sensorSignals.init(_sensor->getNumberOfDataPoints());
-    _measurementIntervalMs = _sensor->getMinimumMeasurementIntervalMs();
-    _lastMeasurementTimeStampMs = millis();
+    mSensorSignals.init(mSensor->getNumberOfDataPoints());
+    mMeasurementIntervalMs = mSensor->getMinimumMeasurementIntervalMs();
+    mLastMeasurementTimeStampMs = millis();
 
-    if (_sensor->getInitializationIntervalMs() > 0) {
+    if (mSensor->getInitializationIntervalMs() > 0) {
         // SGP4X, SCD4X
-        _sensorState = SensorStatus::INITIALIZING;
+        mSensorState = SensorStatus::INITIALIZING;
     } else {
-        _sensorState = SensorStatus::RUNNING;
+        mSensorState = SensorStatus::RUNNING;
     }
 
-    for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
+    for (size_t i = 0; i < mSensor->getNumberOfDataPoints(); ++i) {
         Measurement measurement;
-        measurement.metaData = _sensor->getMetaData();
-        _sensorSignals.addMeasurement(measurement);
+        measurement.metaData = mSensor->getMetaData();
+        mSensorSignals.addMeasurement(measurement);
     }
 
     return NO_ERROR;
 }
 
 void SensorStateMachine::_initializationRoutine() {
-    if (timeIntervalPassed(_sensor->getInitializationIntervalMs(), millis(),
-                           _lastMeasurementTimeStampMs)) {
-        _sensorState = SensorStatus::RUNNING;
-        _lastMeasurementTimeStampMs = millis();
+    if (timeIntervalPassed(mSensor->getInitializationIntervalMs(), millis(),
+                           mLastMeasurementTimeStampMs)) {
+        mSensorState = SensorStatus::RUNNING;
+        mLastMeasurementTimeStampMs = millis();
     }
 }
 
 AutoDetectorError SensorStateMachine::_readSignalsRoutine() {
     unsigned long timeSinceLastMeasurementMs =
-        millis() - _lastMeasurementTimeStampMs;
+        millis() - mLastMeasurementTimeStampMs;
 
     /* Determine timing relationship vs. last measurement */
     enum class timeLineRegion {
         INSIDE_MIN_INTERVAL,          // Measurement not yet due to be performed
         INSIDE_VALID_BAND,            // May request a reading
         OUTSIDE_VALID_INITIALIZATION  // Sensor running status has decayed,
-                                      // conditionning must be performed
+                                      // conditioning must be performed
     };
     timeLineRegion tlr_position = timeLineRegion::INSIDE_MIN_INTERVAL;
 
-    if (timeSinceLastMeasurementMs >= _measurementIntervalMs) {
+    if (timeSinceLastMeasurementMs >= mMeasurementIntervalMs) {
         tlr_position = timeLineRegion::INSIDE_VALID_BAND;
     }
 
-    if (_sensor->readyStateDecayTimeMs() > 0 &&
-        timeSinceLastMeasurementMs > _sensor->readyStateDecayTimeMs()) {
+    if (mSensor->readyStateDecayTimeMs() > 0 &&
+        timeSinceLastMeasurementMs > mSensor->readyStateDecayTimeMs()) {
         tlr_position = timeLineRegion::OUTSIDE_VALID_INITIALIZATION;
     }
 
@@ -92,7 +95,7 @@ AutoDetectorError SensorStateMachine::_readSignalsRoutine() {
             break;
 
         case timeLineRegion::OUTSIDE_VALID_INITIALIZATION:
-            _sensorState = SensorStatus::UNINITIALIZED;
+            mSensorState = SensorStatus::UNINITIALIZED;
             return SENSOR_READY_STATE_DECAYED_ERROR;
 
         default:
@@ -103,35 +106,36 @@ AutoDetectorError SensorStateMachine::_readSignalsRoutine() {
 }
 
 AutoDetectorError SensorStateMachine::_readSignals() {
-    Measurement signalsBuf[_sensor->getNumberOfDataPoints()];
-    uint32_t nowMS = millis();
+    Measurement signalsBuf[mSensor->getNumberOfDataPoints()];
+    const uint32_t nowMS = millis();
 
-    uint16_t error = _sensor->measureAndWrite(signalsBuf, nowMS);
+    const uint16_t error = mSensor->measureAndWrite(signalsBuf, nowMS);
 
     if (error) {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
-        ESP_LOGE(TAG, "Failed to read measurements for sensor %s: %s", sensorLabel(_sensor->getSensorType()), errorMsg);
+        ESP_LOGE(TAG, "Failed to read measurements for sensor %s: %s",
+                 sensorLabel(mSensor->getSensorType()), errorMsg);
         return I2C_ERROR;
     }
 
-    _lastMeasurementTimeStampMs = nowMS;
+    mLastMeasurementTimeStampMs = nowMS;
 
-    for (size_t i = 0; i < _sensor->getNumberOfDataPoints(); ++i) {
-        _sensorSignals.addMeasurement(signalsBuf[i]);
+    for (size_t i = 0; i < mSensor->getNumberOfDataPoints(); ++i) {
+        mSensorSignals.addMeasurement(signalsBuf[i]);
     }
-    _sensorSignals.resetWriteHead();
+    mSensorSignals.resetWriteHead();
 
     return NO_ERROR;
 }
 
 SensorStatus SensorStateMachine::getSensorState() const {
-    return _sensorState;
+    return mSensorState;
 }
 
 uint16_t SensorStateMachine::setMeasurementInterval(uint32_t interval) {
-    if (interval > _sensor->getMinimumMeasurementIntervalMs()) {
-        _measurementIntervalMs = interval;
+    if (interval > mSensor->getMinimumMeasurementIntervalMs()) {
+        mMeasurementIntervalMs = interval;
         return NO_ERROR;
     }
     return 1;
@@ -139,16 +143,16 @@ uint16_t SensorStateMachine::setMeasurementInterval(uint32_t interval) {
 
 AutoDetectorError SensorStateMachine::update() {
     AutoDetectorError error = NO_ERROR;
-    switch (_sensorState) {
+    switch (mSensorState) {
         case SensorStatus::UNDEFINED:
             break;
 
         case SensorStatus::UNINITIALIZED:
             error = _initialize();
             if (error) {
-                _initErrorCounter++;
+                mInitErrorCounter++;
             } else {
-                _initErrorCounter = 0;
+                mInitErrorCounter = 0;
             }
             break;
 
@@ -159,22 +163,20 @@ AutoDetectorError SensorStateMachine::update() {
         case SensorStatus::RUNNING:
             error = _readSignalsRoutine();
             if (error) {
-                _measurementErrorCounter++;
+                mMeasurementErrorCounter++;
             } else {
-                _measurementErrorCounter = 0;
+                mMeasurementErrorCounter = 0;
             }
             break;
 
         case SensorStatus::LOST:
-            break;
-
         default:
             break;
     }
 
-    uint16_t nAllowed = _sensor->getNumberOfAllowedConsecutiveErrors();
-    if (_initErrorCounter > nAllowed || _measurementErrorCounter > nAllowed) {
-        _sensorState = SensorStatus::LOST;
+    const uint16_t nAllowed = ISensor::getNumberOfAllowedConsecutiveErrors();
+    if (mInitErrorCounter > nAllowed || mMeasurementErrorCounter > nAllowed) {
+        mSensorState = SensorStatus::LOST;
         return LOST_SENSOR_ERROR;
     }
 
@@ -182,9 +184,9 @@ AutoDetectorError SensorStateMachine::update() {
 }
 
 ISensor* SensorStateMachine::getSensor() const {
-    return _sensor;
+    return mSensor;
 }
 
 const MeasurementList* SensorStateMachine::getSignals() const {
-    return &_sensorSignals;
+    return &mSensorSignals;
 }

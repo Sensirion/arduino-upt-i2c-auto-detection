@@ -1,10 +1,11 @@
-#ifndef _I_AUTO_DETECTOR_
-#define _I_AUTO_DETECTOR_
+#ifndef I_AUTO_DETECTOR
+#define I_AUTO_DETECTOR
 
 #include "SensorList.h"
 
 class IAutoDetector {
   public:
+    virtual ~IAutoDetector() = default;
     /**
      * @brief Scans bus for Sensirion sensors, initializes them and
      * adds them to the passed sensor list.
@@ -18,4 +19,4 @@ class IAutoDetector {
     virtual void findSensors(SensorList& sensorList) = 0;
 };
 
-#endif /* _I_AUTO_DETECTOR_ */
+#endif /* I_AUTO_DETECTOR */

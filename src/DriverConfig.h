@@ -1,5 +1,5 @@
-#ifndef _DRIVER_CONFIG_H_
-#define _DRIVER_CONFIG_H_
+#ifndef DRIVER_CONFIG_H
+#define DRIVER_CONFIG_H
 
 // Comment out lines to remove unwanted drivers
 
@@ -11,5 +11,6 @@
 #define INCLUDE_SHT4X_DRIVER
 #define INCLUDE_STC3X_DRIVER
 #define INCLUDE_SVM4X_DRIVER
+#define INCLUDE_SEN66_DRIVER
 
-#endif /* _DRIVER_CONFIG_H_ */
+#endif /* DRIVER_CONFIG_H */
