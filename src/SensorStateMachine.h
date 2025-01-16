@@ -1,11 +1,9 @@
-#ifndef _SENSOR_STATE_MACHINE_H_
-#define _SENSOR_STATE_MACHINE_H_
+#ifndef SENSOR_STATE_MACHINE_H
+#define SENSOR_STATE_MACHINE_H
 
 #include "AutoDetectorErrors.h"
 #include "ISensor.h"
 #include "MeasurementList.h"
-#include "SensirionErrors.h"
-#include <stdint.h>
 
 enum class SensorStatus {
     UNDEFINED,
@@ -23,14 +21,14 @@ enum class SensorStatus {
  */
 class SensorStateMachine {
   private:
-    SensorStatus _sensorState;
-    uint8_t _initErrorCounter;
-    uint8_t _measurementErrorCounter;
-    uint32_t _lastMeasurementTimeStampMs;
-    uint32_t _measurementIntervalMs;
+    SensorStatus mSensorState;
+    uint8_t mInitErrorCounter;
+    uint8_t mMeasurementErrorCounter;
+    uint32_t mLastMeasurementTimeStampMs;
+    uint32_t mMeasurementIntervalMs;
 
-    ISensor* _sensor;
-    MeasurementList _sensorSignals;
+    ISensor* mSensor;
+    MeasurementList mSensorSignals;
 
     /**
      * @brief initialize the state machine. Promotes sensor state to
@@ -77,9 +75,9 @@ class SensorStateMachine {
 
   public:
     SensorStateMachine()
-        : _sensorState(SensorStatus::UNDEFINED), _initErrorCounter(0),
-          _measurementErrorCounter(0), _lastMeasurementTimeStampMs(0),
-          _measurementIntervalMs(0), _sensor(nullptr){};
+        : mSensorState(SensorStatus::UNDEFINED), mInitErrorCounter(0),
+          mMeasurementErrorCounter(0), mLastMeasurementTimeStampMs(0),
+          mMeasurementIntervalMs(0), mSensor(nullptr){};
 
     /**
      * @brief constructor with ISensor pointer, used by autodetector
@@ -132,4 +130,4 @@ class SensorStateMachine {
     const MeasurementList* getSignals() const;
 };
 
-#endif /* _SENSOR_STATE_MACHINE_H_ */
+#endif /* SENSOR_STATE_MACHINE_H */

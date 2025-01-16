@@ -14,6 +14,7 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 - SHT4X
 - STC3X
 - SVM4X
+- SEN66
 
 ### Sensor Oddities
 
@@ -51,6 +52,7 @@ Search for the `Sensirion UPT I2C Auto Detection` library in the `Filter your se
 - [Sensirion I2C SCD30](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-scd30/)
 - [Sensirion I2C SGP41](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-sgp41/)
 - [Sensirion I2C STC3x](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-stc3x/)
+- [Sensirion I2C SEN66](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-sen66/)
 
 Alternatively, the library can also be added manually. To do this, download the latest release from github as a .zip file via
 
@@ -120,6 +122,7 @@ This library uses the following dependencies.
 - [SHT4X](https://github.com/Sensirion/arduino-i2c-sht4x)
 - [SVM40](https://github.com/Sensirion/arduino-i2c-svm40)
 - [STC3X](https://github.com/Sensirion/arduino-i2c-stc3x)
+- [SEN66](https://github.com/Sensirion/arduino-i2c-sen66)
 
 In case automatic dependency installation doesn't work, you will have to install them manually.
 

@@ -1,5 +1,5 @@
-#ifndef _I_SENSOR_H_
-#define _I_SENSOR_H_
+#ifndef I_SENSOR_H
+#define I_SENSOR_H
 
 #include "Arduino.h"
 #include "Sensirion_UPT_Core.h"
@@ -8,7 +8,7 @@
  * bus */
 class ISensor {
   private:
-    static const uint16_t _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
+    static constexpr uint16_t NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
 
   public:
     virtual ~ISensor() = default;
@@ -56,7 +56,7 @@ class ISensor {
      * SensirionCore, where 0 value corresponds to no error.
      */
     virtual uint16_t measureAndWrite(Measurement measurements[],
-                                     const unsigned long timeStamp) = 0;
+                                     unsigned long timeStamp) = 0;
 
     /**
      * @brief Get the minimum measurement interval of the sensor. This must be
@@ -71,11 +71,11 @@ class ISensor {
      *
      * Some sensors that require special hardware for the measurement (such as
      * heaters) need to regularly be called for measurements, or else the
-     * conditioning procedure must be exectued again. The time interval within
+     * conditioning procedure must be executed again. The time interval within
      * which the sensor must be called for a reading can be queried with this
      * method.
      *
-     * @param[out] long time (in ms) within which the sensor must be called for
+     * @returns Time (in ms) within which the sensor must be called for
      * a measurement, else it decays to the UNINITIALIZED state. Returns -1 if
      * no such interval is defined for the sensor (ie. decay time is infinite).
      */
@@ -100,17 +100,17 @@ class ISensor {
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
      */
-    uint16_t getNumberOfAllowedConsecutiveErrors() const {
-        return _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
+    static uint16_t getNumberOfAllowedConsecutiveErrors() {
+        return NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS;
     }
 
     /**
-     * @brief Get a pointer to the sensordriver, reinterpret_cast-ed into a void
-     * pointer
+     * @brief Get a pointer to the sensor driver, reinterpret_cast-ed into a
+     * void pointer
      *
      * @return void*
      */
     virtual void* getDriver() = 0;
 };
 
-#endif /* _I_SENSOR_H_ */
+#endif /* I_SENSOR_H */

@@ -1,7 +1,7 @@
-#ifndef _AUTO_DETECTOR_ERRORS_H_
-#define _AUTO_DETECTOR_ERRORS_H_
+#ifndef AUTO_DETECTOR_ERRORS_H
+#define AUTO_DETECTOR_ERRORS_H
 
-#include <stdint.h>
+#include <cstdint>
 
 enum AutoDetectorError : uint16_t {
     NO_ERROR = 0,
@@ -11,4 +11,4 @@ enum AutoDetectorError : uint16_t {
     I2C_ERROR = 4
 };
 
-#endif /* _AUTO_DETECTOR_ERRORS_H_ */
+#endif /* AUTO_DETECTOR_ERRORS_H */

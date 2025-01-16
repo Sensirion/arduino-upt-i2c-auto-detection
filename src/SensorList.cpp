@@ -2,82 +2,85 @@
 
 static const char* TAG = "SensorList";
 
-size_t SensorList::_hashSensorType(SensorType sensorType) const {
-    SensorHash sensorHash = SensorHash::_UNDEFINED;
+size_t SensorList::hashSensorType(const SensorType sensorType) {
+    SensorHash sensorHash = SensorHash::UNDEFINED;
     switch (sensorType) {
         case SensorType::SCD4X:
-            sensorHash = SensorHash::_SCD4X;
+            sensorHash = SensorHash::SCD4X;
             break;
         case SensorType::SFA3X:
-            sensorHash = SensorHash::_SFA3X;
+            sensorHash = SensorHash::SFA3X;
             break;
         case SensorType::SVM41:
         case SensorType::SVM4X:
-            sensorHash = SensorHash::_SVM4X;
+            sensorHash = SensorHash::SVM4X;
             break;
         case SensorType::SHT4X:
-            sensorHash = SensorHash::_SHT4X;
+            sensorHash = SensorHash::SHT4X;
             break;
         case SensorType::SAV45:
-            sensorHash = SensorHash::_UNDEFINED;  // SAV45 not yet supported
+            sensorHash = SensorHash::UNDEFINED;  // SAV45 not yet supported
             break;
         case SensorType::SEN50:
         case SensorType::SEN54:
         case SensorType::SEN55:
         case SensorType::SEN5X:
-            sensorHash = SensorHash::_SEN5X;
+            sensorHash = SensorHash::SEN5X;
             break;
         case SensorType::SCD30:
-            sensorHash = SensorHash::_SCD30;
+            sensorHash = SensorHash::SCD30;
             break;
         case SensorType::STC31:
         case SensorType::STC3X:
-            sensorHash = SensorHash::_STC3X;
+            sensorHash = SensorHash::STC3X;
             break;
         case SensorType::SGP41:
         case SensorType::SGP4X:
-            sensorHash = SensorHash::_SGP4X;
+            sensorHash = SensorHash::SGP4X;
+            break;
+        case SensorType::SEN66:
+            sensorHash = SensorHash::SEN66;
             break;
         default:
-            sensorHash = SensorHash::_UNDEFINED;
+            sensorHash = SensorHash::UNDEFINED;
     }
 
-    if (sensorHash == SensorHash::_UNDEFINED) {
-        ESP_LOGE(TAG, "Error: invalid sensor type %s encountered. Aborting!", sensorLabel(sensorType));
+    if (sensorHash == SensorHash::UNDEFINED) {
+        ESP_LOGE(TAG, "Error: invalid sensor type %s encountered. Aborting!",
+                 sensorLabel(sensorType));
         assert(0);
     }
 
-    // Substracting 1 to hash from 0 up to and including SensorManager's
+    // Subtracting 1 to hash from 0 up to and including SensorManager's
     // _MAX_NUM_SENSORS
     return static_cast<size_t>(sensorHash) - 1;
 }
 
-SensorList::SensorList(uint8_t numSensors) : _numSensors(numSensors) {
-    _sensors = new SensorStateMachine*[_numSensors];
-    for (size_t i = 0; i < _numSensors; i++) {
-        _sensors[i] = nullptr;
+SensorList::SensorList(const uint8_t numSensors) : mNumSensors(numSensors) {
+    mSensors = new SensorStateMachine*[mNumSensors];
+    for (size_t i = 0; i < mNumSensors; i++) {
+        mSensors[i] = nullptr;
     }
 }
 
 SensorList::~SensorList() {
-    delete[] _sensors;
+    delete[] mSensors;
 }
 
-void SensorList::addSensor(ISensor* pSensor) {
+void SensorList::addSensor(ISensor* pSensor) const {
     // Hash
-    size_t hashIndex = _hashSensorType(pSensor->getSensorType());
+    const size_t hashIndex = hashSensorType(pSensor->getSensorType());
     // Insert
-    if (_sensors[hashIndex] == nullptr) {
-        _sensors[hashIndex] = new SensorStateMachine(pSensor);
+    if (mSensors[hashIndex] == nullptr) {
+        mSensors[hashIndex] = new SensorStateMachine(pSensor);
         return;
     }
-    return;
 }
 
-size_t SensorList::count() {
+size_t SensorList::count() const {
     size_t numberOfSensors = 0;
-    for (int i = 0; i < _numSensors; ++i) {
-        if (_sensors[i]) {
+    for (int i = 0; i < mNumSensors; ++i) {
+        if (mSensors[i]) {
             ++numberOfSensors;
         }
     }
@@ -86,50 +89,50 @@ size_t SensorList::count() {
 
 size_t SensorList::getTotalNumberOfDataPoints() const {
     size_t totalNumberOfDataPoints = 0;
-    for (int i = 0; i < _numSensors; ++i) {
-        if (_sensors[i]) {
+    for (int i = 0; i < mNumSensors; ++i) {
+        if (mSensors[i]) {
             totalNumberOfDataPoints +=
-                _sensors[i]->getSensor()->getNumberOfDataPoints();
+                mSensors[i]->getSensor()->getNumberOfDataPoints();
         }
     }
     return totalNumberOfDataPoints;
 }
 
 int SensorList::getLength() const {
-    return _numSensors;
+    return mNumSensors;
 }
 
-SensorStateMachine* SensorList::getSensorStateMachine(size_t i) {
-    return _sensors[i];
+SensorStateMachine* SensorList::getSensorStateMachine(const size_t i) const {
+    return mSensors[i];
 }
 
 ISensor* SensorList::getSensor(SensorType sensorType) const {
-    size_t sensorHashIndex = _hashSensorType(sensorType);
-    if (_sensors[sensorHashIndex]) {
-        return _sensors[sensorHashIndex]->getSensor();
+    const size_t sensorHashIndex = hashSensorType(sensorType);
+    if (mSensors[sensorHashIndex]) {
+        return mSensors[sensorHashIndex]->getSensor();
     }
     return nullptr;
 }
 
 bool SensorList::containsSensor(SensorType sensorType) const {
-    size_t qHashIndex = _hashSensorType(sensorType);
+    const size_t qHashIndex = hashSensorType(sensorType);
 
     // Check (1) if a sensor of this type is known and (2) if the version
     // matches as well
-    if (_sensors[qHashIndex] &&
-        _sensors[qHashIndex]->getSensor()->getSensorType() == sensorType) {
+    if (mSensors[qHashIndex] &&
+        mSensors[qHashIndex]->getSensor()->getSensorType() == sensorType) {
         return true;
     }
 
     return false;
 }
 
-void SensorList::removeLostSensors() {
-    for (size_t i = 0; i < _numSensors; i++) {
-        if (_sensors[i] &&
-            _sensors[i]->getSensorState() == SensorStatus::LOST) {
-            delete _sensors[i];
-            _sensors[i] = nullptr;
+void SensorList::removeLostSensors() const {
+    for (size_t i = 0; i < mNumSensors; i++) {
+        if (mSensors[i] &&
+            mSensors[i]->getSensorState() == SensorStatus::LOST) {
+            delete mSensors[i];
+            mSensors[i] = nullptr;
         }
     }
 }

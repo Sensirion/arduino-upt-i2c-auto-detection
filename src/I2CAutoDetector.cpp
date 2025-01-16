@@ -1,5 +1,4 @@
 #include "I2CAutoDetector.h"
-#include "AutoDetectorErrors.h"
 #include "DriverConfig.h"
 #include "SensirionCore.h"
 
@@ -27,10 +26,13 @@
 #ifdef INCLUDE_SVM4X_DRIVER
 #include "SensorWrappers/Svm4x.h"
 #endif
+#ifdef INCLUDE_SEN66_DRIVER
+#include "SensorWrappers/Sen66.h"
+#endif
 
 void I2CAutoDetector::findSensors(SensorList& sensorList) {
     for (byte address = 1; address < 127; address++) {
-        auto st = probeAddress(address);
+        const auto st = probeAddress(address);
         if (st == SensorType::UNDEFINED) {
             continue;
         }
@@ -50,17 +52,18 @@ void I2CAutoDetector::findSensors(SensorList& sensorList) {
  * Private methods
  */
 
-SensorType I2CAutoDetector::probeAddress(const byte& address) {
+SensorType I2CAutoDetector::probeAddress(const byte& address) const {
     _wire.beginTransmission(address);
-    byte error = _wire.endTransmission();
-    if (error){
+    const byte error = _wire.endTransmission();
+    if (error) {
         return SensorType::UNDEFINED;
     }
     return getSensorTypeFromAddress(address);
 }
 
-ISensor* I2CAutoDetector::createSensorFromSensorType(SensorType sensor_type) {
-    switch (sensor_type) {
+ISensor*
+I2CAutoDetector::createSensorFromSensorType(const SensorType sensorType) const {
+    switch (sensorType) {
         case (SensorType::SCD30): {
             return new Scd30(_wire);
         }
@@ -86,12 +89,14 @@ ISensor* I2CAutoDetector::createSensorFromSensorType(SensorType sensor_type) {
         case (SensorType::SVM4X): {
             return new Svm4x(_wire);
         }
+        case (SensorType::SEN66): {
+            return new Sen66(_wire);
+        }
         default: {
             return nullptr;
         }
     }
 }
-
 
 SensorType I2CAutoDetector::getSensorTypeFromAddress(const byte address) {
     switch (address) {
@@ -135,10 +140,13 @@ SensorType I2CAutoDetector::getSensorTypeFromAddress(const byte address) {
             return SensorType::SVM4X;
         }
 #endif
+#ifdef INCLUDE_SEN66_DRIVER
+        case (Sen66::I2C_ADDRESS): {
+            return SensorType::SEN66;
+        }
+#endif
         default: {
             return SensorType::UNDEFINED;
         }
     }
 }
-
-

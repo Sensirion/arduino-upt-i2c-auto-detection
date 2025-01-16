@@ -1,5 +1,5 @@
-#ifndef _MEASUREMENT_LIST_H_
-#define _MEASUREMENT_LIST_H_
+#ifndef MEASUREMENT_LIST_H
+#define MEASUREMENT_LIST_H
 
 #include "Sensirion_UPT_Core.h"
 
@@ -42,9 +42,9 @@ class MeasurementList {
     void resetWriteHead();
 
   private:
-    size_t _length = 0;
-    size_t _writeHead = 0;
-    Measurement* _measurements = nullptr;
+    size_t mLength = 0;
+    size_t mWriteHead = 0;
+    Measurement* mMeasurements = nullptr;
 };
 
-#endif /* _MEASUREMENT_LIST_H_ */
+#endif /* MEASUREMENT_LIST_H */
