@@ -12,6 +12,8 @@ void SensorManager::executeSensorCommunication() {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
         if (ssm) {
             const AutoDetectorError error = ssm->update();
+            const char* sensorName =
+                sensorLabel(ssm->getSensor()->getSensorType());
             switch (error) {
                 case I2C_ERROR:
                     ESP_LOGW(TAG,
