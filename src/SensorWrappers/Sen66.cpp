@@ -99,7 +99,7 @@ uint16_t Sen66::initializationStep() {
 
     // Get sensor unique ID (last 8 chars of serial no.)
     constexpr uint16_t serialNumberSize = 32;
-    uint8_t serialNumber[serialNumberSize];
+    int8_t serialNumber[serialNumberSize] = {0};
     error = mDriver.getSerialNumber(serialNumber, serialNumberSize);
     if (error) {
         return error;
