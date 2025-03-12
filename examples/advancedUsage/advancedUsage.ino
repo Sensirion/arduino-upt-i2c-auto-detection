@@ -18,7 +18,7 @@ the sensor manager.
 */
 
 #include "Arduino.h"
-#include "SensirionI2CScd4x.h"
+#include "SensirionI2cScd4x.h"
 #include "Sensirion_upt_i2c_auto_detection.h"
 #include <cmath>
 
@@ -34,7 +34,7 @@ To retrieve the drivers of other sensors, change:
 accordingly.
 */
 
-SensirionI2CScd4x* pScd4xDriver = nullptr;
+SensirionI2cScd4x* pScd4xDriver = nullptr;
 void printData(const MeasurementList**, size_t);
 
 uint maxNumSensors;
@@ -50,7 +50,7 @@ void setup() {
     sensorManager.refreshConnectedSensors();
 
     // Retrieval of sensor driver
-    AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2CScd4x>(
+    AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2cScd4x>(
         pScd4xDriver, SensorType::SCD4X);
 
     if (error != NO_ERROR) {
@@ -91,7 +91,7 @@ void loop() {
         Serial.println(
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
         sensorManager.refreshConnectedSensors();
-        sensorManager.getSensorDriver<SensirionI2CScd4x>(pScd4xDriver,
+        sensorManager.getSensorDriver<SensirionI2cScd4x>(pScd4xDriver,
                                                          SensorType::SCD4X);
     }
 }

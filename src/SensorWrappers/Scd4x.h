@@ -2,7 +2,7 @@
 #define _SCD4X_H_
 
 #include "ISensor.h"
-#include "SensirionI2CScd4x.h"
+#include "SensirionI2cScd4x.h"
 #include "Sensirion_UPT_Core.h"
 
 class Scd4x : public ISensor {
@@ -22,9 +22,9 @@ class Scd4x : public ISensor {
     void* getDriver() override;
 
   private:
-    TwoWire& _wire;
-    SensirionI2CScd4x _driver;
-    MetaData _metaData;
+    TwoWire& mWire;
+    SensirionI2cScd4x mDriver;
+    MetaData mMetadata;
 };
 
 #endif /* _SCD4X_H_ */
