@@ -7,15 +7,15 @@ Sfa3x::Sfa3x(TwoWire& wire) : _wire(wire) {
 };
 
 uint16_t Sfa3x::start() {
-    _driver.begin(_wire);
+    _driver.begin(_wire, I2C_ADDRESS);
     return 0;
 }
 
 uint16_t Sfa3x::measureAndWrite(Measurement measurements[],
                                 const unsigned long timeStamp) {
-    int16_t hcho;
-    int16_t humi;
-    int16_t temp;
+    float hcho;
+    float humi;
+    float temp;
 
     uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
     if (error) {
@@ -24,17 +24,17 @@ uint16_t Sfa3x::measureAndWrite(Measurement measurements[],
 
     measurements[0].signalType = SignalType::HCHO_PARTS_PER_BILLION;
     measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = static_cast<float>(hcho) / 5.0f;
+    measurements[0].dataPoint.value = hcho;
     measurements[0].metaData = _metaData;
 
     measurements[1].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
     measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = static_cast<float>(humi) / 100.0f;
+    measurements[1].dataPoint.value = humi;
     measurements[1].metaData = _metaData;
 
     measurements[2].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
     measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = static_cast<float>(temp) / 200.0f;
+    measurements[2].dataPoint.value = temp;
     measurements[2].metaData = _metaData;
 
     return HighLevelError::NoError;
@@ -47,7 +47,7 @@ uint16_t Sfa3x::initializationStep() {
     }
 
     uint8_t serialNumberSize = 32;
-    unsigned char serialNumber[serialNumberSize];
+    int8_t serialNumber[serialNumberSize];
     error = _driver.getDeviceMarking(serialNumber, serialNumberSize);
     if (error) {
         return error;

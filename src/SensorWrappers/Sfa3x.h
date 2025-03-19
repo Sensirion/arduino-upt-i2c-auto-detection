@@ -3,11 +3,11 @@
 
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
-#include <SensirionI2CSfa3x.h>
+#include <SensirionI2cSfa3x.h>
 
 class Sfa3x : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x5D;
+    static const uint16_t I2C_ADDRESS = SFA3X_I2C_ADDR_5D;
     explicit Sfa3x(TwoWire& wire);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
@@ -21,7 +21,7 @@ class Sfa3x : public ISensor {
 
   private:
     TwoWire& _wire;
-    SensirionI2CSfa3x _driver;
+    SensirionI2cSfa3x _driver;
     MetaData _metaData;
 };
 
