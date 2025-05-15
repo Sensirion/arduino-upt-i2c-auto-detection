@@ -1,36 +1,20 @@
 #ifndef SENSOR_LIST_H
 #define SENSOR_LIST_H
-
+#include <vector>
 #include "SensorStateMachine.h"
 
-/**
- * @note We reduce the size of the sensor universe for the purposes of
- * autodetection, since we cannot communicate with two sensors sharing the same
- * I2C-address. This allows us to use the address as an effective hash (using
- * SensorType would leave "holes" in the hashmap).
- */
-enum class SensorHash {
-    UNDEFINED,
-    SCD4X,  // 0x62
-    SFA3X,  // 0x5D
-    SVM4X,  // 0x6A
-    SHT4X,  // 0x44
-    SEN5X,  // 0x69
-    SCD30,  // 0x61
-    STC3X,  // 0x29
-    SGP4X,  // 0x59
-    SEN66,  // 0x6b
-};
 
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
+  using SensorCollection = std::vector<SensorStateMachine*>;
+
   private:
-    const uint8_t mNumSensors;
-    SensorStateMachine** mSensors = nullptr;
+
+    SensorCollection mSensorCollection{};
     static size_t hashSensorType(SensorType sensorType);
 
   public:
-    explicit SensorList(uint8_t numSensors);
+    explicit SensorList() {};
 
     SensorList(const SensorList&) = delete;  // Illegal operation
     SensorList&
@@ -45,14 +29,14 @@ class SensorList {
      *
      * @param[in] pSensor pointer to the sensor to be added to the list
      */
-    void addSensor(ISensor* pSensor) const;
+    void addSensor(ISensor* pSensor);
 
     /**
      * @brief Counts sensors contained in the list
      *
      * @returns number of sensors in the list
      */
-    size_t count() const;
+    size_t count() const { return mSensorCollection.size(); };
 
     /**
      * @brief count Number of signals measured by all sensors contained in the
@@ -63,10 +47,6 @@ class SensorList {
      */
     size_t getTotalNumberOfDataPoints() const;
 
-    /**
-     * @brief getter method for list size
-     */
-    int getLength() const;
 
     /**
      * @brief getter method for a stored state machine
@@ -93,7 +73,7 @@ class SensorList {
     /**
      * @brief remove lost sensors from list
      */
-    void removeLostSensors() const;
+    void removeLostSensors();
 };
 
 #endif /* SENSOR_LIST_H */

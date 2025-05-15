@@ -29,7 +29,7 @@ class SensorManager {
      * use cases.
      */
     explicit SensorManager(IAutoDetector& detector)
-        : mSensorList(MAX_NUM_SENSORS), mDetector(detector){};
+        : mSensorList(), mDetector(detector){};
 
     /**
      * @brief Remove lost sensors and check bus for connected sensors
