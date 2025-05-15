@@ -10,6 +10,8 @@
 
 #include "Sensirion_upt_i2c_auto_detection.h"
 
+SensorRegistrationObject<0x62, Scd4x> registerStcc40(Wire);
+
 I2CAutoDetector i2CAutoDetector(Wire);
 SensorManager sensorManager(i2CAutoDetector);
 bool isEmpty(const MeasurementList**, size_t);
