@@ -8,7 +8,7 @@ void SensorManager::refreshConnectedSensors() {
 }
 
 void SensorManager::executeSensorCommunication() {
-    for (int i = 0; i < mSensorList.getLength(); ++i) {
+    for (int i = 0; i < mSensorList.count(); ++i) {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
         if (ssm) {
             const AutoDetectorError error = ssm->update();
@@ -60,7 +60,7 @@ void SensorManager::refreshAndGetSensorReadings(
 
 void SensorManager::setInterval(const unsigned long interval,
                                 const SensorType sensorType) {
-    for (int i = 0; i < mSensorList.getLength(); ++i) {
+    for (int i = 0; i < mSensorList.count(); ++i) {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
         if (ssm && ssm->getSensor()->getSensorType() == sensorType) {
             ssm->setMeasurementInterval(interval);
