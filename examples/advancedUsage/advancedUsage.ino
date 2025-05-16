@@ -22,7 +22,11 @@ the sensor manager.
 #include "Sensirion_upt_i2c_auto_detection.h"
 #include <cmath>
 
-I2CAutoDetector i2CAutoDetector(Wire);
+SensorToAddressMapping<0x62, Scd4x> address0x62Mappings(Wire);
+
+I2CAutoDetector i2CAutoDetector(Wire,
+    {&address0x62Mappings});
+
 SensorManager sensorManager(i2CAutoDetector);
 
 /*
