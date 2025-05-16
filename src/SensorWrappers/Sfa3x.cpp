@@ -1,13 +1,13 @@
 #include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
-Sfa3x::Sfa3x(TwoWire& wire) : _wire(wire) {
+Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
     _metaData.deviceType.sensorType = SensorType::SFA3X;
     _metaData.platform = DevicePlatform::WIRED;
 };
 
 uint16_t Sfa3x::start() {
-    _driver.begin(_wire, I2C_ADDRESS);
+    _driver.begin(_wire, _address);
     return 0;
 }
 
