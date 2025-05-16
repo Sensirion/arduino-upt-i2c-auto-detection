@@ -2,13 +2,13 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Scd30::Scd30(TwoWire& wire) : _wire(wire) {
-    _metaData.deviceType.sensorType = SensorType::SCD30;
+Scd30::Scd30(TwoWire& wire, const uint16_t address) : _wire(wire), mAddress{address} {
+    // _metaData.deviceType.sensorType = Scd30::LABEL;
     _metaData.platform = DevicePlatform::WIRED;
 };
 
 uint16_t Scd30::start() {
-    _driver.begin(_wire, I2C_ADDRESS);
+    _driver.begin(_wire, mAddress);
     return 0;
 }
 

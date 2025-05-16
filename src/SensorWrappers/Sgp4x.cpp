@@ -3,7 +3,7 @@
 #include "Sensirion_UPT_Core.h"
 
 Sgp41::Sgp41(TwoWire& wire) : _wire(wire) {
-    _metaData.deviceType.sensorType = SensorType::SGP4X;
+    // _metaData.deviceType.sensorType = SensorType::SGP4X;
     _metaData.platform = DevicePlatform::WIRED;
 };
 

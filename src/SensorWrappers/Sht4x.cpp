@@ -3,7 +3,7 @@
 #include "Sensirion_UPT_Core.h"
 
 Sht4x::Sht4x(TwoWire& wire) : _wire(wire) {
-    _metaData.deviceType.sensorType = SensorType::SHT4X;
+    //_metaData.deviceType.sensorType = SensorType::SHT4X;
     _metaData.platform = DevicePlatform::WIRED;
 };
 

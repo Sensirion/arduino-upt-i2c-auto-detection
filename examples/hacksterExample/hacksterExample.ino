@@ -7,7 +7,10 @@ https://www.hackster.io/sensirion-software/easily-read-out-sensirion-sensor-meas
 #include "Sensirion_upt_i2c_auto_detection.h"
 #include "Wire.h"
 
-I2CAutoDetector i2CAutoDetector(Wire);
+SensorToAddressMapping<0x62, Scd4x> address0x62Mappings(Wire);
+
+I2CAutoDetector i2CAutoDetector(Wire,
+    {&address0x62Mappings});
 SensorManager sensorManager(i2CAutoDetector);
 
 int maxNumSensors;
