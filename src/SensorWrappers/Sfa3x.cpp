@@ -2,7 +2,7 @@
 #include "SensirionCore.h"
 
 Sfa3x::Sfa3x(TwoWire& wire) : _wire(wire) {
-    _metaData.deviceType.sensorType = SensorType::SFA3X;
+    //_metaData.deviceType.sensorType = SensorType::SFA3X;
     _metaData.platform = DevicePlatform::WIRED;
 };
 

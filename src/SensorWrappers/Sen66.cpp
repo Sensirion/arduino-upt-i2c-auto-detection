@@ -2,12 +2,12 @@
 #include "SensirionCore.h"
 
 Sen66::Sen66(TwoWire& wire) : mWire(wire) {
-    mMetaData.deviceType.sensorType = SensorType::SEN66;
+    //mMetaData.deviceType.sensorType = SensorType::SEN66;
     mMetaData.platform = DevicePlatform::WIRED;
 };
 
 uint16_t Sen66::start() {
-    mDriver.begin(mWire, Sen66::I2C_ADDRESS);
+    //mDriver.begin(mWire, Sen66::I2C_ADDRESS);
     return 0;
 }
 
@@ -115,7 +115,7 @@ uint16_t Sen66::initializationStep() {
     sensorID |= serialNumber[actualLen - 1];
 
     mMetaData.deviceID = sensorID;
-    mMetaData.deviceType.sensorType = SensorType::SEN66;
+    //mMetaData.deviceType.sensorType = SensorType::SEN66;
 
     // Start Measurement
     error = mDriver.startContinuousMeasurement();

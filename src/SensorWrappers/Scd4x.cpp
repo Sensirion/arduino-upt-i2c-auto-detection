@@ -2,7 +2,7 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Scd4x::Scd4x(TwoWire& wire) : mWire(wire) {
+Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), mAddress{address} {
     mMetadata.deviceType.sensorType = SensorType::SCD4X;
     mMetadata.platform = DevicePlatform::WIRED;
 };
@@ -61,6 +61,7 @@ uint16_t Scd4x::initializationStep() {
 }
 
 SensorType Scd4x::getSensorType() const {
+
     return mMetadata.deviceType.sensorType;
 }
 

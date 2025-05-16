@@ -2,7 +2,7 @@
 #include "SensirionCore.h"
 
 Svm4x::Svm4x(TwoWire& wire) : _wire(wire) {
-    _metaData.deviceType.sensorType = SensorType::SVM41;
+    //_metaData.deviceType.sensorType = SensorType::SVM41;
     _metaData.platform = DevicePlatform::WIRED;
 };
 

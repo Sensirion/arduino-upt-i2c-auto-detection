@@ -2,8 +2,8 @@
 #include "SensirionCore.h"
 
 Sen5x::Sen5x(TwoWire& wire) : _wire(wire) {
-    _metaData.deviceType.sensorType =
-        SensorType::SEN5X;  // determined more precisely in initializationStep()
+    //_metaData.deviceType.sensorType =
+    //    SensorType::SEN5X;  // determined more precisely in initializationStep()
     _metaData.platform = DevicePlatform::WIRED;
 };
 
@@ -55,7 +55,7 @@ uint16_t Sen5x::measureAndWrite(Measurement measurements[],
     measurements[3].dataPoint.t_offset = timeStamp;
     measurements[3].dataPoint.value = massConcentrationPm10p0;
     measurements[3].metaData = _metaData;
-
+    /*
     // Verions 54, 55
     if (getSensorType() == SensorType::SEN54 or
         getSensorType() == SensorType::SEN55) {
@@ -81,6 +81,7 @@ uint16_t Sen5x::measureAndWrite(Measurement measurements[],
         measurements[7].dataPoint.value = noxIndex;
         measurements[7].metaData = _metaData;
     }
+    */
     return HighLevelError::NoError;
 }
 
@@ -133,18 +134,8 @@ MetaData Sen5x::getMetaData() const {
 }
 
 size_t Sen5x::getNumberOfDataPoints() const {
-    switch (getSensorType()) {
-        case SensorType::SEN5X:
-            return 4;
-        case SensorType::SEN50:
-            return 4;
-        case SensorType::SEN54:
-            return 7;
-        case SensorType::SEN55:
-            return 8;
-        default:
-            return 0;
-    }
+    // TODO Fix implementation
+    return 4;
 }
 
 unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
@@ -163,7 +154,7 @@ uint16_t Sen5x::_determineSensorVersion() {
     if (error) {
         return error;
     }
-
+    #if 0 // reimplement
     if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50") == 0) {
         _metaData.deviceType.sensorType = SensorType::SEN50;
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54") ==
@@ -175,5 +166,6 @@ uint16_t Sen5x::_determineSensorVersion() {
     } else {
         _metaData.deviceType.sensorType = SensorType::SEN5X;
     }
+    #endif
     return 0;
 }
