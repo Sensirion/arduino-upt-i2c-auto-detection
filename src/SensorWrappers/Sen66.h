@@ -7,8 +7,7 @@
 
 class Sen66 : public ISensor {
   public:
-    static constexpr uint16_t I2C_ADDRESS = 0x6b;
-    explicit Sen66(TwoWire& wire);
+    explicit Sen66(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              unsigned long timeStamp) override;
@@ -23,6 +22,7 @@ class Sen66 : public ISensor {
   private:
     TwoWire& mWire;
     SensirionI2cSen66 mDriver;
+    uint16_t mAddress;
     MetaData mMetaData;
 };
 

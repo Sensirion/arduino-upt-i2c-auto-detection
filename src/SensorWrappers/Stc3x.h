@@ -7,8 +7,7 @@
 
 class Stc3x : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x29;
-    explicit Stc3x(TwoWire& wire);
+    explicit Stc3x(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
@@ -21,6 +20,7 @@ class Stc3x : public ISensor {
 
   private:
     TwoWire& _wire;
+    uint16_t _address;
     SensirionI2cStc3x _driver;
     MetaData _metaData;
 };

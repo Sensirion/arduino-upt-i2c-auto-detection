@@ -7,8 +7,7 @@
 
 class Sgp41 : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x59;
-    explicit Sgp41(TwoWire& wire);
+    explicit Sgp41(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
@@ -28,6 +27,7 @@ class Sgp41 : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSgp41 _driver;
+    uint16_t _address;
     MetaData _metaData;
     uint16_t _defaultRh = 0x8000;
     uint16_t _defaultT = 0x6666;

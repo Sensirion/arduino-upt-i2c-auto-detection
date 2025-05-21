@@ -4,11 +4,11 @@
 #include "ISensor.h"
 #include "SensirionI2cScd30.h"
 #include "Sensirion_UPT_Core.h"
+#include <string_view>
 
 class Scd30 : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x61;
-    explicit Scd30(TwoWire& wire);
+    explicit Scd30(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
@@ -21,6 +21,7 @@ class Scd30 : public ISensor {
 
   private:
     TwoWire& _wire;
+    uint16_t _address;
     SensirionI2cScd30 _driver;
     MetaData _metaData;
 };

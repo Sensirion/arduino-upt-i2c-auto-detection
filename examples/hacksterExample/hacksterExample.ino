@@ -6,8 +6,10 @@ https://www.hackster.io/sensirion-software/easily-read-out-sensirion-sensor-meas
 #include "Arduino.h"
 #include "Sensirion_upt_i2c_auto_detection.h"
 #include "Wire.h"
+#include "DefaultDriverConfig.h"
 
-I2CAutoDetector i2CAutoDetector(Wire);
+DefaultI2cDetector i2CAutoDetector(Wire);
+    
 SensorManager sensorManager(i2CAutoDetector);
 
 int maxNumSensors;
@@ -23,7 +25,7 @@ void setup() {
   Wire.begin(sda_pin, scl_pin);
 
   // 1.3 Build the "reverse PO Box" we'll use to retrieve sensor data
-  maxNumSensors = sensorManager.getMaxNumberOfSensors();
+  maxNumSensors = maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;
   dataPointers = new const MeasurementList *[maxNumSensors] { nullptr };
 };
 

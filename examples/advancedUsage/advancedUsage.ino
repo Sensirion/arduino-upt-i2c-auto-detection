@@ -21,8 +21,10 @@ the sensor manager.
 #include "SensirionI2cScd4x.h"
 #include "Sensirion_upt_i2c_auto_detection.h"
 #include <cmath>
+#include "DefaultDriverConfig.h"
 
-I2CAutoDetector i2CAutoDetector(Wire);
+DefaultI2cDetector i2CAutoDetector(Wire);
+
 SensorManager sensorManager(i2CAutoDetector);
 
 /*
@@ -44,8 +46,11 @@ float t_incr = 0;
 void setup() {
     Serial.begin(115200);
 
-    int sda_pin = 21;  // Default on esp32 boards
-    int scl_pin = 22;
+    int sda_pin = 43;  // Default on esp32 boards
+    int scl_pin = 44;
+    Wire.begin(sda_pin, scl_pin);
+
+    maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;
     Wire.begin(sda_pin, scl_pin);
     sensorManager.refreshConnectedSensors();
 

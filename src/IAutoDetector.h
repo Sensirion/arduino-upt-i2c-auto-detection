@@ -17,6 +17,13 @@ class IAutoDetector {
      * @param sensorList list to add detected sensors
      */
     virtual void findSensors(SensorList& sensorList) = 0;
+
+    /**
+     * Get the number of configured sensors
+     *
+     * @return The number of sensors that can be configured
+    */
+    virtual size_t configuredSensorsCount() const = 0;
 };
 
 #endif /* I_AUTO_DETECTOR */

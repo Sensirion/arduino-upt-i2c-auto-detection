@@ -7,8 +7,7 @@
 
 class Sen5x : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x69;
-    explicit Sen5x(TwoWire& wire);
+    explicit Sen5x(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
@@ -22,6 +21,7 @@ class Sen5x : public ISensor {
   private:
     TwoWire& _wire;
     SensirionI2CSen5x _driver;
+    uint16_t _address;
     MetaData _metaData;
     uint16_t _determineSensorVersion();
 };

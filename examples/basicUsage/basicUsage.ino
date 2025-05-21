@@ -9,8 +9,10 @@
  */
 
 #include "Sensirion_upt_i2c_auto_detection.h"
+#include "DefaultDriverConfig.h"
 
-I2CAutoDetector i2CAutoDetector(Wire);
+DefaultI2cDetector i2CAutoDetector(Wire);
+
 SensorManager sensorManager(i2CAutoDetector);
 bool isEmpty(const MeasurementList**, size_t);
 void printData(const MeasurementList**, size_t);
@@ -19,14 +21,18 @@ uint maxNumSensors;
 const MeasurementList** pCurrentData;
 
 void setup() {
+    
     Serial.begin(115200);
 
     int sda_pin = 21;  // Default on esp32 boards
     int scl_pin = 22;
     Wire.begin(sda_pin, scl_pin);
 
-    maxNumSensors = sensorManager.getMaxNumberOfSensors();
+    maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;
     pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
+    Serial.print("Number of configured sensors: "); 
+    Serial.println(DefaultI2cDetector::CONFIGURED_SENSORS);
+
 }
 
 void loop() {
@@ -41,13 +47,12 @@ void loop() {
     sensors sharing the same I2C address as equals. Read out the detected
     sensorType from the metadata in the Measurements.
     */
+    
     sensorManager.refreshAndGetSensorReadings(pCurrentData);
+    
     // Print contents
     printData(pCurrentData, maxNumSensors);
-    // Reset hashmap
-    for (size_t i = 0; i < maxNumSensors; i++) {
-        pCurrentData[i] = nullptr;
-    }
+
 }
 
 void printData(const MeasurementList** data, size_t maxNumDataPacks) {

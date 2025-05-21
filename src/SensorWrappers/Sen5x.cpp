@@ -1,7 +1,7 @@
 #include "SensorWrappers/Sen5x.h"
 #include "SensirionCore.h"
 
-Sen5x::Sen5x(TwoWire& wire) : _wire(wire) {
+Sen5x::Sen5x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
     _metaData.deviceType.sensorType =
         SensorType::SEN5X;  // determined more precisely in initializationStep()
     _metaData.platform = DevicePlatform::WIRED;

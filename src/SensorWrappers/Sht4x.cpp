@@ -2,13 +2,13 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Sht4x::Sht4x(TwoWire& wire) : _wire(wire) {
+Sht4x::Sht4x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
     _metaData.deviceType.sensorType = SensorType::SHT4X;
     _metaData.platform = DevicePlatform::WIRED;
 };
 
 uint16_t Sht4x::start() {
-    _driver.begin(_wire, I2C_ADDRESS);
+    _driver.begin(_wire, _address);
     return HighLevelError::NoError;
 }
 

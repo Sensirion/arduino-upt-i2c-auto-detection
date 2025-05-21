@@ -1,13 +1,13 @@
 #include "SensorWrappers/Sen66.h"
 #include "SensirionCore.h"
 
-Sen66::Sen66(TwoWire& wire) : mWire(wire) {
+Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address} {
     mMetaData.deviceType.sensorType = SensorType::SEN66;
     mMetaData.platform = DevicePlatform::WIRED;
 };
 
 uint16_t Sen66::start() {
-    mDriver.begin(mWire, Sen66::I2C_ADDRESS);
+    mDriver.begin(mWire, mAddress);
     return 0;
 }
 

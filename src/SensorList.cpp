@@ -5,16 +5,9 @@
 static const char* TAG = "SensorList";
 
 
-SensorList::~SensorList() {
-    for( auto s : mSensorCollection){
-        delete s;
-    }
-    mSensorCollection.clear();
-}
+SensorList::~SensorList() {}
 
 void SensorList::addSensor(ISensor* pSensor) {
-    // Hash
-
     auto found = std::find_if(mSensorCollection.begin(),
     mSensorCollection.end(), [pSensor](SensorStateMachine* x) {
         return x->getSensor()->getSensorType() == pSensor->getSensorType();
@@ -64,9 +57,6 @@ void SensorList::removeLostSensors() {
     for (auto s: mSensorCollection){
         if(s->getSensorState() != SensorStatus::LOST){
             livingSensors.push_back(s);
-        }
-        else{
-            delete s;
         }
     }
     mSensorCollection.clear();

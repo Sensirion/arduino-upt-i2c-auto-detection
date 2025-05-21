@@ -7,8 +7,7 @@
 
 class Svm4x : public ISensor {
   public:
-    static const uint16_t I2C_ADDRESS = 0x6A;
-    explicit Svm4x(TwoWire& wire);
+    explicit Svm4x(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(Measurement measurements[],
                              const unsigned long timeStamp) override;
@@ -21,6 +20,7 @@ class Svm4x : public ISensor {
 
   private:
     TwoWire& _wire;
+    uint16_t _address;
     SensirionI2CSvm41 _driver;
     MetaData _metaData;
 };
