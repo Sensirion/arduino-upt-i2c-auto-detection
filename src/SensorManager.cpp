@@ -43,7 +43,12 @@ void SensorManager::executeSensorCommunication() {
 }
 
 void SensorManager::getSensorReadings(const MeasurementList** dataHashmap) {
-    for (int i = 0; i < MAX_NUM_SENSORS; ++i) {
+    // Clear existing entries.
+    // The order of the sensors in the measurement list depends on the availability
+    // of sensors!
+    memset(dataHashmap, 0, 
+        sizeof(MeasurementList*)*mDetector.configuredSensorsCount());
+    for (int i = 0; i < mSensorList.count(); ++i) {
         const SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
         if (ssm) {
             dataHashmap[i] = ssm->getSignals();
