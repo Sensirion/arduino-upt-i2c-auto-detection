@@ -11,6 +11,7 @@
 #include "SensorWrappers/Sht4x.h"
 #include "SensorWrappers/Stc3x.h"
 #include "SensorWrappers/Svm4x.h"
+#include "SensorWrappers/Stcc4.h"
 
 using Scd30Mapping = SensorToAddressMapping<0x61, Scd30>;
 using Scd4xMapping = SensorToAddressMapping<0x62, Scd4x>;
@@ -21,6 +22,7 @@ using Sgp41Mapping = SensorToAddressMapping<0x59, Sgp41>;
 using Sht4xMapping = SensorToAddressMapping<0x44, Sht4x>;
 using Stc3xMapping = SensorToAddressMapping<0x29, Stc3x>;
 using Svm4xMapping = SensorToAddressMapping<0x6a, Svm4x>;
+using Stcc4Mapping = SensorToAddressMapping<0x64, Stcc4>;
 
 using DefaultI2cDetector = I2CAutoDetector<Scd30Mapping,
                             Scd4xMapping,
@@ -30,6 +32,7 @@ using DefaultI2cDetector = I2CAutoDetector<Scd30Mapping,
                             Sgp41Mapping,
                             Sht4xMapping,
                             Stc3xMapping,
-                            Svm4xMapping>;
+                            Svm4xMapping,
+                            Stcc4Mapping>;
 
 #endif /* DRIVER_CONFIG_H */
