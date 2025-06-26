@@ -1,6 +1,6 @@
 # Arduino Sensirion UPT I2C Auto Detection
 
-[![arduino-library-badge](https://www.ardu-badge.com/badge/Sensirion%20UPT%20I2C%20Auto%20Detection.svg?)](https://www.ardu-badge.com/Sensirion%20UPT%20I2C%20Auto%20Detection) [![platform-io-badge](https://badges.registry.platformio.org/packages/sensirion/library/Sensirion%20UPT%20I2C%20Auto%20Detection.svg)](https://registry.platformio.org/libraries/sensirion/Sensirion20UPT20I2C20Auto20Detection)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/Sensirion%20UPT%20I2C%20Auto%20Detection.svg?)](https://www.ardu-badge.com/Sensirion%20UPT%20I2C%20Auto%20Detection) [![platform-io-badge](https://badges.registry.platformio.org/packages/sensirion/library/Sensirion%20UPT%20I2C%20Auto%20Detection.svg)](https://registry.platformio.org/libraries/sensirion/Sensirion%20UPT%20I2C%20Auto%20Detection)
 
 Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It allows for easy read-out of the data of Sensirion Sensors using an ESP32 board.
 
@@ -15,6 +15,7 @@ Arduino Library for automatic detection of Sensirion sensors on an I2C Bus. It a
 - STC3X
 - SVM4X
 - SEN66
+- STCC4
 
 ### Sensor Oddities
 
@@ -53,6 +54,7 @@ Search for the `Sensirion UPT I2C Auto Detection` library in the `Filter your se
 - [Sensirion I2C SGP41](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-sgp41/)
 - [Sensirion I2C STC3x](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-stc3x/)
 - [Sensirion I2C SEN66](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-sen66/)
+- [Sensirion I2C STCC4](https://www.arduino.cc/reference/en/libraries/sensirion-i2c-stcc4/)
 
 Alternatively, the library can also be added manually. To do this, download the latest release from github as a .zip file via
 
@@ -123,6 +125,7 @@ This library uses the following dependencies.
 - [SVM40](https://github.com/Sensirion/arduino-i2c-svm40)
 - [STC3X](https://github.com/Sensirion/arduino-i2c-stc3x)
 - [SEN66](https://github.com/Sensirion/arduino-i2c-sen66)
+- [STCC4](https://github.com/Sensirion/arduino-i2c-stcc4)
 
 In case automatic dependency installation doesn't work, you will have to install them manually.
 
