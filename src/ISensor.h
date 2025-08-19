@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "Sensirion_UPT_Core.h"
+#include <vector>
 
 /* Class handling communication with a particular sensor over a communication
  * bus */
@@ -11,6 +12,10 @@ class ISensor {
     static constexpr uint16_t NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS = 3;
 
   public:
+
+    using DeviceType = upt_core::DeviceType;
+    using MeasurementList = std::vector<upt_core::Measurement>;
+
     virtual ~ISensor() = default;
 
     /**
@@ -55,7 +60,7 @@ class ISensor {
      * @return A uint16_t error corresponding to SensirionErrors.h of
      * SensirionCore, where 0 value corresponds to no error.
      */
-    virtual uint16_t measureAndWrite(Measurement measurements[],
+    virtual uint16_t measureAndWrite(MeasurementList& measurements,
                                      unsigned long timeStamp) = 0;
 
     /**
@@ -86,16 +91,16 @@ class ISensor {
     /**
      * @brief Get the specific SensorType of the ISensor realization
      *
-     * @return SensorType
+     * @return DeviceType
      */
-    virtual SensorType getSensorType() const = 0;
+    virtual DeviceType getSensorType() const = 0;
 
     /**
      * @brief Get the MetaData of the ISensor realization
      *
      * @return MetaData
      */
-    virtual MetaData getMetaData() const = 0;
+    virtual upt_core::MetaData getMetaData() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS

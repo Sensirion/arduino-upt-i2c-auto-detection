@@ -3,7 +3,6 @@
 
 #include "AutoDetectorErrors.h"
 #include "ISensor.h"
-#include "MeasurementList.h"
 
 enum class SensorStatus {
     UNDEFINED,
@@ -20,6 +19,10 @@ enum class SensorStatus {
  * information and operations common to all sensor types to the interface class.
  */
 class SensorStateMachine {
+
+  public:
+    using MeasurementList = ISensor::MeasurementList;
+    
   private:
     SensorStatus mSensorState;
     uint8_t mInitErrorCounter;
@@ -74,6 +77,7 @@ class SensorStateMachine {
     AutoDetectorError _readSignals();
 
   public:
+
     SensorStateMachine()
         : mSensorState(SensorStatus::UNDEFINED), mInitErrorCounter(0),
           mMeasurementErrorCounter(0), mLastMeasurementTimeStampMs(0),
@@ -127,7 +131,7 @@ class SensorStateMachine {
     /**
      * @brief getter method for address of sensor signals
      */
-    const MeasurementList* getSignals() const;
+    const MeasurementList& getSignals() const;
 };
 
 #endif /* SENSOR_STATE_MACHINE_H */

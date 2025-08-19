@@ -2,9 +2,8 @@
 #define SENSOR_MANAGER_H
 
 #include "IAutoDetector.h"
-#include "MeasurementList.h"
 #include "SensirionCore.h"
-#include "SensorList.h"
+#include <vector>
 
 /* Class to manage the sensors connected to the board's I2C bus. Handles
  * detection and signal polling in accordance to the sensor's minimal and
@@ -17,6 +16,7 @@ class SensorManager {
     IAutoDetector& mDetector;
 
   public:
+    using MeasurementList = std::vector<upt_core::Measurement>;
     /**
      * @brief constructor
      *
@@ -52,7 +52,7 @@ class SensorManager {
      * SensorManager::getMaxNumberOfSensors(). Existing entries are either
      * ignored or overwritten.
      */
-    void getSensorReadings(const MeasurementList** dataHashmap);
+    void getSensorReadings(const MeasurementList* dataHashmap[]);
 
     /**
      * @brief convenience function performing the sensor list refresh, state
@@ -64,7 +64,7 @@ class SensorManager {
      * SensorManager::getMaxNumberOfSensors(). Existing entries are either
      * ignored or overwritten.
      */
-    void refreshAndGetSensorReadings(const MeasurementList** dataHashmap);
+    void refreshAndGetSensorReadings(const MeasurementList* dataHashmap[]);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if
@@ -77,7 +77,7 @@ class SensorManager {
      * @note Does not return an error in case the validity checks fail, in which
      * case the interval is not set for the sensor
      */
-    void setInterval(unsigned long interval, SensorType sensorType);
+    void setInterval(unsigned long interval, upt_core::DeviceType sensorType);
 
     /**
      * @brief getter method for number of sensors
@@ -100,7 +100,7 @@ class SensorManager {
      */
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver,
-                                      const SensorType sensorType) {
+                                      const ISensor::DeviceType sensorType) {
         if (!mSensorList.containsSensor(sensorType)) {
             return DRIVER_NOT_FOUND_ERROR;
         } else {

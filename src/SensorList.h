@@ -7,11 +7,12 @@
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
   using SensorCollection = std::vector<SensorStateMachine*>;
+  using DeviceType = ISensor::DeviceType;
 
   private:
 
     SensorCollection mSensorCollection{};
-    static size_t hashSensorType(SensorType sensorType);
+    static size_t hashSensorType(upt_core::DeviceType sensorType);
 
   public:
     explicit SensorList() {};
@@ -59,7 +60,7 @@ class SensorList {
     /**
      * @brief getter method for a stored sensor
      */
-    ISensor* getSensor(SensorType sensorType) const;
+    ISensor* getSensor(upt_core::DeviceType sensorType) const;
 
     /**
      * @brief check if the given Sensor is contained in the list.
@@ -68,7 +69,7 @@ class SensorList {
      *
      * @returns True if the sensor is found, false otherwise.
      */
-    bool containsSensor(SensorType sensorType) const;
+    bool containsSensor(upt_core::DeviceType sensorType) const;
 
     /**
      * @brief remove lost sensors from list
