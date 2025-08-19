@@ -14,22 +14,22 @@
 DefaultI2cDetector i2CAutoDetector(Wire);
 
 SensorManager sensorManager(i2CAutoDetector);
-bool isEmpty(const MeasurementList**, size_t);
-void printData(const MeasurementList**, size_t);
+bool isEmpty(const ISensor::MeasurementList*[], size_t);
+void printData(const ISensor::MeasurementList*[], size_t);
 
 uint maxNumSensors;
-const MeasurementList** pCurrentData;
+const ISensor::MeasurementList** pCurrentData;
 
 void setup() {
     
     Serial.begin(115200);
 
-    int sda_pin = 43;  // Default on esp32 boards
-    int scl_pin = 44;
+    int sda_pin = 21;  // Default on esp32 boards
+    int scl_pin = 22;
     Wire.begin(sda_pin, scl_pin);
 
     maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;
-    pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
+    pCurrentData = new const ISensor::MeasurementList* [maxNumSensors] { nullptr };
     Serial.print("Number of configured sensors: "); 
     Serial.println(DefaultI2cDetector::CONFIGURED_SENSORS);
 
@@ -55,7 +55,7 @@ void loop() {
 
 }
 
-void printData(const MeasurementList** data, size_t maxNumDataPacks) {
+void printData(const ISensor::MeasurementList* data[], size_t maxNumDataPacks) {
     if (isEmpty(data, maxNumDataPacks)) {
         Serial.println("No sensors seem to be connected.");
         return;
@@ -63,26 +63,27 @@ void printData(const MeasurementList** data, size_t maxNumDataPacks) {
 
     Serial.println("===========================================");
     for (size_t p = 0; p < maxNumDataPacks; p++) {
-        const MeasurementList* dataPack = data[p];
+        const ISensor::MeasurementList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
         Serial.println("-------------------------------------------");
-        printMeasurementMetaData(dataPack->getMeasurement(0));
+        printMeasurementMetaData((*dataPack)[0]);
         Serial.println("-------------------------------------------");
-        for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            printMeasurementWithoutMetaData(dataPack->getMeasurement(i));
+        for (auto& m: *dataPack){
+            printMeasurementWithoutMetaData(m);
         }
+        
     }
 
     Serial.println();
 }
 
-bool isEmpty(const MeasurementList** data, size_t numDataPacks) {
+bool isEmpty(const ISensor::MeasurementList* data[], size_t numDataPacks) {
     for (size_t p = 0; p < numDataPacks; p++) {
-        const MeasurementList* dataPack = data[p];
+        const ISensor::MeasurementList* dataPack = data[p];
 
-        if (dataPack && data[p]->getLength() > 0) {
+        if (dataPack && dataPack->size() > 0) {
             return false;
         }
     }
