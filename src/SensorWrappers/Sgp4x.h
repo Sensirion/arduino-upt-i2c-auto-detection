@@ -9,11 +9,11 @@ class Sgp41 : public ISensor {
   public:
     explicit Sgp41(TwoWire& wire, uint16_t address);
     uint16_t start() override;
-    uint16_t measureAndWrite(Measurement measurements[],
+    uint16_t measureAndWrite(MeasurementList& measurements,
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
-    SensorType getSensorType() const override;
-    MetaData getMetaData() const override;
+    DeviceType getSensorType() const override;
+    upt_core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
 
@@ -28,7 +28,7 @@ class Sgp41 : public ISensor {
     TwoWire& _wire;
     SensirionI2CSgp41 _driver;
     uint16_t _address;
-    MetaData _metaData;
+    upt_core::MetaData mMetadata;
     uint16_t _defaultRh = 0x8000;
     uint16_t _defaultT = 0x6666;
 };

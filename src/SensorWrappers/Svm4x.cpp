@@ -1,17 +1,16 @@
 #include "SensorWrappers/Svm4x.h"
 #include "SensirionCore.h"
 
-Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
-    _metaData.deviceType.sensorType = SensorType::SVM41;
-    _metaData.platform = DevicePlatform::WIRED;
-};
+Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), 
+    _address{address},
+    mMetaData{upt_core::SensorType::SVM41()} {};
 
 uint16_t Svm4x::start() {
     _driver.begin(_wire);
     return 0;
 }
 
-uint16_t Svm4x::measureAndWrite(Measurement measurements[],
+uint16_t Svm4x::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     float humidity;
     float temperature;
@@ -23,25 +22,19 @@ uint16_t Svm4x::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = humidity;
-    measurements[0].metaData = _metaData;
+    measurements.emplace_back(mMetaData, 
+        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        upt_core::DataPoint{timeStamp, humidity});
 
-    measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = temperature;
-    measurements[1].metaData = _metaData;
 
-    measurements[2].signalType = SignalType::VOC_INDEX;
-    measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = vocIndex;
-    measurements[2].metaData = _metaData;
+    measurements.emplace_back(mMetaData, 
+        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        upt_core::DataPoint{timeStamp, temperature});
 
-    measurements[3].signalType = SignalType::NOX_INDEX;
-    measurements[3].dataPoint.t_offset = timeStamp;
-    measurements[3].dataPoint.value = noxIndex;
-    measurements[3].metaData = _metaData;
+    measurements.emplace_back(mMetaData, 
+        upt_core::SignalType::NOX_INDEX,
+        upt_core::DataPoint{timeStamp, noxIndex});
+
 
     return HighLevelError::NoError;
 }
@@ -69,18 +62,18 @@ uint16_t Svm4x::initializationStep() {
     }
     sensorID |= serialNumber[actualLen - 1];
 
-    _metaData.deviceID = sensorID;
+    mMetaData.deviceID = sensorID;
 
     // Start Measurement
     return _driver.startMeasurement();
 }
 
-SensorType Svm4x::getSensorType() const {
-    return _metaData.deviceType.sensorType;
+upt_core::DeviceType Svm4x::getSensorType() const {
+    return mMetaData.deviceType;
 }
 
-MetaData Svm4x::getMetaData() const {
-    return _metaData;
+upt_core::MetaData Svm4x::getMetaData() const {
+    return mMetaData;
 }
 
 size_t Svm4x::getNumberOfDataPoints() const {

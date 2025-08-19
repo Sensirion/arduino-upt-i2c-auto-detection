@@ -24,8 +24,8 @@ void setup() {
     
     Serial.begin(115200);
 
-    int sda_pin = 21;  // Default on esp32 boards
-    int scl_pin = 22;
+    int sda_pin = 43;  // Default on esp32 boards
+    int scl_pin = 44;
     Wire.begin(sda_pin, scl_pin);
 
     maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;

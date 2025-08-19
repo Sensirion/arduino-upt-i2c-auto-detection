@@ -9,11 +9,11 @@ class Sen66 : public ISensor {
   public:
     explicit Sen66(TwoWire& wire, uint16_t address);
     uint16_t start() override;
-    uint16_t measureAndWrite(Measurement measurements[],
+    uint16_t measureAndWrite(MeasurementList& measurements,
                              unsigned long timeStamp) override;
     uint16_t initializationStep() override;
-    SensorType getSensorType() const override;
-    MetaData getMetaData() const override;
+    DeviceType getSensorType() const override;
+    upt_core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     unsigned long getInitializationIntervalMs() const override;
@@ -23,7 +23,7 @@ class Sen66 : public ISensor {
     TwoWire& mWire;
     SensirionI2cSen66 mDriver;
     uint16_t mAddress;
-    MetaData mMetaData;
+    upt_core::MetaData mMetaData;
 };
 
 #endif /* SEN66_H*/

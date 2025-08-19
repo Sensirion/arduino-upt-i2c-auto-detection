@@ -2,17 +2,16 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Scd30::Scd30(TwoWire& wire, const uint16_t address) : _wire(wire), _address{address} {
-    _metaData.deviceType.sensorType = SensorType::SCD30;
-    _metaData.platform = DevicePlatform::WIRED;
-};
+
+Scd30::Scd30(TwoWire& wire, const uint16_t address) : 
+    _wire(wire), _address{address}, _metaData{upt_core::SensorType::SCD30()}{};
 
 uint16_t Scd30::start() {
     _driver.begin(_wire, _address);
     return 0;
 }
 
-uint16_t Scd30::measureAndWrite(Measurement measurements[],
+uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     // Check data ready
     uint16_t dataReadyFlag = 0;
@@ -24,6 +23,7 @@ uint16_t Scd30::measureAndWrite(Measurement measurements[],
         return 1;
     }
 
+  
     float co2Concentration;
     float temperature;
     float humidity;
@@ -33,20 +33,18 @@ uint16_t Scd30::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType = SignalType::CO2_PARTS_PER_MILLION;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = co2Concentration;
-    measurements[0].metaData = _metaData;
+    measurements.emplace_back(_metaData, 
+        upt_core::SignalType::CO2_PARTS_PER_MILLION,
+        upt_core::DataPoint{timeStamp, co2Concentration});
 
-    measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = temperature;
-    measurements[1].metaData = _metaData;
+    measurements.emplace_back(_metaData, 
+        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS, 
+        upt_core::DataPoint{timeStamp, temperature});
 
-    measurements[2].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
-    measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = humidity;
-    measurements[2].metaData = _metaData;
+    measurements.emplace_back(_metaData, 
+        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE, 
+        upt_core::DataPoint{timeStamp, humidity});
+
 
     /* Prepare next reading by querying the dataReadyFlag. We don't need the
      * value of the flag, but the query seems to finalize setting off the
@@ -83,12 +81,12 @@ uint16_t Scd30::initializationStep() {
     return error;
 }
 
-SensorType Scd30::getSensorType() const {
-    return _metaData.deviceType.sensorType;
+upt_core::DeviceType Scd30::getSensorType() const {
+    return _metaData.deviceType;
     ;
 }
 
-MetaData Scd30::getMetaData() const {
+upt_core::MetaData Scd30::getMetaData() const {
     return _metaData;
 }
 

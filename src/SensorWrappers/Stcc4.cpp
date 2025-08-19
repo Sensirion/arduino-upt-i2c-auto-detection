@@ -2,9 +2,9 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Stcc4::Stcc4(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
-    _metaData.deviceType.sensorType = SensorType::STCC4;
-    _metaData.platform = DevicePlatform::WIRED;
+
+Stcc4::Stcc4(TwoWire& wire, uint16_t address) : _wire(wire), 
+    _address{address}, mMetadata{upt_core::SensorType::STCC4()} {
 };
 
 uint16_t Stcc4::start() {
@@ -12,7 +12,7 @@ uint16_t Stcc4::start() {
     return 0;
 }
 
-uint16_t Stcc4::measureAndWrite(Measurement measurements[],
+uint16_t Stcc4::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     int16_t co2;
     float temperatureValue;
@@ -25,20 +25,18 @@ uint16_t Stcc4::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType = SignalType::CO2_PARTS_PER_MILLION;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = co2;
-    measurements[0].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        upt_core::SignalType::CO2_PARTS_PER_MILLION,
+        upt_core::DataPoint{timeStamp, static_cast<float>(co2)});
 
-    measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = temperatureValue;
-    measurements[1].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        upt_core::DataPoint{timeStamp, temperatureValue});
 
-    measurements[2].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
-    measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = relativeHumidityValue;
-    measurements[2].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        upt_core::DataPoint{timeStamp, relativeHumidityValue});
+
 
     return HighLevelError::NoError;
 }
@@ -57,18 +55,18 @@ uint16_t Stcc4::initializationStep() {
         return error;
     }
 
-    _metaData.deviceID = serialNumber;
+    mMetadata.deviceID = serialNumber;
 
     error = _driver.startContinuousMeasurement();
     return error;
 }
 
-SensorType Stcc4::getSensorType() const {
-    return _metaData.deviceType.sensorType;
+upt_core::DeviceType Stcc4::getSensorType() const {
+    return mMetadata.deviceType;
 }
 
-MetaData Stcc4::getMetaData() const {
-    return _metaData;
+upt_core::MetaData Stcc4::getMetaData() const {
+    return mMetadata;
 }
 
 size_t Stcc4::getNumberOfDataPoints() const {

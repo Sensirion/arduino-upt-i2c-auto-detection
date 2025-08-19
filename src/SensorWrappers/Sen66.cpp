@@ -1,9 +1,8 @@
 #include "SensorWrappers/Sen66.h"
 #include "SensirionCore.h"
 
-Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address} {
-    mMetaData.deviceType.sensorType = SensorType::SEN66;
-    mMetaData.platform = DevicePlatform::WIRED;
+Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), 
+    mAddress{address}, mMetaData{upt_core::SensorType::SEN66()} {
 };
 
 uint16_t Sen66::start() {
@@ -11,7 +10,7 @@ uint16_t Sen66::start() {
     return 0;
 }
 
-uint16_t Sen66::measureAndWrite(Measurement measurements[],
+uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     uint16_t error = 0;
 
@@ -35,55 +34,56 @@ uint16_t Sen66::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType = SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = massConcentrationPm1p0;
-    measurements[0].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+        upt_core::DataPoint{timeStamp, massConcentrationPm1p0}
+    );
 
-    measurements[1].signalType = SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = massConcentrationPm2p5;
-    measurements[1].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+        upt_core::DataPoint{timeStamp, massConcentrationPm2p5}
+    );    
 
-    measurements[2].signalType = SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER;
-    measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = massConcentrationPm4p0;
-    measurements[2].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+        upt_core::DataPoint{timeStamp, massConcentrationPm4p0}
+    );
 
-    measurements[3].signalType = SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER;
-    measurements[3].dataPoint.t_offset = timeStamp;
-    measurements[3].dataPoint.value = massConcentrationPm10p0;
-    measurements[3].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+        upt_core::DataPoint{timeStamp, massConcentrationPm10p0}
+    );  
 
-    measurements[4].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
-    measurements[4].dataPoint.t_offset = timeStamp;
-    measurements[4].dataPoint.value = humidity;
-    measurements[4].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        upt_core::DataPoint{timeStamp, humidity}
+    );
 
-    measurements[5].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[5].dataPoint.t_offset = timeStamp;
-    measurements[5].dataPoint.value = temperature;
-    measurements[5].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        upt_core::DataPoint{timeStamp, temperature}
+    );      
 
-    measurements[6].signalType = SignalType::VOC_INDEX;
-    measurements[6].dataPoint.t_offset = timeStamp;
-    measurements[6].dataPoint.value = vocIndex;
-    measurements[6].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::VOC_INDEX,
+        upt_core::DataPoint{timeStamp, vocIndex}
+    );   
 
-    measurements[7].signalType = SignalType::NOX_INDEX;
-    measurements[7].dataPoint.t_offset = timeStamp;
-    measurements[7].dataPoint.value = noxIndex;
-    measurements[7].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::NOX_INDEX,
+        upt_core::DataPoint{timeStamp, noxIndex}
+    );   
+
 
     // Filter out 0xFFFF CO2 value
     if (co2 == 65535) {
         co2 = 0;
     }
 
-    measurements[8].signalType = SignalType::CO2_PARTS_PER_MILLION;
-    measurements[8].dataPoint.t_offset = timeStamp;
-    measurements[8].dataPoint.value = co2;
-    measurements[8].metaData = mMetaData;
+    measurements.emplace_back(mMetaData,
+        upt_core::SignalType::CO2_PARTS_PER_MILLION,
+        upt_core::DataPoint{timeStamp, static_cast<float>(co2)}
+    );       
 
     return HighLevelError::NoError;
 }
@@ -115,7 +115,6 @@ uint16_t Sen66::initializationStep() {
     sensorID |= serialNumber[actualLen - 1];
 
     mMetaData.deviceID = sensorID;
-    mMetaData.deviceType.sensorType = SensorType::SEN66;
 
     // Start Measurement
     error = mDriver.startContinuousMeasurement();
@@ -123,11 +122,11 @@ uint16_t Sen66::initializationStep() {
     return error;
 }
 
-SensorType Sen66::getSensorType() const {
-    return mMetaData.deviceType.sensorType;
+upt_core::DeviceType Sen66::getSensorType() const {
+    return mMetaData.deviceType;
 }
 
-MetaData Sen66::getMetaData() const {
+upt_core::MetaData Sen66::getMetaData() const {
     return mMetaData;
 }
 

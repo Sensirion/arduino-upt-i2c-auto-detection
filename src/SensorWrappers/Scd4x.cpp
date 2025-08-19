@@ -2,17 +2,16 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), mAddress{address} {
-    mMetadata.deviceType.sensorType = SensorType::SCD4X;
-    mMetadata.platform = DevicePlatform::WIRED;
-};
+Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), 
+    mAddress{address},
+    mMetadata{upt_core::SensorType::SCD4X()}{};
 
 uint16_t Scd4x::start() {
     mDriver.begin(mWire, mAddress);
     return 0;
 }
 
-uint16_t Scd4x::measureAndWrite(Measurement measurements[],
+uint16_t Scd4x::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     uint16_t co2;
     float temp;
@@ -22,20 +21,17 @@ uint16_t Scd4x::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType = SignalType::CO2_PARTS_PER_MILLION;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = static_cast<float>(co2);
-    measurements[0].metaData = mMetadata;
+    measurements.emplace_back(mMetadata, 
+        upt_core::SignalType::CO2_PARTS_PER_MILLION,
+        upt_core::DataPoint{timeStamp, static_cast<float>(co2)});
 
-    measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = temp;
-    measurements[1].metaData = mMetadata;
+    measurements.emplace_back(mMetadata, 
+        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        upt_core::DataPoint{timeStamp, temp});        
 
-    measurements[2].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
-    measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = humi;
-    measurements[2].metaData = mMetadata;
+    measurements.emplace_back(mMetadata, 
+        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        upt_core::DataPoint{timeStamp, humi});      
 
     return HighLevelError::NoError;
 }
@@ -60,12 +56,12 @@ uint16_t Scd4x::initializationStep() {
     return error;
 }
 
-SensorType Scd4x::getSensorType() const {
+upt_core::DeviceType Scd4x::getSensorType() const {
 
-    return mMetadata.deviceType.sensorType;
+    return mMetadata.deviceType;
 }
 
-MetaData Scd4x::getMetaData() const {
+upt_core::MetaData Scd4x::getMetaData() const {
     return mMetadata;
 }
 
@@ -84,5 +80,5 @@ unsigned long Scd4x::getInitializationIntervalMs() const {
 }
 
 void* Scd4x::getDriver() {
-    return reinterpret_cast<void*>(&mDriver);
+    return std::addressof(mDriver);
 }
