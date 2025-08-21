@@ -8,7 +8,7 @@ https://www.hackster.io/sensirion-software/easily-read-out-sensirion-sensor-meas
 #include "Wire.h"
 #include "DefaultDriverConfig.h"
 
-using namespace upt_core;
+using namespace sensirion::upt::core;
 
 DefaultI2cDetector i2CAutoDetector(Wire);
     

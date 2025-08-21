@@ -3,7 +3,7 @@
 
 Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address},
-    mMetaData{upt_core::SensorType::SVM41()} {};
+    mMetaData{sensirion::upt::core::SensorType::SVM41()} {};
 
 uint16_t Svm4x::start() {
     _driver.begin(_wire);
@@ -23,17 +23,17 @@ uint16_t Svm4x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetaData, 
-        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        upt_core::DataPoint{timeStamp, humidity});
+        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        sensirion::upt::core::DataPoint{timeStamp, humidity});
 
 
     measurements.emplace_back(mMetaData, 
-        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        upt_core::DataPoint{timeStamp, temperature});
+        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        sensirion::upt::core::DataPoint{timeStamp, temperature});
 
     measurements.emplace_back(mMetaData, 
-        upt_core::SignalType::NOX_INDEX,
-        upt_core::DataPoint{timeStamp, noxIndex});
+        sensirion::upt::core::SignalType::NOX_INDEX,
+        sensirion::upt::core::DataPoint{timeStamp, noxIndex});
 
 
     return HighLevelError::NoError;
@@ -68,11 +68,11 @@ uint16_t Svm4x::initializationStep() {
     return _driver.startMeasurement();
 }
 
-upt_core::DeviceType Svm4x::getSensorType() const {
+sensirion::upt::core::DeviceType Svm4x::getSensorType() const {
     return mMetaData.deviceType;
 }
 
-upt_core::MetaData Svm4x::getMetaData() const {
+sensirion::upt::core::MetaData Svm4x::getMetaData() const {
     return mMetaData;
 }
 

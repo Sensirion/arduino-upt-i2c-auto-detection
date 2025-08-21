@@ -2,10 +2,10 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-using namespace upt_core;
+using namespace sensirion::upt::core;
 
 Sht4x::Sht4x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{upt_core::SensorType::SHT4X()}{};
+    mMetadata{sensirion::upt::core::SensorType::SHT4X()}{};
 
 uint16_t Sht4x::start() {
     _driver.begin(_wire, _address);
@@ -22,12 +22,12 @@ uint16_t Sht4x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        upt_core::DataPoint{timeStamp, temperature});
+        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        sensirion::upt::core::DataPoint{timeStamp, temperature});
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        upt_core::DataPoint{timeStamp, humi});
+        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        sensirion::upt::core::DataPoint{timeStamp, humi});
 
     return HighLevelError::NoError;
 }

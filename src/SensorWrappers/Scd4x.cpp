@@ -4,7 +4,7 @@
 
 Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), 
     mAddress{address},
-    mMetadata{upt_core::SensorType::SCD4X()}{};
+    mMetadata{sensirion::upt::core::SensorType::SCD4X()}{};
 
 uint16_t Scd4x::start() {
     mDriver.begin(mWire, mAddress);
@@ -22,16 +22,16 @@ uint16_t Scd4x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::CO2_PARTS_PER_MILLION,
-        upt_core::DataPoint{timeStamp, static_cast<float>(co2)});
+        sensirion::upt::core::SignalType::CO2_PARTS_PER_MILLION,
+        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(co2)});
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        upt_core::DataPoint{timeStamp, temp});        
+        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        sensirion::upt::core::DataPoint{timeStamp, temp});        
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        upt_core::DataPoint{timeStamp, humi});      
+        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        sensirion::upt::core::DataPoint{timeStamp, humi});      
 
     return HighLevelError::NoError;
 }
@@ -56,12 +56,12 @@ uint16_t Scd4x::initializationStep() {
     return error;
 }
 
-upt_core::DeviceType Scd4x::getSensorType() const {
+sensirion::upt::core::DeviceType Scd4x::getSensorType() const {
 
     return mMetadata.deviceType;
 }
 
-upt_core::MetaData Scd4x::getMetaData() const {
+sensirion::upt::core::MetaData Scd4x::getMetaData() const {
     return mMetadata;
 }
 

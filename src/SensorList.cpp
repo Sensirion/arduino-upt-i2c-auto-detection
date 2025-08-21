@@ -35,7 +35,7 @@ SensorStateMachine* SensorList::getSensorStateMachine(const size_t i) const {
     return mSensorCollection[i];
 }
 
-ISensor* SensorList::getSensor(upt_core::DeviceType sensorType) const {
+ISensor* SensorList::getSensor(sensirion::upt::core::DeviceType sensorType) const {
     for( const auto s : mSensorCollection){
         if (s->getSensor()->getSensorType() == sensorType){
             return s->getSensor();
@@ -44,7 +44,7 @@ ISensor* SensorList::getSensor(upt_core::DeviceType sensorType) const {
     return nullptr;
 }
 
-bool SensorList::containsSensor(upt_core::DeviceType sensorType) const {
+bool SensorList::containsSensor(sensirion::upt::core::DeviceType sensorType) const {
     auto iter = std::find_if(mSensorCollection.begin(),
     mSensorCollection.end(), [sensorType](SensorStateMachine* s) {
         return s->getSensor()->getSensorType() == sensorType;

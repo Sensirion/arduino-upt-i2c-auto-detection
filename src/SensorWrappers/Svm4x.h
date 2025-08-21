@@ -13,7 +13,7 @@ class Svm4x : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getSensorType() const override;
-    upt_core::MetaData getMetaData() const override;
+    sensirion::upt::core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -22,7 +22,7 @@ class Svm4x : public ISensor {
     TwoWire& _wire;
     uint16_t _address;
     SensirionI2CSvm41 _driver;
-    upt_core::MetaData mMetaData;
+    sensirion::upt::core::MetaData mMetaData;
 };
 
 #endif /* _SVM40_H_ */

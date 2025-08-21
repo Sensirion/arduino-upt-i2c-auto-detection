@@ -1,10 +1,10 @@
 #include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
-using namespace upt_core;
+using namespace sensirion::upt::core;
 
 Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{upt_core::SensorType::SFA3X()}{};
+    mMetadata{sensirion::upt::core::SensorType::SFA3X()}{};
 
 uint16_t Sfa3x::start() {
     _driver.begin(_wire, _address);
@@ -22,16 +22,16 @@ uint16_t Sfa3x::measureAndWrite(MeasurementList& measurements,
         return error;
     }
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::HCHO_PARTS_PER_BILLION,
-        upt_core::DataPoint{timeStamp, hcho});
+        sensirion::upt::core::SignalType::HCHO_PARTS_PER_BILLION,
+        sensirion::upt::core::DataPoint{timeStamp, hcho});
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        upt_core::DataPoint{timeStamp, humi});    
+        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        sensirion::upt::core::DataPoint{timeStamp, humi});    
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        upt_core::DataPoint{timeStamp, temperature});
+        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        sensirion::upt::core::DataPoint{timeStamp, temperature});
 
     return HighLevelError::NoError;
 }
@@ -64,11 +64,11 @@ uint16_t Sfa3x::initializationStep() {
     return error;
 }
 
-upt_core::DeviceType Sfa3x::getSensorType() const {
+sensirion::upt::core::DeviceType Sfa3x::getSensorType() const {
     return mMetadata.deviceType;
 }
 
-upt_core::MetaData Sfa3x::getMetaData() const {
+sensirion::upt::core::MetaData Sfa3x::getMetaData() const {
     return mMetadata;
 }
 

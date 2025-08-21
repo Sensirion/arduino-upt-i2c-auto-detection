@@ -13,7 +13,7 @@ class Sht4x : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getSensorType() const override;
-    upt_core::MetaData getMetaData() const override;
+    sensirion::upt::core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -22,7 +22,7 @@ class Sht4x : public ISensor {
     TwoWire& _wire;
     uint16_t _address;
     SensirionI2cSht4x _driver;
-    upt_core::MetaData mMetadata;
+    sensirion::upt::core::MetaData mMetadata;
 };
 
 #endif /* _SHT4X_H_ */

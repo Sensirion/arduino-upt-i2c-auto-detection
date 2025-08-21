@@ -16,7 +16,7 @@ class SensorManager {
     IAutoDetector& mDetector;
 
   public:
-    using MeasurementList = std::vector<upt_core::Measurement>;
+    using MeasurementList = std::vector<sensirion::upt::core::Measurement>;
     /**
      * @brief constructor
      *
@@ -77,7 +77,7 @@ class SensorManager {
      * @note Does not return an error in case the validity checks fail, in which
      * case the interval is not set for the sensor
      */
-    void setInterval(unsigned long interval, upt_core::DeviceType sensorType);
+    void setInterval(unsigned long interval, sensirion::upt::core::DeviceType sensorType);
 
     /**
      * @brief getter method for number of sensors

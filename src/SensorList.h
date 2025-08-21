@@ -12,7 +12,7 @@ class SensorList {
   private:
 
     SensorCollection mSensorCollection{};
-    static size_t hashSensorType(upt_core::DeviceType sensorType);
+    static size_t hashSensorType(sensirion::upt::core::DeviceType sensorType);
 
   public:
     explicit SensorList() {};
@@ -60,7 +60,7 @@ class SensorList {
     /**
      * @brief getter method for a stored sensor
      */
-    ISensor* getSensor(upt_core::DeviceType sensorType) const;
+    ISensor* getSensor(sensirion::upt::core::DeviceType sensorType) const;
 
     /**
      * @brief check if the given Sensor is contained in the list.
@@ -69,7 +69,7 @@ class SensorList {
      *
      * @returns True if the sensor is found, false otherwise.
      */
-    bool containsSensor(upt_core::DeviceType sensorType) const;
+    bool containsSensor(sensirion::upt::core::DeviceType sensorType) const;
 
     /**
      * @brief remove lost sensors from list

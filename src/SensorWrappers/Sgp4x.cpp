@@ -4,7 +4,7 @@
 
 Sgp41::Sgp41(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address}, 
-    mMetadata{upt_core::SensorType::SGP4X()} {};
+    mMetadata{sensirion::upt::core::SensorType::SGP4X()} {};
 
 uint16_t Sgp41::start() {
     _driver.begin(_wire);
@@ -23,12 +23,12 @@ uint16_t Sgp41::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::RAW_VOC_INDEX,
-        upt_core::DataPoint{timeStamp, static_cast<float>(srawVoc)});
+        sensirion::upt::core::SignalType::RAW_VOC_INDEX,
+        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(srawVoc)});
 
     measurements.emplace_back(mMetadata, 
-        upt_core::SignalType::RAW_NOX_INDEX,
-        upt_core::DataPoint{timeStamp, static_cast<float>(srawNox)});
+        sensirion::upt::core::SignalType::RAW_NOX_INDEX,
+        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(srawNox)});
 
 
     return HighLevelError::NoError;
@@ -51,11 +51,11 @@ uint16_t Sgp41::initializationStep() {
     return error;
 }
 
-upt_core::DeviceType Sgp41::getSensorType() const {
+sensirion::upt::core::DeviceType Sgp41::getSensorType() const {
     return mMetadata.deviceType;
 }
 
-upt_core::MetaData Sgp41::getMetaData() const {
+sensirion::upt::core::MetaData Sgp41::getMetaData() const {
     return mMetadata;
 }
 

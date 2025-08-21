@@ -13,8 +13,8 @@ class ISensor {
 
   public:
 
-    using DeviceType = upt_core::DeviceType;
-    using MeasurementList = std::vector<upt_core::Measurement>;
+    using DeviceType = sensirion::upt::core::DeviceType;
+    using MeasurementList = std::vector<sensirion::upt::core::Measurement>;
 
     virtual ~ISensor() = default;
 
@@ -100,7 +100,7 @@ class ISensor {
      *
      * @return MetaData
      */
-    virtual upt_core::MetaData getMetaData() const = 0;
+    virtual sensirion::upt::core::MetaData getMetaData() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS

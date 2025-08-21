@@ -14,7 +14,7 @@ class Scd4x : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getSensorType() const override;
-    upt_core::MetaData getMetaData() const override;
+    sensirion::upt::core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     // Same as measurement interval
@@ -25,7 +25,7 @@ class Scd4x : public ISensor {
     TwoWire& mWire;
     uint16_t mAddress;
     SensirionI2cScd4x mDriver;
-    upt_core::MetaData mMetadata;
+    sensirion::upt::core::MetaData mMetadata;
 };
 
 #endif /* _SCD4X_H_ */
