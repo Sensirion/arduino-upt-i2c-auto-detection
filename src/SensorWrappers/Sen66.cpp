@@ -122,7 +122,7 @@ uint16_t Sen66::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sen66::getSensorType() const {
+sensirion::upt::core::DeviceType Sen66::getDeviceType() const {
     return mMetaData.deviceType;
 }
 

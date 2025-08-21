@@ -10,7 +10,7 @@ SensorList::~SensorList() {}
 void SensorList::addSensor(ISensor* pSensor) {
     auto found = std::find_if(mSensorCollection.begin(),
     mSensorCollection.end(), [pSensor](SensorStateMachine* x) {
-        return x->getSensor()->getSensorType() == pSensor->getSensorType();
+        return x->getSensor()->getDeviceType() == pSensor->getDeviceType();
     });
     if (found == mSensorCollection.end()){
         mSensorCollection.push_back(new SensorStateMachine(pSensor));
@@ -35,19 +35,19 @@ SensorStateMachine* SensorList::getSensorStateMachine(const size_t i) const {
     return mSensorCollection[i];
 }
 
-ISensor* SensorList::getSensor(sensirion::upt::core::DeviceType sensorType) const {
+ISensor* SensorList::getSensor(sensirion::upt::core::DeviceType deviceType) const {
     for( const auto s : mSensorCollection){
-        if (s->getSensor()->getSensorType() == sensorType){
+        if (s->getSensor()->getDeviceType() == deviceType){
             return s->getSensor();
         }
     }
     return nullptr;
 }
 
-bool SensorList::containsSensor(sensirion::upt::core::DeviceType sensorType) const {
+bool SensorList::containsSensor(sensirion::upt::core::DeviceType deviceType) const {
     auto iter = std::find_if(mSensorCollection.begin(),
-    mSensorCollection.end(), [sensorType](SensorStateMachine* s) {
-        return s->getSensor()->getSensorType() == sensorType;
+    mSensorCollection.end(), [deviceType](SensorStateMachine* s) {
+        return s->getSensor()->getDeviceType() == deviceType;
     });
     return iter != mSensorCollection.end();
 }

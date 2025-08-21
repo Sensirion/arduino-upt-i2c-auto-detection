@@ -105,7 +105,7 @@ uint16_t Stc3x::initializationStep() {
     return HighLevelError::NoError;
 }
 
-sensirion::upt::core::DeviceType Stc3x::getSensorType() const {
+sensirion::upt::core::DeviceType Stc3x::getDeviceType() const {
     return mMetadata.deviceType;
 }
 

@@ -68,7 +68,7 @@ uint16_t Svm4x::initializationStep() {
     return _driver.startMeasurement();
 }
 
-sensirion::upt::core::DeviceType Svm4x::getSensorType() const {
+sensirion::upt::core::DeviceType Svm4x::getDeviceType() const {
     return mMetaData.deviceType;
 }
 

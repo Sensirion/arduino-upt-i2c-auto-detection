@@ -42,7 +42,7 @@ uint16_t Sht4x::initializationStep() {
     return error;
 }
 
-DeviceType Sht4x::getSensorType() const {
+DeviceType Sht4x::getDeviceType() const {
     return mMetadata.deviceType;
 }
 

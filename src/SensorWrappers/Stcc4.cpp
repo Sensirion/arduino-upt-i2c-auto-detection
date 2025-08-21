@@ -61,7 +61,7 @@ uint16_t Stcc4::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Stcc4::getSensorType() const {
+sensirion::upt::core::DeviceType Stcc4::getDeviceType() const {
     return mMetadata.deviceType;
 }
 

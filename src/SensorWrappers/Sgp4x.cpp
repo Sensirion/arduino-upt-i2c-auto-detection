@@ -51,7 +51,7 @@ uint16_t Sgp41::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sgp41::getSensorType() const {
+sensirion::upt::core::DeviceType Sgp41::getDeviceType() const {
     return mMetadata.deviceType;
 }
 

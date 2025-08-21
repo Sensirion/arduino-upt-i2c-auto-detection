@@ -64,7 +64,7 @@ uint16_t Sfa3x::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sfa3x::getSensorType() const {
+sensirion::upt::core::DeviceType Sfa3x::getDeviceType() const {
     return mMetadata.deviceType;
 }
 

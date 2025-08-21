@@ -12,7 +12,7 @@ class Scd30 : public ISensor {
     uint16_t measureAndWrite(MeasurementList&,
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
-    DeviceType getSensorType() const override;
+    DeviceType getDeviceType() const override;
     sensirion::upt::core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;

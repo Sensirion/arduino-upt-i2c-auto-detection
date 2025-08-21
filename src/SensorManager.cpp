@@ -13,7 +13,7 @@ void SensorManager::executeSensorCommunication() {
         if (ssm) {
             const AutoDetectorError error = ssm->update();
             const char* sensorName =
-                sensirion::upt::core::deviceLabel(ssm->getSensor()->getSensorType());
+                sensirion::upt::core::deviceLabel(ssm->getSensor()->getDeviceType());
             switch (error) {
                 case I2C_ERROR:
                     ESP_LOGW(TAG,
@@ -67,10 +67,10 @@ void SensorManager::refreshAndGetSensorReadings(
 }
 
 void SensorManager::setInterval(const unsigned long interval,
-                                const ISensor::DeviceType sensorType) {
+                                const ISensor::DeviceType deviceType) {
     for (int i = 0; i < mSensorList.count(); ++i) {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
-        if (ssm && ssm->getSensor()->getSensorType() == sensorType) {
+        if (ssm && ssm->getSensor()->getDeviceType() == deviceType) {
             ssm->setMeasurementInterval(interval);
         }
     }

@@ -81,7 +81,7 @@ uint16_t Scd30::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Scd30::getSensorType() const {
+sensirion::upt::core::DeviceType Scd30::getDeviceType() const {
     return _metaData.deviceType;
     ;
 }

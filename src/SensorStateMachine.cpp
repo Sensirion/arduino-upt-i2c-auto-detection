@@ -27,7 +27,7 @@ AutoDetectorError SensorStateMachine::_initialize() {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
         ESP_LOGE(TAG, "Failed to perform initialization step of sensor %s: %s",
-                 mSensor->getSensorType().data(), errorMsg);
+                 mSensor->getDeviceType().data(), errorMsg);
         return I2C_ERROR;
     }
     mMeasurementIntervalMs = mSensor->getMinimumMeasurementIntervalMs();
@@ -107,7 +107,7 @@ AutoDetectorError SensorStateMachine::_readSignals() {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
         ESP_LOGE(TAG, "Failed to read measurements for sensor %s: %s",
-                 mSensor->getSensorType().data(), errorMsg);
+                 mSensor->getDeviceType().data(), errorMsg);
         return I2C_ERROR;
     }
 

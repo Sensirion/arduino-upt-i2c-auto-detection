@@ -93,7 +93,7 @@ class ISensor {
      *
      * @return DeviceType
      */
-    virtual DeviceType getSensorType() const = 0;
+    virtual DeviceType getDeviceType() const = 0;
 
     /**
      * @brief Get the MetaData of the ISensor realization

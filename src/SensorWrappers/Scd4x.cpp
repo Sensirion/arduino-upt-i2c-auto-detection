@@ -56,7 +56,7 @@ uint16_t Scd4x::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Scd4x::getSensorType() const {
+sensirion::upt::core::DeviceType Scd4x::getDeviceType() const {
 
     return mMetadata.deviceType;
 }

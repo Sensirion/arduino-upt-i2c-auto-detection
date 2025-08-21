@@ -43,9 +43,7 @@ void loop() {
     The library provides a hashmap of pointers to MeasurementList objects for
     each of the connected sensors. The referenced Data contains a collection of
     Measurements corresponding to the latest available readings from the sensor.
-    The hashmap has a lower resolution than SensorType, because it treats
-    sensors sharing the same I2C address as equals. Read out the detected
-    sensorType from the metadata in the Measurements.
+    Read out the detected deviceType from the metadata in the Measurements.
     */
     
     sensorManager.refreshAndGetSensorReadings(pCurrentData);

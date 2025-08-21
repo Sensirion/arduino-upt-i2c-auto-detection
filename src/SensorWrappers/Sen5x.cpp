@@ -54,8 +54,8 @@ uint16_t Sen5x::measureAndWrite(MeasurementList& measurements,
 
 
     // Verions 54, 55
-    if (getSensorType() == sensirion::upt::core::SensorType::SEN54() or
-        getSensorType() == sensirion::upt::core::SensorType::SEN55()) {
+    if (getDeviceType() == sensirion::upt::core::SensorType::SEN54() or
+        getDeviceType() == sensirion::upt::core::SensorType::SEN55()) {
 
         measurements.emplace_back(_metaData, 
             sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
@@ -71,7 +71,7 @@ uint16_t Sen5x::measureAndWrite(MeasurementList& measurements,
 
     }
     // Version 55
-    if (getSensorType() == sensirion::upt::core::SensorType::SEN55()) {
+    if (getDeviceType() == sensirion::upt::core::SensorType::SEN55()) {
 
         measurements.emplace_back(_metaData, 
             sensirion::upt::core::SignalType::NOX_INDEX,
@@ -121,7 +121,7 @@ uint16_t Sen5x::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sen5x::getSensorType() const {
+sensirion::upt::core::DeviceType Sen5x::getDeviceType() const {
     return _metaData.deviceType;
 }
 
@@ -136,7 +136,7 @@ size_t Sen5x::getNumberOfDataPoints() const {
         {sensirion::upt::core::SensorType::SEN54(), 7},
         {sensirion::upt::core::SensorType::SEN55(), 8},
     };
-    const auto iter = deviceToSignalCount.find(getSensorType());
+    const auto iter = deviceToSignalCount.find(getDeviceType());
     if (iter == deviceToSignalCount.cend()){
         return 0;
     }
