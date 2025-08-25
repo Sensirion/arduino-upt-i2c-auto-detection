@@ -2,17 +2,16 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Sgp41::Sgp41(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
-    _metaData.deviceType.sensorType = SensorType::SGP4X;
-    _metaData.platform = DevicePlatform::WIRED;
-};
+Sgp41::Sgp41(TwoWire& wire, uint16_t address) : _wire(wire), 
+    _address{address}, 
+    mMetadata{sensirion::upt::core::SensorType::SGP4X()} {};
 
 uint16_t Sgp41::start() {
     _driver.begin(_wire);
     return 0;
 }
 
-uint16_t Sgp41::measureAndWrite(Measurement measurements[],
+uint16_t Sgp41::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     uint16_t srawVoc = 0;
     uint16_t srawNox = 0;
@@ -23,15 +22,14 @@ uint16_t Sgp41::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType = SignalType::RAW_VOC_INDEX;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = static_cast<float>(srawVoc);
-    measurements[0].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::RAW_VOC_INDEX,
+        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(srawVoc)});
 
-    measurements[1].signalType = SignalType::RAW_NOX_INDEX;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = static_cast<float>(srawNox);
-    measurements[1].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::RAW_NOX_INDEX,
+        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(srawNox)});
+
 
     return HighLevelError::NoError;
 }
@@ -46,19 +44,19 @@ uint16_t Sgp41::initializationStep() {
     uint64_t sensorID = 0;
     sensorID |= (static_cast<uint64_t>(serialNo[0]) << 16 * 2) |
                 (serialNo[1] << 16) | serialNo[2];
-    _metaData.deviceID = sensorID;
+    mMetadata.deviceID = sensorID;
 
     uint16_t srawVoc;  // discarded during initialization
     error = _driver.executeConditioning(_defaultRh, _defaultT, srawVoc);
     return error;
 }
 
-SensorType Sgp41::getSensorType() const {
-    return _metaData.deviceType.sensorType;
+sensirion::upt::core::DeviceType Sgp41::getDeviceType() const {
+    return mMetadata.deviceType;
 }
 
-MetaData Sgp41::getMetaData() const {
-    return _metaData;
+sensirion::upt::core::MetaData Sgp41::getMetaData() const {
+    return mMetadata;
 }
 
 size_t Sgp41::getNumberOfDataPoints() const {

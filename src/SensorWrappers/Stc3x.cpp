@@ -2,11 +2,10 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-Stc3x::Stc3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
-    _metaData.deviceType.sensorType =
-        SensorType::STC3X;  // Determined more precisely at initializationStep()
-    _metaData.platform = DevicePlatform::WIRED;
-};
+Stc3x::Stc3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
+    mMetadata{sensirion::upt::core::SensorType::STC3X()}
+ {// The device type is determined more precisely at initializationStep()
+ };
 
 uint16_t Stc3x::start() {
     _driver.begin(_wire, _address);
@@ -14,7 +13,7 @@ uint16_t Stc3x::start() {
     return error;
 }
 
-uint16_t Stc3x::measureAndWrite(Measurement measurements[],
+uint16_t Stc3x::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     float gasValue;
     float temperatureValue;
@@ -25,16 +24,13 @@ uint16_t Stc3x::measureAndWrite(Measurement measurements[],
         return error;
     }
 
-    measurements[0].signalType =
-        SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = gasValue;
-    measurements[0].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE,
+        sensirion::upt::core::DataPoint{timeStamp, gasValue});
 
-    measurements[1].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = temperatureValue;
-    measurements[1].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        sensirion::upt::core::DataPoint{timeStamp, temperatureValue});
 
     return HighLevelError::NoError;
 }
@@ -66,14 +62,14 @@ uint16_t Stc3x::initializationStep() {
     const uint32_t maskedProductNo = productNumber & mask;
     const uint32_t maskedSTC31ProductNo = stc31ProductNumber & mask;
     if (maskedSTC31ProductNo == maskedProductNo) {
-        _metaData.deviceType.sensorType = SensorType::STC31;
+        mMetadata.deviceType = sensirion::upt::core::SensorType::STC31();
     }  // else keep default STC3X
 
     // Sensor Serial No
     uint64_t sensorID = 0;
     sensorID |=
         (uint64_t)serialNumberRawHigh << 32 | (uint64_t)serialNumberRawLow;
-    _metaData.deviceID = sensorID;
+    mMetadata.deviceID = sensorID;
 
     // Select gas mode
     /**
@@ -109,12 +105,12 @@ uint16_t Stc3x::initializationStep() {
     return HighLevelError::NoError;
 }
 
-SensorType Stc3x::getSensorType() const {
-    return _metaData.deviceType.sensorType;
+sensirion::upt::core::DeviceType Stc3x::getDeviceType() const {
+    return mMetadata.deviceType;
 }
 
-MetaData Stc3x::getMetaData() const {
-    return _metaData;
+sensirion::upt::core::MetaData Stc3x::getMetaData() const {
+    return mMetadata;
 }
 
 size_t Stc3x::getNumberOfDataPoints() const {

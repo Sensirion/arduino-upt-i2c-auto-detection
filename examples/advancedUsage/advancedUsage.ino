@@ -37,17 +37,17 @@ accordingly.
 */
 
 SensirionI2cScd4x* pScd4xDriver = nullptr;
-void printData(const MeasurementList**, size_t);
+void printData(const ISensor::MeasurementList*[], size_t);
 
 uint maxNumSensors;
-const MeasurementList** pCurrentData;
+const ISensor::MeasurementList** pCurrentData;
 float t_incr = 0;
 
 void setup() {
     Serial.begin(115200);
 
-    int sda_pin = 43;  // Default on esp32 boards
-    int scl_pin = 44;
+    int sda_pin = 21;  // Default on esp32 boards
+    int scl_pin = 22;
     Wire.begin(sda_pin, scl_pin);
 
     maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;
@@ -56,7 +56,7 @@ void setup() {
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2cScd4x>(
-        pScd4xDriver, SensorType::SCD4X);
+        pScd4xDriver, sensirion::upt::core::SensorType::SCD4X());
 
     if (error != NO_ERROR) {
         Serial.print("Encountered error while getting sensor driver (code ");
@@ -66,10 +66,10 @@ void setup() {
 
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
-    sensorManager.setInterval(7500, SensorType::SCD4X);
+    sensorManager.setInterval(7500, sensirion::upt::core::SensorType::SCD4X());
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
-    pCurrentData = new const MeasurementList* [maxNumSensors] { nullptr };
+    pCurrentData = new const ISensor::MeasurementList* [maxNumSensors] { nullptr };
 }
 
 void loop() {
@@ -97,24 +97,24 @@ void loop() {
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
         sensorManager.refreshConnectedSensors();
         sensorManager.getSensorDriver<SensirionI2cScd4x>(pScd4xDriver,
-                                                         SensorType::SCD4X);
+                                                         sensirion::upt::core::SensorType::SCD4X());
     }
 }
 
-void printData(const MeasurementList** data, size_t numDataPacks) {
+void printData(const ISensor::MeasurementList* data[], size_t numDataPacks) {
     Serial.println("===========================================");
     Serial.println("Data retrieved via sensor manager:");
     for (size_t p = 0; p < numDataPacks; p++) {
-        const MeasurementList* dataPack = data[p];
+        const ISensor::MeasurementList* dataPack = data[p];
         if (!dataPack) {
             continue;
         }
 
         Serial.println("-------------------------------------------");
-        printMeasurementMetaData(dataPack->getMeasurement(0));
+        printMeasurementMetaData((*dataPack)[0]);
         Serial.println("-------------------------------------------");
-        for (size_t i = 0; i < dataPack->getLength(); ++i) {
-            printMeasurementWithoutMetaData(dataPack->getMeasurement(i));
+        for( const auto &m: *dataPack){
+            printMeasurementWithoutMetaData(m);
         }
     }
 

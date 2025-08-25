@@ -2,9 +2,8 @@
 #define SENSOR_MANAGER_H
 
 #include "IAutoDetector.h"
-#include "MeasurementList.h"
 #include "SensirionCore.h"
-#include "SensorList.h"
+#include <vector>
 
 /* Class to manage the sensors connected to the board's I2C bus. Handles
  * detection and signal polling in accordance to the sensor's minimal and
@@ -17,6 +16,7 @@ class SensorManager {
     IAutoDetector& mDetector;
 
   public:
+    using MeasurementList = std::vector<sensirion::upt::core::Measurement>;
     /**
      * @brief constructor
      *
@@ -52,7 +52,7 @@ class SensorManager {
      * SensorManager::getMaxNumberOfSensors(). Existing entries are either
      * ignored or overwritten.
      */
-    void getSensorReadings(const MeasurementList** dataHashmap);
+    void getSensorReadings(const MeasurementList* dataHashmap[]);
 
     /**
      * @brief convenience function performing the sensor list refresh, state
@@ -64,7 +64,7 @@ class SensorManager {
      * SensorManager::getMaxNumberOfSensors(). Existing entries are either
      * ignored or overwritten.
      */
-    void refreshAndGetSensorReadings(const MeasurementList** dataHashmap);
+    void refreshAndGetSensorReadings(const MeasurementList* dataHashmap[]);
 
     /**
      * @brief Sets polling interval for the specified sensor after checking if
@@ -72,12 +72,12 @@ class SensorManager {
      *
      * @param[in] interval desired measurement interval
      *
-     * @param[in] sensorType target sensor
+     * @param[in] deviceType target sensor
      *
      * @note Does not return an error in case the validity checks fail, in which
      * case the interval is not set for the sensor
      */
-    void setInterval(unsigned long interval, SensorType sensorType);
+    void setInterval(unsigned long interval, sensirion::upt::core::DeviceType deviceType);
 
     /**
      * @brief getter method for number of sensors
@@ -91,7 +91,7 @@ class SensorManager {
      * @param[in] pDriver nullptr initialized pointer to specific Sensirion
      * sensor driver class T.
      *
-     * @param[in] sensorType corresponding to ISensor implementation for sensor
+     * @param[in] deviceType corresponding to ISensor implementation for sensor
      * driver class T.
      *
      * @returns DRIVER_NOT_FOUND_ERROR in case of failure
@@ -100,12 +100,12 @@ class SensorManager {
      */
     template <class T>
     AutoDetectorError getSensorDriver(T*& pDriver,
-                                      const SensorType sensorType) {
-        if (!mSensorList.containsSensor(sensorType)) {
+                                      const ISensor::DeviceType deviceType) {
+        if (!mSensorList.containsSensor(deviceType)) {
             return DRIVER_NOT_FOUND_ERROR;
         } else {
             pDriver =
-                static_cast<T*>(mSensorList.getSensor(sensorType)->getDriver());
+                static_cast<T*>(mSensorList.getSensor(deviceType)->getDriver());
         }
         return NO_ERROR;
     };

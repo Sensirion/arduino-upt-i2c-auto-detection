@@ -1,41 +1,37 @@
 #include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
-Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address} {
-    _metaData.deviceType.sensorType = SensorType::SFA3X;
-    _metaData.platform = DevicePlatform::WIRED;
-};
+using namespace sensirion::upt::core;
+
+Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
+    mMetadata{sensirion::upt::core::SensorType::SFA3X()}{};
 
 uint16_t Sfa3x::start() {
     _driver.begin(_wire, _address);
     return 0;
 }
 
-uint16_t Sfa3x::measureAndWrite(Measurement measurements[],
+uint16_t Sfa3x::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     float hcho;
     float humi;
-    float temp;
+    float temperature;
 
-    uint16_t error = _driver.readMeasuredValues(hcho, humi, temp);
+    uint16_t error = _driver.readMeasuredValues(hcho, humi, temperature);
     if (error) {
         return error;
     }
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::HCHO_PARTS_PER_BILLION,
+        sensirion::upt::core::DataPoint{timeStamp, hcho});
 
-    measurements[0].signalType = SignalType::HCHO_PARTS_PER_BILLION;
-    measurements[0].dataPoint.t_offset = timeStamp;
-    measurements[0].dataPoint.value = hcho;
-    measurements[0].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        sensirion::upt::core::DataPoint{timeStamp, humi});    
 
-    measurements[1].signalType = SignalType::RELATIVE_HUMIDITY_PERCENTAGE;
-    measurements[1].dataPoint.t_offset = timeStamp;
-    measurements[1].dataPoint.value = humi;
-    measurements[1].metaData = _metaData;
-
-    measurements[2].signalType = SignalType::TEMPERATURE_DEGREES_CELSIUS;
-    measurements[2].dataPoint.t_offset = timeStamp;
-    measurements[2].dataPoint.value = temp;
-    measurements[2].metaData = _metaData;
+    measurements.emplace_back(mMetadata, 
+        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        sensirion::upt::core::DataPoint{timeStamp, temperature});
 
     return HighLevelError::NoError;
 }
@@ -62,18 +58,18 @@ uint16_t Sfa3x::initializationStep() {
     }
     sensorID |= serialNumber[actualLen - 1];
 
-    _metaData.deviceID = sensorID;
+    mMetadata.deviceID = sensorID;
 
     error = _driver.startContinuousMeasurement();
     return error;
 }
 
-SensorType Sfa3x::getSensorType() const {
-    return _metaData.deviceType.sensorType;
+sensirion::upt::core::DeviceType Sfa3x::getDeviceType() const {
+    return mMetadata.deviceType;
 }
 
-MetaData Sfa3x::getMetaData() const {
-    return _metaData;
+sensirion::upt::core::MetaData Sfa3x::getMetaData() const {
+    return mMetadata;
 }
 
 size_t Sfa3x::getNumberOfDataPoints() const {

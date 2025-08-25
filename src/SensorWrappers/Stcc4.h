@@ -9,11 +9,11 @@ class Stcc4 : public ISensor {
   public:
     explicit Stcc4(TwoWire& wire, uint16_t address);
     uint16_t start() override;
-    uint16_t measureAndWrite(Measurement measurements[],
+    uint16_t measureAndWrite(MeasurementList& measurements,
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
-    SensorType getSensorType() const override;
-    MetaData getMetaData() const override;
+    DeviceType getDeviceType() const override;
+    sensirion::upt::core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -22,7 +22,7 @@ class Stcc4 : public ISensor {
     TwoWire& _wire;
     uint16_t _address;
     SensirionI2cStcc4 _driver;
-    MetaData _metaData;
+    sensirion::upt::core::MetaData mMetadata;
 };
 
 #endif /* _STCC4_H_ */

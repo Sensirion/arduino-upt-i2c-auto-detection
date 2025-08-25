@@ -27,11 +27,9 @@ AutoDetectorError SensorStateMachine::_initialize() {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
         ESP_LOGE(TAG, "Failed to perform initialization step of sensor %s: %s",
-                 sensorLabel(mSensor->getSensorType()), errorMsg);
+                 mSensor->getDeviceType().data(), errorMsg);
         return I2C_ERROR;
     }
-
-    mSensorSignals.init(mSensor->getNumberOfDataPoints());
     mMeasurementIntervalMs = mSensor->getMinimumMeasurementIntervalMs();
     mLastMeasurementTimeStampMs = millis();
 
@@ -40,12 +38,6 @@ AutoDetectorError SensorStateMachine::_initialize() {
         mSensorState = SensorStatus::INITIALIZING;
     } else {
         mSensorState = SensorStatus::RUNNING;
-    }
-
-    for (size_t i = 0; i < mSensor->getNumberOfDataPoints(); ++i) {
-        Measurement measurement;
-        measurement.metaData = mSensor->getMetaData();
-        mSensorSignals.addMeasurement(measurement);
     }
 
     return NO_ERROR;
@@ -106,25 +98,20 @@ AutoDetectorError SensorStateMachine::_readSignalsRoutine() {
 }
 
 AutoDetectorError SensorStateMachine::_readSignals() {
-    Measurement signalsBuf[mSensor->getNumberOfDataPoints()];
+    
     const uint32_t nowMS = millis();
-
-    const uint16_t error = mSensor->measureAndWrite(signalsBuf, nowMS);
+    mSensorSignals.clear();
+    const uint16_t error = mSensor->measureAndWrite(mSensorSignals, nowMS);
 
     if (error) {
         char errorMsg[256];
         errorToString(error, errorMsg, 256);
         ESP_LOGE(TAG, "Failed to read measurements for sensor %s: %s",
-                 sensorLabel(mSensor->getSensorType()), errorMsg);
+                 mSensor->getDeviceType().data(), errorMsg);
         return I2C_ERROR;
     }
 
     mLastMeasurementTimeStampMs = nowMS;
-
-    for (size_t i = 0; i < mSensor->getNumberOfDataPoints(); ++i) {
-        mSensorSignals.addMeasurement(signalsBuf[i]);
-    }
-    mSensorSignals.resetWriteHead();
 
     return NO_ERROR;
 }
@@ -187,6 +174,6 @@ ISensor* SensorStateMachine::getSensor() const {
     return mSensor;
 }
 
-const MeasurementList* SensorStateMachine::getSignals() const {
-    return &mSensorSignals;
+const ISensor::MeasurementList& SensorStateMachine::getSignals() const {
+    return mSensorSignals;
 }

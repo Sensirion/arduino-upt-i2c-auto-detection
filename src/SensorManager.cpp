@@ -13,7 +13,7 @@ void SensorManager::executeSensorCommunication() {
         if (ssm) {
             const AutoDetectorError error = ssm->update();
             const char* sensorName =
-                sensorLabel(ssm->getSensor()->getSensorType());
+                sensirion::upt::core::deviceLabel(ssm->getSensor()->getDeviceType());
             switch (error) {
                 case I2C_ERROR:
                     ESP_LOGW(TAG,
@@ -42,7 +42,7 @@ void SensorManager::executeSensorCommunication() {
     }
 }
 
-void SensorManager::getSensorReadings(const MeasurementList** dataHashmap) {
+void SensorManager::getSensorReadings(const MeasurementList* dataHashmap[]) {
     // Clear existing entries.
     // The order of the sensors in the measurement list depends on the availability
     // of sensors!
@@ -50,24 +50,27 @@ void SensorManager::getSensorReadings(const MeasurementList** dataHashmap) {
         sizeof(MeasurementList*)*mDetector.configuredSensorsCount());
     for (int i = 0; i < mSensorList.count(); ++i) {
         const SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
-        if (ssm) {
-            dataHashmap[i] = ssm->getSignals();
+        if (ssm && ssm->getSensorState() == SensorStatus::RUNNING) {
+            const auto sig = std::addressof(ssm->getSignals());
+            if (sig->size() == ssm->getSensor()->getNumberOfDataPoints()){
+                dataHashmap[i] = sig;
+            }
         }
     }
 }
 
 void SensorManager::refreshAndGetSensorReadings(
-    const MeasurementList** dataHashmap) {
+    const MeasurementList* dataHashmap[]) {
     refreshConnectedSensors();
     executeSensorCommunication();
     getSensorReadings(dataHashmap);
 }
 
 void SensorManager::setInterval(const unsigned long interval,
-                                const SensorType sensorType) {
+                                const ISensor::DeviceType deviceType) {
     for (int i = 0; i < mSensorList.count(); ++i) {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
-        if (ssm && ssm->getSensor()->getSensorType() == sensorType) {
+        if (ssm && ssm->getSensor()->getDeviceType() == deviceType) {
             ssm->setMeasurementInterval(interval);
         }
     }
