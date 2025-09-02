@@ -56,7 +56,7 @@ void setup() {
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2cScd4x>(
-        pScd4xDriver, sensirion::upt::core::SensorType::SCD4X());
+        pScd4xDriver, sensirion::upt::core::SCD4X());
 
     if (error != NO_ERROR) {
         Serial.print("Encountered error while getting sensor driver (code ");
@@ -66,7 +66,7 @@ void setup() {
 
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
-    sensorManager.setInterval(7500, sensirion::upt::core::SensorType::SCD4X());
+    sensorManager.setInterval(7500, sensirion::upt::core::SCD4X());
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
     pCurrentData = new const ISensor::MeasurementList* [maxNumSensors] { nullptr };
@@ -97,7 +97,7 @@ void loop() {
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
         sensorManager.refreshConnectedSensors();
         sensorManager.getSensorDriver<SensirionI2cScd4x>(pScd4xDriver,
-                                                         sensirion::upt::core::SensorType::SCD4X());
+                                                         sensirion::upt::core::SCD4X());
     }
 }
 

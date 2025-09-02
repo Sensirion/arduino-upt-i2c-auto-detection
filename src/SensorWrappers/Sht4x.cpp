@@ -5,7 +5,7 @@
 using namespace sensirion::upt::core;
 
 Sht4x::Sht4x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{sensirion::upt::core::SensorType::SHT4X()}{};
+    mMetadata{sensirion::upt::core::SHT4X()}{};
 
 uint16_t Sht4x::start() {
     _driver.begin(_wire, _address);

@@ -4,7 +4,7 @@
 using namespace sensirion::upt::core;
 
 Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{sensirion::upt::core::SensorType::SFA3X()}{};
+    mMetadata{sensirion::upt::core::SFA3X()}{};
 
 uint16_t Sfa3x::start() {
     _driver.begin(_wire, _address);

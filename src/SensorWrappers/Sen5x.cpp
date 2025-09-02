@@ -5,7 +5,7 @@
 Sen5x::Sen5x(TwoWire& wire, uint16_t address) : 
     _wire(wire),
     _address{address},
-    _metaData{sensirion::upt::core::SensorType::SEN5X()} {};
+    _metaData{sensirion::upt::core::SEN5X()} {};
 
 uint16_t Sen5x::start() {
     _driver.begin(_wire);
@@ -54,8 +54,8 @@ uint16_t Sen5x::measureAndWrite(MeasurementList& measurements,
 
 
     // Verions 54, 55
-    if (getDeviceType() == sensirion::upt::core::SensorType::SEN54() or
-        getDeviceType() == sensirion::upt::core::SensorType::SEN55()) {
+    if (getDeviceType() == sensirion::upt::core::SEN54() or
+        getDeviceType() == sensirion::upt::core::SEN55()) {
 
         measurements.emplace_back(_metaData, 
             sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
@@ -71,7 +71,7 @@ uint16_t Sen5x::measureAndWrite(MeasurementList& measurements,
 
     }
     // Version 55
-    if (getDeviceType() == sensirion::upt::core::SensorType::SEN55()) {
+    if (getDeviceType() == sensirion::upt::core::SEN55()) {
 
         measurements.emplace_back(_metaData, 
             sensirion::upt::core::SignalType::NOX_INDEX,
@@ -131,10 +131,10 @@ sensirion::upt::core::MetaData Sen5x::getMetaData() const {
 
 size_t Sen5x::getNumberOfDataPoints() const {
     static std::map<sensirion::upt::core::DeviceType, size_t> deviceToSignalCount = {
-        {sensirion::upt::core::SensorType::SEN5X(), 4},
-        {sensirion::upt::core::SensorType::SEN50(), 4},
-        {sensirion::upt::core::SensorType::SEN54(), 7},
-        {sensirion::upt::core::SensorType::SEN55(), 8},
+        {sensirion::upt::core::SEN5X(), 4},
+        {sensirion::upt::core::SEN50(), 4},
+        {sensirion::upt::core::SEN54(), 7},
+        {sensirion::upt::core::SEN55(), 8},
     };
     const auto iter = deviceToSignalCount.find(getDeviceType());
     if (iter == deviceToSignalCount.cend()){
@@ -161,15 +161,15 @@ uint16_t Sen5x::_determineSensorVersion() {
     }
 
     if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50") == 0) {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN50();
+        _metaData.deviceType = sensirion::upt::core::SEN50();
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54") ==
                0) {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN54();
+        _metaData.deviceType = sensirion::upt::core::SEN54();
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN55") ==
                0) {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN55();
+        _metaData.deviceType = sensirion::upt::core::SEN55();
     } else {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN5X();
+        _metaData.deviceType = sensirion::upt::core::SEN5X();
     }
     return 0;
 }

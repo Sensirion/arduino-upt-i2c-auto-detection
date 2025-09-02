@@ -4,7 +4,7 @@
 
 Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), 
     mAddress{address},
-    mMetadata{sensirion::upt::core::SensorType::SCD4X()}{};
+    mMetadata{sensirion::upt::core::SCD4X()}{};
 
 uint16_t Scd4x::start() {
     mDriver.begin(mWire, mAddress);

@@ -2,7 +2,7 @@
 #include "SensirionCore.h"
 
 Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), 
-    mAddress{address}, mMetaData{sensirion::upt::core::SensorType::SEN66()} {
+    mAddress{address}, mMetaData{sensirion::upt::core::SEN66()} {
 };
 
 uint16_t Sen66::start() {

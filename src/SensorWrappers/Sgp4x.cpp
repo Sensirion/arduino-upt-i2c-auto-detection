@@ -4,7 +4,7 @@
 
 Sgp41::Sgp41(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address}, 
-    mMetadata{sensirion::upt::core::SensorType::SGP4X()} {};
+    mMetadata{sensirion::upt::core::SGP4X()} {};
 
 uint16_t Sgp41::start() {
     _driver.begin(_wire);

@@ -3,7 +3,7 @@
 
 Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address},
-    mMetaData{sensirion::upt::core::SensorType::SVM41()} {};
+    mMetaData{sensirion::upt::core::SVM41()} {};
 
 uint16_t Svm4x::start() {
     _driver.begin(_wire);

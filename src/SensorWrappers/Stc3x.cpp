@@ -3,7 +3,7 @@
 #include "Sensirion_UPT_Core.h"
 
 Stc3x::Stc3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{sensirion::upt::core::SensorType::STC3X()}
+    mMetadata{sensirion::upt::core::STC3X()}
  {// The device type is determined more precisely at initializationStep()
  };
 
@@ -62,7 +62,7 @@ uint16_t Stc3x::initializationStep() {
     const uint32_t maskedProductNo = productNumber & mask;
     const uint32_t maskedSTC31ProductNo = stc31ProductNumber & mask;
     if (maskedSTC31ProductNo == maskedProductNo) {
-        mMetadata.deviceType = sensirion::upt::core::SensorType::STC31();
+        mMetadata.deviceType = sensirion::upt::core::STC31();
     }  // else keep default STC3X
 
     // Sensor Serial No

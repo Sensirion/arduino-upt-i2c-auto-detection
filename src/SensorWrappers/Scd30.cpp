@@ -4,7 +4,7 @@
 
 
 Scd30::Scd30(TwoWire& wire, const uint16_t address) : 
-    _wire(wire), _address{address}, _metaData{sensirion::upt::core::SensorType::SCD30()}{};
+    _wire(wire), _address{address}, _metaData{sensirion::upt::core::SCD30()}{};
 
 uint16_t Scd30::start() {
     _driver.begin(_wire, _address);

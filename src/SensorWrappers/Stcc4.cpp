@@ -4,7 +4,7 @@
 
 
 Stcc4::Stcc4(TwoWire& wire, uint16_t address) : _wire(wire), 
-    _address{address}, mMetadata{sensirion::upt::core::SensorType::STCC4()} {
+    _address{address}, mMetadata{sensirion::upt::core::STCC4()} {
 };
 
 uint16_t Stcc4::start() {
