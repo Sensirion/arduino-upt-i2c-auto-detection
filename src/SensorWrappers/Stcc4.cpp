@@ -5,7 +5,7 @@
 namespace sensirion::upt::i2c_autodetect{
 
 Stcc4::Stcc4(TwoWire& wire, uint16_t address) : _wire(wire), 
-    _address{address}, mMetadata{sensirion::upt::core::STCC4()} {
+    _address{address}, mMetadata{core::STCC4()} {
 };
 
 uint16_t Stcc4::start() {
@@ -27,16 +27,16 @@ uint16_t Stcc4::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::CO2_PARTS_PER_MILLION,
-        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(co2)});
+        core::SignalType::CO2_PARTS_PER_MILLION,
+        core::DataPoint{timeStamp, static_cast<float>(co2)});
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        sensirion::upt::core::DataPoint{timeStamp, temperatureValue});
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        core::DataPoint{timeStamp, temperatureValue});
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        sensirion::upt::core::DataPoint{timeStamp, relativeHumidityValue});
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        core::DataPoint{timeStamp, relativeHumidityValue});
 
 
     return HighLevelError::NoError;
@@ -62,11 +62,11 @@ uint16_t Stcc4::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Stcc4::getDeviceType() const {
+core::DeviceType Stcc4::getDeviceType() const {
     return mMetadata.deviceType;
 }
 
-sensirion::upt::core::MetaData Stcc4::getMetaData() const {
+core::MetaData Stcc4::getMetaData() const {
     return mMetadata;
 }
 

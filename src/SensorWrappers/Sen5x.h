@@ -15,7 +15,7 @@ class Sen5x : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
-    sensirion::upt::core::MetaData getMetaData() const override;
+    core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -24,7 +24,7 @@ class Sen5x : public ISensor {
     TwoWire& _wire;
     SensirionI2CSen5x _driver;
     uint16_t _address;
-    sensirion::upt::core::MetaData _metaData;
+    core::MetaData _metaData;
     uint16_t _determineSensorVersion();
 };
 } // namespace sensirion::upt::i2c_autodetect 

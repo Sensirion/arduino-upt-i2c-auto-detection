@@ -15,7 +15,7 @@ class Sen66 : public ISensor {
                              unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
-    sensirion::upt::core::MetaData getMetaData() const override;
+    core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     unsigned long getInitializationIntervalMs() const override;
@@ -25,7 +25,7 @@ class Sen66 : public ISensor {
     TwoWire& mWire;
     SensirionI2cSen66 mDriver;
     uint16_t mAddress;
-    sensirion::upt::core::MetaData mMetaData;
+    core::MetaData mMetaData;
 };
 } // namespace sensirion::upt::i2c_autodetect 
 

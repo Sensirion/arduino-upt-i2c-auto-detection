@@ -23,7 +23,7 @@ the sensor manager.
 #include <cmath>
 #include "DefaultDriverConfig.h"
 
-using namespace sensirion::upt::core;
+using namespace sensirion::upt;
 using namespace sensirion::upt::i2c_autodetect;
 
 DefaultI2cDetector i2CAutoDetector(Wire);
@@ -59,7 +59,7 @@ void setup() {
 
     // Retrieval of sensor driver
     AutoDetectorError error = sensorManager.getSensorDriver<SensirionI2cScd4x>(
-        pScd4xDriver, sensirion::upt::core::SCD4X());
+        pScd4xDriver, core::SCD4X());
 
     if (error != NO_ERROR) {
         Serial.print("Encountered error while getting sensor driver (code ");
@@ -69,7 +69,7 @@ void setup() {
 
     // Set custom interval for sensor measurement update (default: 5s, lower
     // values are ignored)
-    sensorManager.setInterval(7500, sensirion::upt::core::SCD4X());
+    sensorManager.setInterval(7500, core::SCD4X());
 
     maxNumSensors = sensorManager.getMaxNumberOfSensors();
     pCurrentData = new const ISensor::MeasurementList* [maxNumSensors] { nullptr };
@@ -100,7 +100,7 @@ void loop() {
             "Please connect a Sensirion SCD4X CO2 sensor on the i2c bus.");
         sensorManager.refreshConnectedSensors();
         sensorManager.getSensorDriver<SensirionI2cScd4x>(pScd4xDriver,
-                                                         sensirion::upt::core::SCD4X());
+                                                         core::SCD4X());
     }
 }
 

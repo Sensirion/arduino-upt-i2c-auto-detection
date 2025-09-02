@@ -15,7 +15,7 @@ void SensorManager::executeSensorCommunication() {
         if (ssm) {
             const AutoDetectorError error = ssm->update();
             const char* sensorName =
-                sensirion::upt::core::deviceLabel(ssm->getSensor()->getDeviceType());
+                core::deviceLabel(ssm->getSensor()->getDeviceType());
             switch (error) {
                 case I2C_ERROR:
                     ESP_LOGW(TAG,

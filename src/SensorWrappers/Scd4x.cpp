@@ -6,7 +6,7 @@ namespace sensirion::upt::i2c_autodetect{
 
 Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), 
     mAddress{address},
-    mMetadata{sensirion::upt::core::SCD4X()}{};
+    mMetadata{core::SCD4X()}{};
 
 uint16_t Scd4x::start() {
     mDriver.begin(mWire, mAddress);
@@ -24,16 +24,16 @@ uint16_t Scd4x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::CO2_PARTS_PER_MILLION,
-        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(co2)});
+        core::SignalType::CO2_PARTS_PER_MILLION,
+        core::DataPoint{timeStamp, static_cast<float>(co2)});
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        sensirion::upt::core::DataPoint{timeStamp, temp});        
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        core::DataPoint{timeStamp, temp});        
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        sensirion::upt::core::DataPoint{timeStamp, humi});      
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        core::DataPoint{timeStamp, humi});      
 
     return HighLevelError::NoError;
 }
@@ -58,12 +58,12 @@ uint16_t Scd4x::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Scd4x::getDeviceType() const {
+core::DeviceType Scd4x::getDeviceType() const {
 
     return mMetadata.deviceType;
 }
 
-sensirion::upt::core::MetaData Scd4x::getMetaData() const {
+core::MetaData Scd4x::getMetaData() const {
     return mMetadata;
 }
 

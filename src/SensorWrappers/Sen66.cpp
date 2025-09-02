@@ -4,7 +4,7 @@
 namespace sensirion::upt::i2c_autodetect{
 
 Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), 
-    mAddress{address}, mMetaData{sensirion::upt::core::SEN66()} {
+    mAddress{address}, mMetaData{core::SEN66()} {
 };
 
 uint16_t Sen66::start() {
@@ -37,43 +37,43 @@ uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm1p0}
+        core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm1p0}
     );
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm2p5}
+        core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm2p5}
     );    
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm4p0}
+        core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm4p0}
     );
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm10p0}
+        core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm10p0}
     );  
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        sensirion::upt::core::DataPoint{timeStamp, humidity}
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        core::DataPoint{timeStamp, humidity}
     );
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        sensirion::upt::core::DataPoint{timeStamp, temperature}
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        core::DataPoint{timeStamp, temperature}
     );      
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::VOC_INDEX,
-        sensirion::upt::core::DataPoint{timeStamp, vocIndex}
+        core::SignalType::VOC_INDEX,
+        core::DataPoint{timeStamp, vocIndex}
     );   
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::NOX_INDEX,
-        sensirion::upt::core::DataPoint{timeStamp, noxIndex}
+        core::SignalType::NOX_INDEX,
+        core::DataPoint{timeStamp, noxIndex}
     );   
 
 
@@ -83,8 +83,8 @@ uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetaData,
-        sensirion::upt::core::SignalType::CO2_PARTS_PER_MILLION,
-        sensirion::upt::core::DataPoint{timeStamp, static_cast<float>(co2)}
+        core::SignalType::CO2_PARTS_PER_MILLION,
+        core::DataPoint{timeStamp, static_cast<float>(co2)}
     );       
 
     return HighLevelError::NoError;
@@ -124,11 +124,11 @@ uint16_t Sen66::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sen66::getDeviceType() const {
+core::DeviceType Sen66::getDeviceType() const {
     return mMetaData.deviceType;
 }
 
-sensirion::upt::core::MetaData Sen66::getMetaData() const {
+core::MetaData Sen66::getMetaData() const {
     return mMetaData;
 }
 
