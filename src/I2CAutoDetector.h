@@ -59,9 +59,10 @@ class I2CAutoDetector : public IAutoDetector {
     using DetectableSensorsT = std::array<ISensorToAddressMapping*, 
           sizeof...(SensorMappingT)>;
 
+    TwoWire& _wire;
     DetectableSensorsT mDetectionTable;
 
-    TwoWire& _wire;
+    
 
     /// Helper funciton to implement the initialisation of the detection table
     ///

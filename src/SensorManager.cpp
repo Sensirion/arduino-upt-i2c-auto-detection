@@ -14,6 +14,7 @@ void SensorManager::executeSensorCommunication() {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
         if (ssm) {
             const AutoDetectorError error = ssm->update();
+            [[maybe_unused]] 
             const char* sensorName =
                 core::deviceLabel(ssm->getSensor()->getDeviceType());
             switch (error) {
