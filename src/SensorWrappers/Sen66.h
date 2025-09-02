@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2cSen66.h>
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Sen66 : public ISensor {
   public:
     explicit Sen66(TwoWire& wire, uint16_t address);
@@ -25,5 +27,6 @@ class Sen66 : public ISensor {
     uint16_t mAddress;
     sensirion::upt::core::MetaData mMetaData;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SEN66_H*/

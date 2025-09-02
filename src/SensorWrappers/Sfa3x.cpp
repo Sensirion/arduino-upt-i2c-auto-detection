@@ -1,6 +1,8 @@
 #include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 using namespace sensirion::upt::core;
 
 Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
@@ -83,3 +85,5 @@ unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
 void* Sfa3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 
+

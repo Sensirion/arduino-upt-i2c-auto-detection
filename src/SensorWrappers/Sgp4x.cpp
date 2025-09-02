@@ -2,6 +2,8 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 Sgp41::Sgp41(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address}, 
     mMetadata{sensirion::upt::core::SGP4X()} {};
@@ -78,3 +80,4 @@ void* Sgp41::getDriver() {
 long Sgp41::readyStateDecayTimeMs() const {
     return 2000;
 }
+} // namespace sensirion::upt::i2c_autodetect 

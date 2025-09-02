@@ -5,6 +5,8 @@
 #include "SensirionI2cSht4x.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Sht4x : public ISensor {
   public:
     explicit Sht4x(TwoWire& wire, uint16_t address);
@@ -24,5 +26,6 @@ class Sht4x : public ISensor {
     SensirionI2cSht4x _driver;
     sensirion::upt::core::MetaData mMetadata;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SHT4X_H_ */

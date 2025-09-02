@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <array>
 
+namespace sensirion::upt::i2c_autodetect{
 
 /// Class to search registered sensors on the i2c bus
 ///
@@ -73,6 +74,6 @@ class I2CAutoDetector : public IAutoDetector {
       return new T(wire);
     }
 };
-
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* I2C_AUTO_DETECTOR_H */

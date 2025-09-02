@@ -2,6 +2,8 @@
 #include "SensirionCore.h"
 #include <map>
 
+namespace sensirion::upt::i2c_autodetect{
+
 Sen5x::Sen5x(TwoWire& wire, uint16_t address) : 
     _wire(wire),
     _address{address},
@@ -173,3 +175,4 @@ uint16_t Sen5x::_determineSensorVersion() {
     }
     return 0;
 }
+} // namespace sensirion::upt::i2c_autodetect 

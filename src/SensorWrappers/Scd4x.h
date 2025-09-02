@@ -5,6 +5,7 @@
 #include "SensirionI2cScd4x.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
 
 class Scd4x : public ISensor {
   public:
@@ -27,5 +28,6 @@ class Scd4x : public ISensor {
     SensirionI2cScd4x mDriver;
     sensirion::upt::core::MetaData mMetadata;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SCD4X_H_ */

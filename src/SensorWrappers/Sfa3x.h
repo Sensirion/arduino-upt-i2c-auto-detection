@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2cSfa3x.h>
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Sfa3x : public ISensor {
   public:
     explicit Sfa3x(TwoWire& wire, uint16_t address);
@@ -24,5 +26,6 @@ class Sfa3x : public ISensor {
     SensirionI2cSfa3x _driver;
     sensirion::upt::core::MetaData mMetadata;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SFA3X_H_ */

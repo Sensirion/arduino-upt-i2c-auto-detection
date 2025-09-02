@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <iterator>
 
-static const char* TAG = "SensorList";
+namespace sensirion::upt::i2c_autodetect{
+
+constexpr auto TAG = "SensorList";
 
 
 SensorList::~SensorList() {}
@@ -62,3 +64,4 @@ void SensorList::removeLostSensors() {
     mSensorCollection.clear();
     mSensorCollection = livingSensors;
 }
+} // namespace sensirion::upt::i2c_autodetect 

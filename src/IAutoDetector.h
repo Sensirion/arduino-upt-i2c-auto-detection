@@ -3,6 +3,8 @@
 
 #include "SensorList.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class IAutoDetector {
   public:
     virtual ~IAutoDetector() = default;
@@ -25,5 +27,6 @@ class IAutoDetector {
     */
     virtual size_t configuredSensorsCount() const = 0;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* I_AUTO_DETECTOR */

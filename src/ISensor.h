@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <vector>
 
+namespace sensirion::upt::i2c_autodetect{
+
 /* Class handling communication with a particular sensor over a communication
  * bus */
 class ISensor {
@@ -117,5 +119,6 @@ class ISensor {
      */
     virtual void* getDriver() = 0;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* I_SENSOR_H */

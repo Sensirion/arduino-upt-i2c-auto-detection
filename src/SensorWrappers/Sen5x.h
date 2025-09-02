@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2CSen5x.h>
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Sen5x : public ISensor {
   public:
     explicit Sen5x(TwoWire& wire, uint16_t address);
@@ -25,5 +27,6 @@ class Sen5x : public ISensor {
     sensirion::upt::core::MetaData _metaData;
     uint16_t _determineSensorVersion();
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SEN5X_H_*/

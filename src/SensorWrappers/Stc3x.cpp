@@ -2,6 +2,8 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 Stc3x::Stc3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
     mMetadata{sensirion::upt::core::STC3X()}
  {// The device type is determined more precisely at initializationStep()
@@ -124,3 +126,4 @@ unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
 void* Stc3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

@@ -5,6 +5,8 @@
 #include "SensirionCore.h"
 #include <vector>
 
+namespace sensirion::upt::i2c_autodetect{
+
 /* Class to manage the sensors connected to the board's I2C bus. Handles
  * detection and signal polling in accordance to the sensor's minimal and
  * maximal polling intervals */
@@ -110,5 +112,6 @@ class SensorManager {
         return NO_ERROR;
     };
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SENSOR_MANAGER_H */

@@ -2,6 +2,8 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), 
     mAddress{address},
     mMetadata{sensirion::upt::core::SCD4X()}{};
@@ -82,3 +84,4 @@ unsigned long Scd4x::getInitializationIntervalMs() const {
 void* Scd4x::getDriver() {
     return std::addressof(mDriver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

@@ -1,6 +1,8 @@
 #include "SensorWrappers/Svm4x.h"
 #include "SensirionCore.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address},
     mMetaData{sensirion::upt::core::SVM41()} {};
@@ -87,3 +89,4 @@ unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
 void* Svm4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

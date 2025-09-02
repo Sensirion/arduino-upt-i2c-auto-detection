@@ -6,6 +6,7 @@
 #include <array>
 #include <vector>
 
+namespace sensirion::upt::i2c_autodetect{
 
 /// This is the interface of an entry in the registration table
 /// that allows to map sensors to i2c addresses.
@@ -48,6 +49,6 @@ struct SensorToAddressMapping: ISensorToAddressMapping{
 
     SensorT mSensor;
 };
-
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif // I2C_SENSOR_MAPPING_H

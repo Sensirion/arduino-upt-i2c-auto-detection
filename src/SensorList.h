@@ -3,6 +3,7 @@
 #include <vector>
 #include "SensorStateMachine.h"
 
+namespace sensirion::upt::i2c_autodetect{
 
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
@@ -76,5 +77,6 @@ class SensorList {
      */
     void removeLostSensors();
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SENSOR_LIST_H */

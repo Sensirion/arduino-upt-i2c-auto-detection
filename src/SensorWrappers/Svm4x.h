@@ -5,6 +5,8 @@
 #include "SensirionI2CSvm41.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Svm4x : public ISensor {
   public:
     explicit Svm4x(TwoWire& wire, uint16_t address);
@@ -24,5 +26,6 @@ class Svm4x : public ISensor {
     SensirionI2CSvm41 _driver;
     sensirion::upt::core::MetaData mMetaData;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SVM40_H_ */

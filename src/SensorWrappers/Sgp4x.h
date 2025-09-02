@@ -5,6 +5,8 @@
 #include "SensirionI2CSgp41.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Sgp41 : public ISensor {
   public:
     explicit Sgp41(TwoWire& wire, uint16_t address);
@@ -32,5 +34,6 @@ class Sgp41 : public ISensor {
     uint16_t _defaultRh = 0x8000;
     uint16_t _defaultT = 0x6666;
 };
+} // namespace sensirion::upt::i2c_autodetect $
 
 #endif /* _SGP4X_H_ */

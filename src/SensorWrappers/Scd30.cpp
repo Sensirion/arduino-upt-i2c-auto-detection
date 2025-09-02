@@ -2,6 +2,7 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
 
 Scd30::Scd30(TwoWire& wire, const uint16_t address) : 
     _wire(wire), _address{address}, _metaData{sensirion::upt::core::SCD30()}{};
@@ -101,3 +102,4 @@ unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
 void* Scd30::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

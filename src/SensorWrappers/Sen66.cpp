@@ -1,6 +1,8 @@
 #include "SensorWrappers/Sen66.h"
 #include "SensirionCore.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), 
     mAddress{address}, mMetaData{sensirion::upt::core::SEN66()} {
 };
@@ -145,3 +147,4 @@ void* Sen66::getDriver() {
 unsigned long Sen66::getInitializationIntervalMs() const {
     return 1200;
 }
+} // namespace sensirion::upt::i2c_autodetect 

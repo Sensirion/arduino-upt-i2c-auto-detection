@@ -5,6 +5,8 @@
 #include "SensirionI2cScd30.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Scd30 : public ISensor {
   public:
     explicit Scd30(TwoWire& wire, uint16_t address);
@@ -24,5 +26,6 @@ class Scd30 : public ISensor {
     SensirionI2cScd30 _driver;
     sensirion::upt::core::MetaData _metaData;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SCD30_H_ */
