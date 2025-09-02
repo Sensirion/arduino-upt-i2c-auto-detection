@@ -5,6 +5,8 @@
 #include "SensirionI2CSvm41.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Svm4x : public ISensor {
   public:
     explicit Svm4x(TwoWire& wire, uint16_t address);
@@ -13,7 +15,7 @@ class Svm4x : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
-    sensirion::upt::core::MetaData getMetaData() const override;
+    core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -22,7 +24,8 @@ class Svm4x : public ISensor {
     TwoWire& _wire;
     uint16_t _address;
     SensirionI2CSvm41 _driver;
-    sensirion::upt::core::MetaData mMetaData;
+    core::MetaData mMetaData;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SVM40_H_ */

@@ -4,6 +4,8 @@
 #include "AutoDetectorErrors.h"
 #include "ISensor.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 enum class SensorStatus {
     UNDEFINED,
     UNINITIALIZED,  // Sensor is online on the bus but neither running a
@@ -133,5 +135,7 @@ class SensorStateMachine {
      */
     const MeasurementList& getSignals() const;
 };
+
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SENSOR_STATE_MACHINE_H */

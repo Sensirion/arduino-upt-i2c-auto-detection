@@ -2,9 +2,10 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
 
 Scd30::Scd30(TwoWire& wire, const uint16_t address) : 
-    _wire(wire), _address{address}, _metaData{sensirion::upt::core::SensorType::SCD30()}{};
+    _wire(wire), _address{address}, _metaData{core::SCD30()}{};
 
 uint16_t Scd30::start() {
     _driver.begin(_wire, _address);
@@ -34,16 +35,16 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::CO2_PARTS_PER_MILLION,
-        sensirion::upt::core::DataPoint{timeStamp, co2Concentration});
+        core::SignalType::CO2_PARTS_PER_MILLION,
+        core::DataPoint{timeStamp, co2Concentration});
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS, 
-        sensirion::upt::core::DataPoint{timeStamp, temperature});
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS, 
+        core::DataPoint{timeStamp, temperature});
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE, 
-        sensirion::upt::core::DataPoint{timeStamp, humidity});
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE, 
+        core::DataPoint{timeStamp, humidity});
 
 
     /* Prepare next reading by querying the dataReadyFlag. We don't need the
@@ -81,12 +82,12 @@ uint16_t Scd30::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Scd30::getDeviceType() const {
+core::DeviceType Scd30::getDeviceType() const {
     return _metaData.deviceType;
     ;
 }
 
-sensirion::upt::core::MetaData Scd30::getMetaData() const {
+core::MetaData Scd30::getMetaData() const {
     return _metaData;
 }
 
@@ -101,3 +102,4 @@ unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
 void* Scd30::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

@@ -13,6 +13,8 @@
 #include "SensorWrappers/Svm4x.h"
 #include "SensorWrappers/Stcc4.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 using Scd30Mapping = SensorToAddressMapping<0x61, Scd30>;
 using Scd4xMapping = SensorToAddressMapping<0x62, Scd4x>;
 using Sen5xMapping = SensorToAddressMapping<0x69, Sen5x>;
@@ -34,5 +36,6 @@ using DefaultI2cDetector = I2CAutoDetector<Scd30Mapping,
                             Stc3xMapping,
                             Svm4xMapping,
                             Stcc4Mapping>;
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* DRIVER_CONFIG_H */

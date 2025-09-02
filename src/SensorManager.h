@@ -5,6 +5,8 @@
 #include "SensirionCore.h"
 #include <vector>
 
+namespace sensirion::upt::i2c_autodetect{
+
 /* Class to manage the sensors connected to the board's I2C bus. Handles
  * detection and signal polling in accordance to the sensor's minimal and
  * maximal polling intervals */
@@ -16,7 +18,7 @@ class SensorManager {
     IAutoDetector& mDetector;
 
   public:
-    using MeasurementList = std::vector<sensirion::upt::core::Measurement>;
+    using MeasurementList = std::vector<core::Measurement>;
     /**
      * @brief constructor
      *
@@ -77,7 +79,7 @@ class SensorManager {
      * @note Does not return an error in case the validity checks fail, in which
      * case the interval is not set for the sensor
      */
-    void setInterval(unsigned long interval, sensirion::upt::core::DeviceType deviceType);
+    void setInterval(unsigned long interval, core::DeviceType deviceType);
 
     /**
      * @brief getter method for number of sensors
@@ -110,5 +112,6 @@ class SensorManager {
         return NO_ERROR;
     };
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SENSOR_MANAGER_H */

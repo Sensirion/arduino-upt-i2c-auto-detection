@@ -11,4 +11,4 @@ jobs:
     with:
       expect-arduino-examples: true
       lint-lib-manager-check: update
-      dependency-list: "[{'name': 'Sensirion Core'}, {'name': 'Sensirion UPT Core', 'version': '0.7.0'}, {'name': 'Sensirion I2C SCD4x'}, {'name': 'Sensirion I2C SFA3x'}, {'name': 'Sensirion I2C SVM4x'}, {'name': 'Sensirion I2C SHT4x'}, {'name': 'Sensirion I2C SEN5X'}, {'name': 'Sensirion I2C SCD30'}, {'name': 'Sensirion I2C SGP41'}, {'name': 'Sensirion I2C STC3x'}, {'name': 'Sensirion I2C SEN66'}, {'name': 'Sensirion I2C STCC4'}, {'source-path': './'}]"
+      dependency-list: "[{'name': 'Sensirion Core'}, {'name': 'Sensirion UPT Core', 'version': '0.8.0'}, {'name': 'Sensirion I2C SCD4x'}, {'name': 'Sensirion I2C SFA3x'}, {'name': 'Sensirion I2C SVM4x'}, {'name': 'Sensirion I2C SHT4x'}, {'name': 'Sensirion I2C SEN5X'}, {'name': 'Sensirion I2C SCD30'}, {'name': 'Sensirion I2C SGP41'}, {'name': 'Sensirion I2C STC3x'}, {'name': 'Sensirion I2C SEN66'}, {'name': 'Sensirion I2C STCC4'}, {'source-path': './'}]"

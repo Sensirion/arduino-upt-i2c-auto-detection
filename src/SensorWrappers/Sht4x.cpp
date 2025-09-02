@@ -2,10 +2,12 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 using namespace sensirion::upt::core;
 
 Sht4x::Sht4x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{sensirion::upt::core::SensorType::SHT4X()}{};
+    mMetadata{core::SHT4X()}{};
 
 uint16_t Sht4x::start() {
     _driver.begin(_wire, _address);
@@ -22,12 +24,12 @@ uint16_t Sht4x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        sensirion::upt::core::DataPoint{timeStamp, temperature});
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        core::DataPoint{timeStamp, temperature});
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        sensirion::upt::core::DataPoint{timeStamp, humi});
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        core::DataPoint{timeStamp, humi});
 
     return HighLevelError::NoError;
 }
@@ -61,3 +63,4 @@ unsigned long Sht4x::getMinimumMeasurementIntervalMs() const {
 void* Sht4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

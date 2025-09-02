@@ -2,7 +2,9 @@
 
 #include <SensirionErrors.h>
 
-static const char* TAG = "SensorStateMachine";
+namespace sensirion::upt::i2c_autodetect{
+
+constexpr auto TAG = "SensorStateMachine";
 
 bool timeIntervalPassed(const uint32_t interval,
                         const uint32_t currentTimeStamp,
@@ -177,3 +179,5 @@ ISensor* SensorStateMachine::getSensor() const {
 const ISensor::MeasurementList& SensorStateMachine::getSignals() const {
     return mSensorSignals;
 }
+
+} // sensirion::upt::i2c_autodetect

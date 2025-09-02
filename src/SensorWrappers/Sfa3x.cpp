@@ -1,10 +1,12 @@
 #include "SensorWrappers/Sfa3x.h"
 #include "SensirionCore.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 using namespace sensirion::upt::core;
 
 Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
-    mMetadata{sensirion::upt::core::SensorType::SFA3X()}{};
+    mMetadata{core::SFA3X()}{};
 
 uint16_t Sfa3x::start() {
     _driver.begin(_wire, _address);
@@ -22,16 +24,16 @@ uint16_t Sfa3x::measureAndWrite(MeasurementList& measurements,
         return error;
     }
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::HCHO_PARTS_PER_BILLION,
-        sensirion::upt::core::DataPoint{timeStamp, hcho});
+        core::SignalType::HCHO_PARTS_PER_BILLION,
+        core::DataPoint{timeStamp, hcho});
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        sensirion::upt::core::DataPoint{timeStamp, humi});    
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        core::DataPoint{timeStamp, humi});    
 
     measurements.emplace_back(mMetadata, 
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        sensirion::upt::core::DataPoint{timeStamp, temperature});
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        core::DataPoint{timeStamp, temperature});
 
     return HighLevelError::NoError;
 }
@@ -64,11 +66,11 @@ uint16_t Sfa3x::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sfa3x::getDeviceType() const {
+core::DeviceType Sfa3x::getDeviceType() const {
     return mMetadata.deviceType;
 }
 
-sensirion::upt::core::MetaData Sfa3x::getMetaData() const {
+core::MetaData Sfa3x::getMetaData() const {
     return mMetadata;
 }
 
@@ -83,3 +85,5 @@ unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
 void* Sfa3x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 
+

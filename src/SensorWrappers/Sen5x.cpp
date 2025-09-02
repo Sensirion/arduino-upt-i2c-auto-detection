@@ -2,10 +2,12 @@
 #include "SensirionCore.h"
 #include <map>
 
+namespace sensirion::upt::i2c_autodetect{
+
 Sen5x::Sen5x(TwoWire& wire, uint16_t address) : 
     _wire(wire),
     _address{address},
-    _metaData{sensirion::upt::core::SensorType::SEN5X()} {};
+    _metaData{core::SEN5X()} {};
 
 uint16_t Sen5x::start() {
     _driver.begin(_wire);
@@ -36,46 +38,46 @@ uint16_t Sen5x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm1p0});
+        core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm1p0});
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm2p5});
+        core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm2p5});
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm4p0});
+        core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm4p0});
 
     measurements.emplace_back(_metaData, 
-        sensirion::upt::core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
-        sensirion::upt::core::DataPoint{timeStamp, massConcentrationPm10p0});
+        core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm10p0});
 
 
 
     // Verions 54, 55
-    if (getDeviceType() == sensirion::upt::core::SensorType::SEN54() or
-        getDeviceType() == sensirion::upt::core::SensorType::SEN55()) {
+    if (getDeviceType() == core::SEN54() or
+        getDeviceType() == core::SEN55()) {
 
         measurements.emplace_back(_metaData, 
-            sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-            sensirion::upt::core::DataPoint{timeStamp, ambientHumidity});
+            core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+            core::DataPoint{timeStamp, ambientHumidity});
 
         measurements.emplace_back(_metaData, 
-            sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-            sensirion::upt::core::DataPoint{timeStamp, ambientTemperature});
+            core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+            core::DataPoint{timeStamp, ambientTemperature});
 
         measurements.emplace_back(_metaData, 
-            sensirion::upt::core::SignalType::VOC_INDEX,
-            sensirion::upt::core::DataPoint{timeStamp, vocIndex});
+            core::SignalType::VOC_INDEX,
+            core::DataPoint{timeStamp, vocIndex});
 
     }
     // Version 55
-    if (getDeviceType() == sensirion::upt::core::SensorType::SEN55()) {
+    if (getDeviceType() == core::SEN55()) {
 
         measurements.emplace_back(_metaData, 
-            sensirion::upt::core::SignalType::NOX_INDEX,
-            sensirion::upt::core::DataPoint{timeStamp, noxIndex});
+            core::SignalType::NOX_INDEX,
+            core::DataPoint{timeStamp, noxIndex});
 
     }
     return HighLevelError::NoError;
@@ -121,20 +123,20 @@ uint16_t Sen5x::initializationStep() {
     return error;
 }
 
-sensirion::upt::core::DeviceType Sen5x::getDeviceType() const {
+core::DeviceType Sen5x::getDeviceType() const {
     return _metaData.deviceType;
 }
 
-sensirion::upt::core::MetaData Sen5x::getMetaData() const {
+core::MetaData Sen5x::getMetaData() const {
     return _metaData;
 }
 
 size_t Sen5x::getNumberOfDataPoints() const {
-    static std::map<sensirion::upt::core::DeviceType, size_t> deviceToSignalCount = {
-        {sensirion::upt::core::SensorType::SEN5X(), 4},
-        {sensirion::upt::core::SensorType::SEN50(), 4},
-        {sensirion::upt::core::SensorType::SEN54(), 7},
-        {sensirion::upt::core::SensorType::SEN55(), 8},
+    static std::map<core::DeviceType, size_t> deviceToSignalCount = {
+        {core::SEN5X(), 4},
+        {core::SEN50(), 4},
+        {core::SEN54(), 7},
+        {core::SEN55(), 8},
     };
     const auto iter = deviceToSignalCount.find(getDeviceType());
     if (iter == deviceToSignalCount.cend()){
@@ -161,15 +163,16 @@ uint16_t Sen5x::_determineSensorVersion() {
     }
 
     if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50") == 0) {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN50();
+        _metaData.deviceType = core::SEN50();
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54") ==
                0) {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN54();
+        _metaData.deviceType = core::SEN54();
     } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN55") ==
                0) {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN55();
+        _metaData.deviceType = core::SEN55();
     } else {
-        _metaData.deviceType = sensirion::upt::core::SensorType::SEN5X();
+        _metaData.deviceType = core::SEN5X();
     }
     return 0;
 }
+} // namespace sensirion::upt::i2c_autodetect 

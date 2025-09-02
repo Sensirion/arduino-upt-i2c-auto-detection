@@ -3,6 +3,7 @@
 #include <vector>
 #include "SensorStateMachine.h"
 
+namespace sensirion::upt::i2c_autodetect{
 
 /* Class to handle the list of sensors on the i2c bus */
 class SensorList {
@@ -12,7 +13,7 @@ class SensorList {
   private:
 
     SensorCollection mSensorCollection{};
-    static size_t hashSensorType(sensirion::upt::core::DeviceType deviceType);
+    static size_t hashSensorType(core::DeviceType deviceType);
 
   public:
     explicit SensorList() {};
@@ -60,7 +61,7 @@ class SensorList {
     /**
      * @brief getter method for a stored sensor
      */
-    ISensor* getSensor(sensirion::upt::core::DeviceType deviceType) const;
+    ISensor* getSensor(core::DeviceType deviceType) const;
 
     /**
      * @brief check if the given Sensor is contained in the list.
@@ -69,12 +70,13 @@ class SensorList {
      *
      * @returns True if the sensor is found, false otherwise.
      */
-    bool containsSensor(sensirion::upt::core::DeviceType deviceType) const;
+    bool containsSensor(core::DeviceType deviceType) const;
 
     /**
      * @brief remove lost sensors from list
      */
     void removeLostSensors();
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SENSOR_LIST_H */

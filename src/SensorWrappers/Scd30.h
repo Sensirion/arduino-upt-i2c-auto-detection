@@ -5,6 +5,8 @@
 #include "SensirionI2cScd30.h"
 #include "Sensirion_UPT_Core.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Scd30 : public ISensor {
   public:
     explicit Scd30(TwoWire& wire, uint16_t address);
@@ -13,7 +15,7 @@ class Scd30 : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
-    sensirion::upt::core::MetaData getMetaData() const override;
+    core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -22,7 +24,8 @@ class Scd30 : public ISensor {
     TwoWire& _wire;
     uint16_t _address;
     SensirionI2cScd30 _driver;
-    sensirion::upt::core::MetaData _metaData;
+    core::MetaData _metaData;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _SCD30_H_ */

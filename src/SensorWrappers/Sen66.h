@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2cSen66.h>
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Sen66 : public ISensor {
   public:
     explicit Sen66(TwoWire& wire, uint16_t address);
@@ -13,7 +15,7 @@ class Sen66 : public ISensor {
                              unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
-    sensirion::upt::core::MetaData getMetaData() const override;
+    core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     unsigned long getInitializationIntervalMs() const override;
@@ -23,7 +25,8 @@ class Sen66 : public ISensor {
     TwoWire& mWire;
     SensirionI2cSen66 mDriver;
     uint16_t mAddress;
-    sensirion::upt::core::MetaData mMetaData;
+    core::MetaData mMetaData;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* SEN66_H*/

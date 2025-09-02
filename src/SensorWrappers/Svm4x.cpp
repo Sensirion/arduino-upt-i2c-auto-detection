@@ -1,9 +1,11 @@
 #include "SensorWrappers/Svm4x.h"
 #include "SensirionCore.h"
 
+namespace sensirion::upt::i2c_autodetect{
+
 Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), 
     _address{address},
-    mMetaData{sensirion::upt::core::SensorType::SVM41()} {};
+    mMetaData{core::SVM41()} {};
 
 uint16_t Svm4x::start() {
     _driver.begin(_wire);
@@ -23,17 +25,17 @@ uint16_t Svm4x::measureAndWrite(MeasurementList& measurements,
     }
 
     measurements.emplace_back(mMetaData, 
-        sensirion::upt::core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        sensirion::upt::core::DataPoint{timeStamp, humidity});
+        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        core::DataPoint{timeStamp, humidity});
 
 
     measurements.emplace_back(mMetaData, 
-        sensirion::upt::core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        sensirion::upt::core::DataPoint{timeStamp, temperature});
+        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        core::DataPoint{timeStamp, temperature});
 
     measurements.emplace_back(mMetaData, 
-        sensirion::upt::core::SignalType::NOX_INDEX,
-        sensirion::upt::core::DataPoint{timeStamp, noxIndex});
+        core::SignalType::NOX_INDEX,
+        core::DataPoint{timeStamp, noxIndex});
 
 
     return HighLevelError::NoError;
@@ -68,11 +70,11 @@ uint16_t Svm4x::initializationStep() {
     return _driver.startMeasurement();
 }
 
-sensirion::upt::core::DeviceType Svm4x::getDeviceType() const {
+core::DeviceType Svm4x::getDeviceType() const {
     return mMetaData.deviceType;
 }
 
-sensirion::upt::core::MetaData Svm4x::getMetaData() const {
+core::MetaData Svm4x::getMetaData() const {
     return mMetaData;
 }
 
@@ -87,3 +89,4 @@ unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
 void* Svm4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+} // namespace sensirion::upt::i2c_autodetect 

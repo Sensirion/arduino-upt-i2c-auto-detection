@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <iterator>
 
-static const char* TAG = "SensorList";
+namespace sensirion::upt::i2c_autodetect{
+
+constexpr auto TAG = "SensorList";
 
 
 SensorList::~SensorList() {}
@@ -35,7 +37,7 @@ SensorStateMachine* SensorList::getSensorStateMachine(const size_t i) const {
     return mSensorCollection[i];
 }
 
-ISensor* SensorList::getSensor(sensirion::upt::core::DeviceType deviceType) const {
+ISensor* SensorList::getSensor(core::DeviceType deviceType) const {
     for( const auto s : mSensorCollection){
         if (s->getSensor()->getDeviceType() == deviceType){
             return s->getSensor();
@@ -44,7 +46,7 @@ ISensor* SensorList::getSensor(sensirion::upt::core::DeviceType deviceType) cons
     return nullptr;
 }
 
-bool SensorList::containsSensor(sensirion::upt::core::DeviceType deviceType) const {
+bool SensorList::containsSensor(core::DeviceType deviceType) const {
     auto iter = std::find_if(mSensorCollection.begin(),
     mSensorCollection.end(), [deviceType](SensorStateMachine* s) {
         return s->getSensor()->getDeviceType() == deviceType;
@@ -62,3 +64,4 @@ void SensorList::removeLostSensors() {
     mSensorCollection.clear();
     mSensorCollection = livingSensors;
 }
+} // namespace sensirion::upt::i2c_autodetect 

@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <vector>
 
+namespace sensirion::upt::i2c_autodetect{
+
 /* Class handling communication with a particular sensor over a communication
  * bus */
 class ISensor {
@@ -13,8 +15,8 @@ class ISensor {
 
   public:
 
-    using DeviceType = sensirion::upt::core::DeviceType;
-    using MeasurementList = std::vector<sensirion::upt::core::Measurement>;
+    using DeviceType = core::DeviceType;
+    using MeasurementList = std::vector<core::Measurement>;
 
     virtual ~ISensor() = default;
 
@@ -100,7 +102,7 @@ class ISensor {
      *
      * @return MetaData
      */
-    virtual sensirion::upt::core::MetaData getMetaData() const = 0;
+    virtual core::MetaData getMetaData() const = 0;
 
     /**
      * @brief getter method for _NUMBER_OF_ALLOWED_CONSECUTIVE_ERRORS
@@ -117,5 +119,6 @@ class ISensor {
      */
     virtual void* getDriver() = 0;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* I_SENSOR_H */

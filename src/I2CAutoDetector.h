@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <array>
 
+namespace sensirion::upt::i2c_autodetect{
 
 /// Class to search registered sensors on the i2c bus
 ///
@@ -58,9 +59,10 @@ class I2CAutoDetector : public IAutoDetector {
     using DetectableSensorsT = std::array<ISensorToAddressMapping*, 
           sizeof...(SensorMappingT)>;
 
+    TwoWire& _wire;
     DetectableSensorsT mDetectionTable;
 
-    TwoWire& _wire;
+    
 
     /// Helper funciton to implement the initialisation of the detection table
     ///
@@ -73,6 +75,6 @@ class I2CAutoDetector : public IAutoDetector {
       return new T(wire);
     }
 };
-
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* I2C_AUTO_DETECTOR_H */

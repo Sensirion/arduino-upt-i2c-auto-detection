@@ -1,6 +1,8 @@
 #include "SensorManager.h"
 
-static const char* TAG = "SensorManager";
+namespace sensirion::upt::i2c_autodetect{
+
+constexpr auto TAG = "SensorManager";
 
 void SensorManager::refreshConnectedSensors() {
     mSensorList.removeLostSensors();
@@ -12,8 +14,9 @@ void SensorManager::executeSensorCommunication() {
         SensorStateMachine* ssm = mSensorList.getSensorStateMachine(i);
         if (ssm) {
             const AutoDetectorError error = ssm->update();
+            [[maybe_unused]] 
             const char* sensorName =
-                sensirion::upt::core::deviceLabel(ssm->getSensor()->getDeviceType());
+                core::deviceLabel(ssm->getSensor()->getDeviceType());
             switch (error) {
                 case I2C_ERROR:
                     ESP_LOGW(TAG,
@@ -79,3 +82,4 @@ void SensorManager::setInterval(const unsigned long interval,
 int SensorManager::getMaxNumberOfSensors() {
     return MAX_NUM_SENSORS;
 }
+} // namespace sensirion::upt::i2c_autodetect 

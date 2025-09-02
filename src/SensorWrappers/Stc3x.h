@@ -5,6 +5,8 @@
 #include "Sensirion_UPT_Core.h"
 #include <SensirionI2cStc3x.h>
 
+namespace sensirion::upt::i2c_autodetect{
+
 class Stc3x : public ISensor {
   public:
     explicit Stc3x(TwoWire& wire, uint16_t address);
@@ -13,7 +15,7 @@ class Stc3x : public ISensor {
                              const unsigned long timeStamp) override;
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
-    sensirion::upt::core::MetaData getMetaData() const override;
+    core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
@@ -22,7 +24,8 @@ class Stc3x : public ISensor {
     TwoWire& _wire;
     uint16_t _address;
     SensirionI2cStc3x _driver;
-    sensirion::upt::core::MetaData mMetadata;
+    core::MetaData mMetadata;
 };
+} // namespace sensirion::upt::i2c_autodetect 
 
 #endif /* _STC3X_H_ */
