@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Introduced own namespace
+
+### Changed
+- Updated UPT Core to 0.9
+- Use sensirion::upt namespace
+
 ## [1.0.0]
 
 ### Added
