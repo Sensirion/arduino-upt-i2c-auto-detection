@@ -63,4 +63,11 @@ unsigned long Sht4x::getMinimumMeasurementIntervalMs() const {
 void* Sht4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
+
+bool Sht4x::probe() {
+    // Use serial number as a probe method
+    uint32_t serial;
+    uint16_t error = _driver.serialNumber(serial);
+    return (error == HighLevelError::NoError);
+}
 } // namespace sensirion::upt::i2c_autodetect 

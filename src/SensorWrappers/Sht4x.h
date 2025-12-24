@@ -19,6 +19,7 @@ class Sht4x : public ISensor {
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
+    bool probe() override;
 
   private:
     TwoWire& _wire;
