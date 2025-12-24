@@ -26,6 +26,8 @@ class Sgp41 : public ISensor {
     // Typical measurement interval: 1s
     long readyStateDecayTimeMs() const override;
 
+    bool probe() override;
+
   private:
     TwoWire& _wire;
     SensirionI2CSgp41 _driver;

@@ -80,4 +80,12 @@ void* Sgp41::getDriver() {
 long Sgp41::readyStateDecayTimeMs() const {
     return 2000;
 }
+
+bool Sgp41::probe() {
+    // Use getSerialNumber as probe method
+    uint16_t serialNo[3];
+    uint16_t error = _driver.getSerialNumber(serialNo);
+    return (error == HighLevelError::NoError);  
+}
+
 } // namespace sensirion::upt::i2c_autodetect 
