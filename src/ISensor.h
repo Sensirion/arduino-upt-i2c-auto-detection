@@ -118,6 +118,15 @@ class ISensor {
      * @return void*
      */
     virtual void* getDriver() = 0;
+
+    /**
+     * @brief Probe the sensor to ensure the right sensor is detected
+     *
+     * @return true if sensor is responding properly, false otherwise.
+     */
+    virtual bool probe() {
+        return true;
+    }
 };
 } // namespace sensirion::upt::i2c_autodetect 
 
