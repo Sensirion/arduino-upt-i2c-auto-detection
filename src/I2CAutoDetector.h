@@ -50,6 +50,9 @@ class I2CAutoDetector : public IAutoDetector {
         if (error){
             continue;
         }
+        tableEntry->getSensor().start();
+        if (!tableEntry->getSensor().probe()) continue;
+
         sensorList.addSensor(&tableEntry->getSensor());
       }
     }
