@@ -45,15 +45,7 @@ class I2CAutoDetector : public IAutoDetector {
      */
     virtual void findSensors(SensorList& sensorList) override {
       for (auto tableEntry:mDetectionTable){ 
-        // Skip if I2C address is already used by a sensor in the list
-        bool addressInUse = false;
-        for (size_t i = 0; i < sensorList.count(); ++i) {
-          if (sensorList[i]->getSensor()->getI2CAddress() == tableEntry->getI2cAddress()) {
-            addressInUse = true;
-            break;
-          }
-        }
-        if (addressInUse) continue;
+        if (sensorList.containsSensor(tableEntry->getI2cAddress())) continue;
         
         _wire.beginTransmission(tableEntry->getI2cAddress());
         const byte error = _wire.endTransmission();

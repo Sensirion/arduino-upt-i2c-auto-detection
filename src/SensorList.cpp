@@ -9,18 +9,20 @@ constexpr auto TAG = "SensorList";
 
 SensorList::~SensorList() {}
 
-SensorStateMachine* SensorList::operator[] (size_t index) const {
-    if (index >= mSensorCollection.size()){
-        return nullptr;
-    }
-    return mSensorCollection[index];
-}
-
 
 void SensorList::addSensorIfNotPresent(ISensor* pSensor) {
     if (!containsSensor(pSensor->getDeviceType())){
         mSensorCollection.push_back(new SensorStateMachine(pSensor));
     }
+}
+
+
+bool SensorList::containsSensor(uint8_t address) const{
+        auto iter = std::find_if(mSensorCollection.begin(),
+    mSensorCollection.end(), [address](SensorStateMachine* s) {
+        return s->getSensor()->getI2CAddress() == address;
+    });
+    return iter != mSensorCollection.end();
 }
 
 
