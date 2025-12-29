@@ -5,10 +5,10 @@
 namespace sensirion::upt::i2c_autodetect{
 
 Scd30::Scd30(TwoWire& wire, const uint16_t address) : 
-    _wire(wire), _address{address}, _metaData{core::SCD30()}{};
+    mWire(wire), mAddress{address}, mMetadata{core::SCD30()}{};
 
 uint16_t Scd30::start() {
-    _driver.begin(_wire, _address);
+    mDriver.begin(mWire, mAddress);
     return 0;
 }
 
@@ -16,7 +16,7 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     // Check data ready
     uint16_t dataReadyFlag = 0;
-    uint16_t error = _driver.getDataReady(dataReadyFlag);
+    uint16_t error = mDriver.getDataReady(dataReadyFlag);
     if (error) {
         return error;
     }
@@ -29,20 +29,20 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
     float temperature;
     float humidity;
     error =
-        _driver.readMeasurementData(co2Concentration, temperature, humidity);
+        mDriver.readMeasurementData(co2Concentration, temperature, humidity);
     if (error) {
         return error;
     }
 
-    measurements.emplace_back(_metaData, 
+    measurements.emplace_back(mMetadata, 
         core::SignalType::CO2_PARTS_PER_MILLION,
         core::DataPoint{timeStamp, co2Concentration});
 
-    measurements.emplace_back(_metaData, 
+    measurements.emplace_back(mMetadata, 
         core::SignalType::TEMPERATURE_DEGREES_CELSIUS, 
         core::DataPoint{timeStamp, temperature});
 
-    measurements.emplace_back(_metaData, 
+    measurements.emplace_back(mMetadata, 
         core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE, 
         core::DataPoint{timeStamp, humidity});
 
@@ -53,7 +53,7 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
      * call of this function as it then is not required to enter a wait loop
      * (see SensirionI2cScd30::blockingReadMeasurementData()). This procedure is
      * only required for SCD30. */
-    error = _driver.getDataReady(dataReadyFlag);
+    error = mDriver.getDataReady(dataReadyFlag);
     if (error) {
         return error;
     }
@@ -62,9 +62,9 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
 
 uint16_t Scd30::initializationStep() {
     // stop potentially previously started measurement
-    _driver.stopPeriodicMeasurement();
+    mDriver.stopPeriodicMeasurement();
     // Start Measurement
-    uint16_t error = _driver.startPeriodicMeasurement(0);
+    uint16_t error = mDriver.startPeriodicMeasurement(0);
     if (error) {
         return error;
     }
@@ -74,21 +74,21 @@ uint16_t Scd30::initializationStep() {
     for (size_t i = 0; i < 64; i++) {
         sensorID |= (random(2) << i);
     }
-    _metaData.deviceID = sensorID;
+    mMetadata.deviceID = sensorID;
 
     /* See explanatory comment for measureAndWrite() */
     uint16_t dataReadyFlag;
-    error = _driver.getDataReady(dataReadyFlag);
+    error = mDriver.getDataReady(dataReadyFlag);
     return error;
 }
 
 core::DeviceType Scd30::getDeviceType() const {
-    return _metaData.deviceType;
+    return mMetadata.deviceType;
     ;
 }
 
 core::MetaData Scd30::getMetaData() const {
-    return _metaData;
+    return mMetadata;
 }
 
 size_t Scd30::getNumberOfDataPoints() const {
@@ -96,7 +96,7 @@ size_t Scd30::getNumberOfDataPoints() const {
 }
 
 uint8_t Scd30::getI2CAddress() const {
-    return _address;
+    return mAddress;
 };
 
 unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
@@ -104,6 +104,6 @@ unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
 }
 
 void* Scd30::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
 }
 } // namespace sensirion::upt::i2c_autodetect 

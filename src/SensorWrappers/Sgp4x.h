@@ -30,9 +30,9 @@ class Sgp41 : public ISensor {
     bool probe() override;
 
   private:
-    TwoWire& _wire;
-    SensirionI2CSgp41 _driver;
-    uint16_t _address;
+    TwoWire& mWire;
+    SensirionI2CSgp41 mDriver;
+    uint16_t mAddress;
     core::MetaData mMetadata;
     uint16_t _defaultRh = 0x8000;
     uint16_t _defaultT = 0x6666;

@@ -4,14 +4,14 @@
 
 namespace sensirion::upt::i2c_autodetect{
 
-Stc3x::Stc3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
+Stc3x::Stc3x(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address},
     mMetadata{core::STC3X()}
  {// The device type is determined more precisely at initializationStep()
  };
 
 uint16_t Stc3x::start() {
-    _driver.begin(_wire, _address);
-    uint16_t error = _driver.setBinaryGas(0x0001);
+    mDriver.begin(mWire, mAddress);
+    uint16_t error = mDriver.setBinaryGas(0x0001);
     return error;
 }
 
@@ -21,7 +21,7 @@ uint16_t Stc3x::measureAndWrite(MeasurementList& measurements,
     float temperatureValue;
 
     uint16_t error =
-        _driver.measureGasConcentration(gasValue, temperatureValue);
+        mDriver.measureGasConcentration(gasValue, temperatureValue);
     if (error) {
         return error;
     }
@@ -38,7 +38,7 @@ uint16_t Stc3x::measureAndWrite(MeasurementList& measurements,
 }
 
 uint16_t Stc3x::initializationStep() {
-    uint16_t error = _driver.prepareProductIdentifier();
+    uint16_t error = mDriver.prepareProductIdentifier();
     if (error) {
         return error;
     }
@@ -47,7 +47,7 @@ uint16_t Stc3x::initializationStep() {
     uint32_t serialNumberRawLow;
     uint32_t serialNumberRawHigh;
 
-    error = _driver.readProductIdentifier(productNumber, serialNumberRawHigh,
+    error = mDriver.readProductIdentifier(productNumber, serialNumberRawHigh,
                                           serialNumberRawLow);
 
     if (error) {
@@ -85,7 +85,7 @@ uint16_t Stc3x::initializationStep() {
      *  0x0002: CO2 in N2   (range 0-25%  vol.)
      *  0x0003: CO2 in Air  (range 0-25%  vol.)
      */
-    error = _driver.setBinaryGas(0x0003);
+    error = mDriver.setBinaryGas(0x0003);
     if (error) {
         return error;
     }
@@ -99,7 +99,7 @@ uint16_t Stc3x::initializationStep() {
      * Sensor would assume a relative humidity of 0% if we would not set this
      * explicitly, which could lead to negative gas concentration values.
      */
-    error = _driver.setRelativeHumidity(50);
+    error = mDriver.setRelativeHumidity(50);
     if (error) {
         return error;
     }
@@ -120,7 +120,7 @@ size_t Stc3x::getNumberOfDataPoints() const {
 }
 
 uint8_t Stc3x::getI2CAddress() const {
-    return _address;
+    return mAddress;
 };
 
 unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
@@ -128,6 +128,6 @@ unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
 }
 
 void* Stc3x::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
 }
 } // namespace sensirion::upt::i2c_autodetect 

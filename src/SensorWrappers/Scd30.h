@@ -22,10 +22,10 @@ class Scd30 : public ISensor {
     void* getDriver() override;
 
   private:
-    TwoWire& _wire;
-    uint16_t _address;
-    SensirionI2cScd30 _driver;
-    core::MetaData _metaData;
+    TwoWire& mWire;
+    uint16_t mAddress;
+    SensirionI2cScd30 mDriver;
+    core::MetaData mMetadata;
 };
 } // namespace sensirion::upt::i2c_autodetect 
 

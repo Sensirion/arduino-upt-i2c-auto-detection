@@ -3,12 +3,12 @@
 
 namespace sensirion::upt::i2c_autodetect{
 
-Svm4x::Svm4x(TwoWire& wire, uint16_t address) : _wire(wire), 
-    _address{address},
+Svm4x::Svm4x(TwoWire& wire, uint16_t address) : mWire(wire), 
+    mAddress{address},
     mMetaData{core::SVM41()} {};
 
 uint16_t Svm4x::start() {
-    _driver.begin(_wire);
+    mDriver.begin(mWire);
     return 0;
 }
 
@@ -19,7 +19,7 @@ uint16_t Svm4x::measureAndWrite(MeasurementList& measurements,
     float vocIndex;
     float noxIndex;
     uint16_t error =
-        _driver.readMeasuredValues(humidity, temperature, vocIndex, noxIndex);
+        mDriver.readMeasuredValues(humidity, temperature, vocIndex, noxIndex);
     if (error) {
         return error;
     }
@@ -42,14 +42,14 @@ uint16_t Svm4x::measureAndWrite(MeasurementList& measurements,
 }
 
 uint16_t Svm4x::initializationStep() {
-    uint16_t error = _driver.stopMeasurement();
+    uint16_t error = mDriver.stopMeasurement();
     if (error) {
         return error;
     }
     // Sensor Serial No.
     uint8_t serialNumber[32];
     uint8_t serialNumberSize = 32;
-    error = _driver.getSerialNumber(serialNumber, serialNumberSize);
+    error = mDriver.getSerialNumber(serialNumber, serialNumberSize);
     if (error) {
         return error;
     }
@@ -67,7 +67,7 @@ uint16_t Svm4x::initializationStep() {
     mMetaData.deviceID = sensorID;
 
     // Start Measurement
-    return _driver.startMeasurement();
+    return mDriver.startMeasurement();
 }
 
 core::DeviceType Svm4x::getDeviceType() const {
@@ -83,7 +83,7 @@ size_t Svm4x::getNumberOfDataPoints() const {
 }
 
 uint8_t Svm4x::getI2CAddress() const {
-    return _address;
+    return mAddress;
 };
 
 unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
@@ -91,6 +91,6 @@ unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
 }
 
 void* Svm4x::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
 }
 } // namespace sensirion::upt::i2c_autodetect 

@@ -20,7 +20,7 @@ class I2CAutoDetector : public IAutoDetector {
 
 
     explicit I2CAutoDetector(TwoWire& wire):
-      _wire(wire),
+      mWire(wire),
       mDetectionTable{createMappingInstance<SensorMappingT>(wire)...}{};
 
     virtual ~I2CAutoDetector() {
@@ -47,8 +47,8 @@ class I2CAutoDetector : public IAutoDetector {
       for (auto tableEntry:mDetectionTable){ 
         if (sensorList.containsSensor(tableEntry->getI2cAddress())) continue;
         
-        _wire.beginTransmission(tableEntry->getI2cAddress());
-        const byte error = _wire.endTransmission();
+        mWire.beginTransmission(tableEntry->getI2cAddress());
+        const byte error = mWire.endTransmission();
         if (error){
             continue;
         }
@@ -64,7 +64,7 @@ class I2CAutoDetector : public IAutoDetector {
     using DetectableSensorsT = std::array<ISensorToAddressMapping*, 
           sizeof...(SensorMappingT)>;
 
-    TwoWire& _wire;
+    TwoWire& mWire;
     DetectableSensorsT mDetectionTable;
 
     

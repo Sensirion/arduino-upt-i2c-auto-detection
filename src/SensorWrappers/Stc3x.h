@@ -22,9 +22,9 @@ class Stc3x : public ISensor {
     void* getDriver() override;
 
   private:
-    TwoWire& _wire;
-    uint16_t _address;
-    SensirionI2cStc3x _driver;
+    TwoWire& mWire;
+    uint16_t mAddress;
+    SensirionI2cStc3x mDriver;
     core::MetaData mMetadata;
 };
 } // namespace sensirion::upt::i2c_autodetect 

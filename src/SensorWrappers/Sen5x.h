@@ -22,10 +22,10 @@ class Sen5x : public ISensor {
     void* getDriver() override;
 
   private:
-    TwoWire& _wire;
-    SensirionI2CSen5x _driver;
-    uint16_t _address;
-    core::MetaData _metaData;
+    TwoWire& mWire;
+    SensirionI2CSen5x mDriver;
+    uint16_t mAddress;
+    core::MetaData mMetadata;
     uint16_t _determineSensorVersion();
 };
 } // namespace sensirion::upt::i2c_autodetect 

@@ -4,12 +4,12 @@
 
 namespace sensirion::upt::i2c_autodetect{
 
-Sgp41::Sgp41(TwoWire& wire, uint16_t address) : _wire(wire), 
-    _address{address}, 
+Sgp41::Sgp41(TwoWire& wire, uint16_t address) : mWire(wire), 
+    mAddress{address}, 
     mMetadata{core::SGP4X()} {};
 
 uint16_t Sgp41::start() {
-    _driver.begin(_wire);
+    mDriver.begin(mWire);
     return 0;
 }
 
@@ -19,7 +19,7 @@ uint16_t Sgp41::measureAndWrite(MeasurementList& measurements,
     uint16_t srawNox = 0;
 
     uint16_t error =
-        _driver.measureRawSignals(_defaultRh, _defaultT, srawVoc, srawNox);
+        mDriver.measureRawSignals(_defaultRh, _defaultT, srawVoc, srawNox);
     if (error) {
         return error;
     }
@@ -39,7 +39,7 @@ uint16_t Sgp41::measureAndWrite(MeasurementList& measurements,
 uint16_t Sgp41::initializationStep() {
     // Read serial No.
     uint16_t serialNo[3];
-    uint16_t error = _driver.getSerialNumber(serialNo);
+    uint16_t error = mDriver.getSerialNumber(serialNo);
     if (error) {
         return error;
     }
@@ -49,7 +49,7 @@ uint16_t Sgp41::initializationStep() {
     mMetadata.deviceID = sensorID;
 
     uint16_t srawVoc;  // discarded during initialization
-    error = _driver.executeConditioning(_defaultRh, _defaultT, srawVoc);
+    error = mDriver.executeConditioning(_defaultRh, _defaultT, srawVoc);
     return error;
 }
 
@@ -74,7 +74,7 @@ unsigned long Sgp41::getInitializationIntervalMs() const {
 }
 
 void* Sgp41::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
 }
 
 long Sgp41::readyStateDecayTimeMs() const {
@@ -82,13 +82,13 @@ long Sgp41::readyStateDecayTimeMs() const {
 }
 
 uint8_t Sgp41::getI2CAddress() const {
-    return _address;
+    return mAddress;
 };
 
 bool Sgp41::probe() {
     // Use getSerialNumber as probe method
     uint16_t serialNo[3];
-    uint16_t error = _driver.getSerialNumber(serialNo);
+    uint16_t error = mDriver.getSerialNumber(serialNo);
     return (error == HighLevelError::NoError);  
 }
 

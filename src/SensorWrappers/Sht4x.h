@@ -23,9 +23,9 @@ class Sht4x : public ISensor {
     bool probe() override;
 
   private:
-    TwoWire& _wire;
-    uint16_t _address;
-    SensirionI2cSht4x _driver;
+    TwoWire& mWire;
+    uint16_t mAddress;
+    SensirionI2cSht4x mDriver;
     core::MetaData mMetadata;
 };
 } // namespace sensirion::upt::i2c_autodetect 
