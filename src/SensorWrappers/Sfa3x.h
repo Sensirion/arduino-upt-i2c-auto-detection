@@ -16,6 +16,7 @@ class Sfa3x : public ISensor {
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
     core::MetaData getMetaData() const override;
+    uint8_t getI2CAddress() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;

@@ -17,6 +17,7 @@ class Stcc4 : public ISensor {
     DeviceType getDeviceType() const override;
     core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
+    uint8_t getI2CAddress() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
 

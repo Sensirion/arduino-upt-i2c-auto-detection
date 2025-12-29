@@ -140,6 +140,10 @@ unsigned long Sen66::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
+uint8_t Sen66::getI2CAddress() const {
+    return mAddress;
+};
+
 void* Sen66::getDriver() {
     return &mDriver;
 }

@@ -82,6 +82,10 @@ size_t Svm4x::getNumberOfDataPoints() const {
     return 4;
 }
 
+uint8_t Svm4x::getI2CAddress() const {
+    return _address;
+};
+
 unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }

@@ -153,6 +153,10 @@ void* Sen5x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
 
+uint8_t Sen5x::getI2CAddress() const {
+    return _address;
+};
+
 uint16_t Sen5x::_determineSensorVersion() {
     uint8_t sensorNameSize = 32;
     unsigned char sensorNameStr[sensorNameSize];

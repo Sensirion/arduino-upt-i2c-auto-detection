@@ -74,6 +74,10 @@ size_t Stcc4::getNumberOfDataPoints() const {
     return 3;
 }
 
+uint8_t Stcc4::getI2CAddress() const {
+    return _address;
+};
+
 unsigned long Stcc4::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }

@@ -64,6 +64,10 @@ void* Sht4x::getDriver() {
     return reinterpret_cast<void*>(&_driver);
 }
 
+uint8_t Sht4x::getI2CAddress() const {
+    return _address;
+};
+
 bool Sht4x::probe() {
     // Use serial number as a probe method
     uint32_t serial;

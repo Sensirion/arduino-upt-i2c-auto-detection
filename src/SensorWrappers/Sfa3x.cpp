@@ -78,6 +78,11 @@ size_t Sfa3x::getNumberOfDataPoints() const {
     return 3;
 }
 
+uint8_t Sfa3x::getI2CAddress() const {
+    return _address;
+};
+
+
 unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }

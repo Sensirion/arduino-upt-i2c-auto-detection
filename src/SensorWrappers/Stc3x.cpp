@@ -119,6 +119,10 @@ size_t Stc3x::getNumberOfDataPoints() const {
     return 2;
 }
 
+uint8_t Stc3x::getI2CAddress() const {
+    return _address;
+};
+
 unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }

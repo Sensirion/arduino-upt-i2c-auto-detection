@@ -95,6 +95,10 @@ size_t Scd30::getNumberOfDataPoints() const {
     return 3;
 }
 
+uint8_t Scd30::getI2CAddress() const {
+    return _address;
+};
+
 unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
     return 2000;
 }

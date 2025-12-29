@@ -51,6 +51,13 @@ class ISensor {
     virtual size_t getNumberOfDataPoints() const = 0;
 
     /**
+     * @brief Get the I2C address used by this sensor
+     *
+     * @return uint8_t the I2C address
+     */
+    virtual uint8_t getI2CAddress() const = 0;
+
+    /**
      * @brief Call driver methods to perform measurement and update DataPoints
      *
      * @param measurements argument must be at least getNumberOfDataPoints()

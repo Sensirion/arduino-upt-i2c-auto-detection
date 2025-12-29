@@ -81,6 +81,10 @@ long Sgp41::readyStateDecayTimeMs() const {
     return 2000;
 }
 
+uint8_t Sgp41::getI2CAddress() const {
+    return _address;
+};
+
 bool Sgp41::probe() {
     // Use getSerialNumber as probe method
     uint16_t serialNo[3];
