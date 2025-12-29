@@ -31,7 +31,7 @@ class SensorList {
      *
      * @param[in] pSensor pointer to the sensor to be added to the list
      */
-    void addSensor(ISensor* pSensor);
+    void addSensorIfNotPresent(ISensor* pSensor);
 
     /**
      * @brief Counts sensors contained in the list
