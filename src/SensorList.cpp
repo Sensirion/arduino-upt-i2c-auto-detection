@@ -10,11 +10,7 @@ constexpr auto TAG = "SensorList";
 SensorList::~SensorList() {}
 
 void SensorList::addSensorIfNotPresent(ISensor* pSensor) {
-    auto found = std::find_if(mSensorCollection.begin(),
-    mSensorCollection.end(), [pSensor](SensorStateMachine* x) {
-        return x->getSensor()->getDeviceType() == pSensor->getDeviceType();
-    });
-    if (found == mSensorCollection.end()){
+    if (!containsSensor(pSensor->getDeviceType())){
         mSensorCollection.push_back(new SensorStateMachine(pSensor));
     }
 }
