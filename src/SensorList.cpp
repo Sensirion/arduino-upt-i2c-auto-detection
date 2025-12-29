@@ -60,12 +60,19 @@ bool SensorList::containsSensor(core::DeviceType deviceType) const {
 
 void SensorList::removeLostSensors() {
     std::vector<SensorStateMachine*> livingSensors{};
+    std::vector<SensorStateMachine*> lostSensors{};
     for (auto s: mSensorCollection){
         if(s->getSensorState() != SensorStatus::LOST){
             livingSensors.push_back(s);
         }
+        else{
+            lostSensors.push_back(s);
+        }
     }
     mSensorCollection.clear();
     mSensorCollection = livingSensors;
+    for (auto s: lostSensors){
+        delete s;
+    }
 }
 } // namespace sensirion::upt::i2c_autodetect 
