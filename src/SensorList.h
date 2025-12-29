@@ -24,6 +24,8 @@ class SensorList {
 
     ~SensorList();
 
+    SensorStateMachine* operator[] (size_t index) const;
+
     /**
      * @brief add a sensor to the list of tracked sensors. Ignores sensors that
      * are already in the list. Causes program abort if unknown sensor is
