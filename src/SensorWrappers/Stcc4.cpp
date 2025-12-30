@@ -4,12 +4,12 @@
 
 namespace sensirion::upt::i2c_autodetect{
 
-Stcc4::Stcc4(TwoWire& wire, uint16_t address) : _wire(wire), 
-    _address{address}, mMetadata{core::STCC4()} {
+Stcc4::Stcc4(TwoWire& wire, uint16_t address) : mWire(wire), 
+    mAddress{address}, mMetadata{core::STCC4()} {
 };
 
 uint16_t Stcc4::start() {
-    _driver.begin(_wire, _address);
+    mDriver.begin(mWire, mAddress);
     return 0;
 }
 
@@ -21,7 +21,7 @@ uint16_t Stcc4::measureAndWrite(MeasurementList& measurements,
     uint16_t sensorStatus; // Required by API but not used in this implementation
 
     uint16_t error =
-        _driver.readMeasurement(co2, temperatureValue, relativeHumidityValue, sensorStatus);
+        mDriver.readMeasurement(co2, temperatureValue, relativeHumidityValue, sensorStatus);
     if (error) {
         return error;
     }
@@ -44,21 +44,21 @@ uint16_t Stcc4::measureAndWrite(MeasurementList& measurements,
 
 uint16_t Stcc4::initializationStep() {
     // stop potentially previously started measurement
-    uint16_t error = _driver.stopContinuousMeasurement();
+    uint16_t error = mDriver.stopContinuousMeasurement();
     if (error) {
         return error;
     }
 
     uint32_t productId;
     uint64_t serialNumber;
-    error = _driver.getProductId(productId, serialNumber);
+    error = mDriver.getProductId(productId, serialNumber);
     if (error) {
         return error;
     }
 
     mMetadata.deviceID = serialNumber;
 
-    error = _driver.startContinuousMeasurement();
+    error = mDriver.startContinuousMeasurement();
     return error;
 }
 
@@ -74,11 +74,15 @@ size_t Stcc4::getNumberOfDataPoints() const {
     return 3;
 }
 
+uint8_t Stcc4::getI2CAddress() const {
+    return mAddress;
+};
+
 unsigned long Stcc4::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
 void* Stcc4::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
 }
 } // namespace sensirion::upt::i2c_autodetect 

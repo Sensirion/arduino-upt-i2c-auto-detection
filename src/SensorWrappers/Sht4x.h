@@ -16,14 +16,16 @@ class Sht4x : public ISensor {
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
     core::MetaData getMetaData() const override;
+    uint8_t getI2CAddress() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
+    bool probe() override;
 
   private:
-    TwoWire& _wire;
-    uint16_t _address;
-    SensirionI2cSht4x _driver;
+    TwoWire& mWire;
+    uint16_t mAddress;
+    SensirionI2cSht4x mDriver;
     core::MetaData mMetadata;
 };
 } // namespace sensirion::upt::i2c_autodetect 

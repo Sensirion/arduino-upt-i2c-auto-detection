@@ -67,6 +67,10 @@ core::MetaData Scd4x::getMetaData() const {
     return mMetadata;
 }
 
+uint8_t Scd4x::getI2CAddress() const {
+    return mAddress;
+};
+
 size_t Scd4x::getNumberOfDataPoints() const {
     return 3;
 }

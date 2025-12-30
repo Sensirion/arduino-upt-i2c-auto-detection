@@ -51,6 +51,13 @@ class ISensor {
     virtual size_t getNumberOfDataPoints() const = 0;
 
     /**
+     * @brief Get the I2C address used by this sensor
+     *
+     * @return uint8_t the I2C address
+     */
+    virtual uint8_t getI2CAddress() const = 0;
+
+    /**
      * @brief Call driver methods to perform measurement and update DataPoints
      *
      * @param measurements argument must be at least getNumberOfDataPoints()
@@ -118,6 +125,15 @@ class ISensor {
      * @return void*
      */
     virtual void* getDriver() = 0;
+
+    /**
+     * @brief Probe the sensor to ensure the right sensor is detected
+     *
+     * @return true if sensor is responding properly, false otherwise.
+     */
+    virtual bool probe() {
+        return true;
+    }
 };
 } // namespace sensirion::upt::i2c_autodetect 
 

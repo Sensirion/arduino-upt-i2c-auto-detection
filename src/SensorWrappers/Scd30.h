@@ -16,15 +16,16 @@ class Scd30 : public ISensor {
     uint16_t initializationStep() override;
     DeviceType getDeviceType() const override;
     core::MetaData getMetaData() const override;
+    uint8_t getI2CAddress() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
 
   private:
-    TwoWire& _wire;
-    uint16_t _address;
-    SensirionI2cScd30 _driver;
-    core::MetaData _metaData;
+    TwoWire& mWire;
+    uint16_t mAddress;
+    SensirionI2cScd30 mDriver;
+    core::MetaData mMetadata;
 };
 } // namespace sensirion::upt::i2c_autodetect 
 

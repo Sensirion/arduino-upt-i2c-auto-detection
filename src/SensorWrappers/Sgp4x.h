@@ -17,6 +17,7 @@ class Sgp41 : public ISensor {
     DeviceType getDeviceType() const override;
     core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
+    uint8_t getI2CAddress() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
 
     // Typical: 10s
@@ -26,10 +27,12 @@ class Sgp41 : public ISensor {
     // Typical measurement interval: 1s
     long readyStateDecayTimeMs() const override;
 
+    bool probe() override;
+
   private:
-    TwoWire& _wire;
-    SensirionI2CSgp41 _driver;
-    uint16_t _address;
+    TwoWire& mWire;
+    SensirionI2CSgp41 mDriver;
+    uint16_t mAddress;
     core::MetaData mMetadata;
     uint16_t _defaultRh = 0x8000;
     uint16_t _defaultT = 0x6666;

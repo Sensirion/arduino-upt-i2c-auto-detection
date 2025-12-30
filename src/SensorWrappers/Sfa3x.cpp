@@ -5,11 +5,11 @@ namespace sensirion::upt::i2c_autodetect{
 
 using namespace sensirion::upt::core;
 
-Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
+Sfa3x::Sfa3x(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address},
     mMetadata{core::SFA3X()}{};
 
 uint16_t Sfa3x::start() {
-    _driver.begin(_wire, _address);
+    mDriver.begin(mWire, mAddress);
     return 0;
 }
 
@@ -19,7 +19,7 @@ uint16_t Sfa3x::measureAndWrite(MeasurementList& measurements,
     float humi;
     float temperature;
 
-    uint16_t error = _driver.readMeasuredValues(hcho, humi, temperature);
+    uint16_t error = mDriver.readMeasuredValues(hcho, humi, temperature);
     if (error) {
         return error;
     }
@@ -39,14 +39,14 @@ uint16_t Sfa3x::measureAndWrite(MeasurementList& measurements,
 }
 
 uint16_t Sfa3x::initializationStep() {
-    uint16_t error = _driver.stopMeasurement();
+    uint16_t error = mDriver.stopMeasurement();
     if (error) {
         return error;
     }
 
     uint8_t serialNumberSize = 32;
     int8_t serialNumber[serialNumberSize];
-    error = _driver.getDeviceMarking(serialNumber, serialNumberSize);
+    error = mDriver.getDeviceMarking(serialNumber, serialNumberSize);
     if (error) {
         return error;
     }
@@ -62,7 +62,7 @@ uint16_t Sfa3x::initializationStep() {
 
     mMetadata.deviceID = sensorID;
 
-    error = _driver.startContinuousMeasurement();
+    error = mDriver.startContinuousMeasurement();
     return error;
 }
 
@@ -78,12 +78,17 @@ size_t Sfa3x::getNumberOfDataPoints() const {
     return 3;
 }
 
+uint8_t Sfa3x::getI2CAddress() const {
+    return mAddress;
+};
+
+
 unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 
 void* Sfa3x::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
 }
 } // namespace sensirion::upt::i2c_autodetect 
 

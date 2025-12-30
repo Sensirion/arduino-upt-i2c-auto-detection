@@ -17,13 +17,14 @@ class Svm4x : public ISensor {
     DeviceType getDeviceType() const override;
     core::MetaData getMetaData() const override;
     size_t getNumberOfDataPoints() const override;
+    uint8_t getI2CAddress() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     void* getDriver() override;
 
   private:
-    TwoWire& _wire;
-    uint16_t _address;
-    SensirionI2CSvm41 _driver;
+    TwoWire& mWire;
+    uint16_t mAddress;
+    SensirionI2CSvm41 mDriver;
     core::MetaData mMetaData;
 };
 } // namespace sensirion::upt::i2c_autodetect 

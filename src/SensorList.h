@@ -31,7 +31,17 @@ class SensorList {
      *
      * @param[in] pSensor pointer to the sensor to be added to the list
      */
-    void addSensor(ISensor* pSensor);
+    void addSensorIfNotPresent(ISensor* pSensor);
+
+    /**
+     * @brief check if the given I2C address is already used by a sensor in
+     * the list
+     *
+     * @param[in] address to be checked for in the list
+     *
+     * @returns True if the address is found, false otherwise.
+     */
+    bool containsSensor(uint8_t address) const;
 
     /**
      * @brief Counts sensors contained in the list

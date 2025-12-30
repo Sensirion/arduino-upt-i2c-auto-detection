@@ -9,14 +9,20 @@ constexpr auto TAG = "SensorList";
 
 SensorList::~SensorList() {}
 
-void SensorList::addSensor(ISensor* pSensor) {
-    auto found = std::find_if(mSensorCollection.begin(),
-    mSensorCollection.end(), [pSensor](SensorStateMachine* x) {
-        return x->getSensor()->getDeviceType() == pSensor->getDeviceType();
-    });
-    if (found == mSensorCollection.end()){
+
+void SensorList::addSensorIfNotPresent(ISensor* pSensor) {
+    if (!containsSensor(pSensor->getDeviceType())){
         mSensorCollection.push_back(new SensorStateMachine(pSensor));
     }
+}
+
+
+bool SensorList::containsSensor(uint8_t address) const{
+        auto iter = std::find_if(mSensorCollection.begin(),
+    mSensorCollection.end(), [address](SensorStateMachine* s) {
+        return s->getSensor()->getI2CAddress() == address;
+    });
+    return iter != mSensorCollection.end();
 }
 
 
@@ -56,12 +62,19 @@ bool SensorList::containsSensor(core::DeviceType deviceType) const {
 
 void SensorList::removeLostSensors() {
     std::vector<SensorStateMachine*> livingSensors{};
+    std::vector<SensorStateMachine*> lostSensors{};
     for (auto s: mSensorCollection){
         if(s->getSensorState() != SensorStatus::LOST){
             livingSensors.push_back(s);
         }
+        else{
+            lostSensors.push_back(s);
+        }
     }
     mSensorCollection.clear();
     mSensorCollection = livingSensors;
+    for (auto s: lostSensors){
+        delete s;
+    }
 }
 } // namespace sensirion::upt::i2c_autodetect 

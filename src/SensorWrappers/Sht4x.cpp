@@ -6,11 +6,11 @@ namespace sensirion::upt::i2c_autodetect{
 
 using namespace sensirion::upt::core;
 
-Sht4x::Sht4x(TwoWire& wire, uint16_t address) : _wire(wire), _address{address},
+Sht4x::Sht4x(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address},
     mMetadata{core::SHT4X()}{};
 
 uint16_t Sht4x::start() {
-    _driver.begin(_wire, _address);
+    mDriver.begin(mWire, mAddress);
     return HighLevelError::NoError;
 }
 
@@ -18,7 +18,7 @@ uint16_t Sht4x::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     float temperature;
     float humi;
-    uint16_t error = _driver.measureHighPrecision(temperature, humi);
+    uint16_t error = mDriver.measureHighPrecision(temperature, humi);
     if (error) {
         return error;
     }
@@ -36,7 +36,7 @@ uint16_t Sht4x::measureAndWrite(MeasurementList& measurements,
 
 uint16_t Sht4x::initializationStep() {
     uint32_t serialNo;
-    uint16_t error = _driver.serialNumber(serialNo);
+    uint16_t error = mDriver.serialNumber(serialNo);
     if (error) {
         return error;
     }
@@ -61,6 +61,17 @@ unsigned long Sht4x::getMinimumMeasurementIntervalMs() const {
 }
 
 void* Sht4x::getDriver() {
-    return reinterpret_cast<void*>(&_driver);
+    return reinterpret_cast<void*>(&mDriver);
+}
+
+uint8_t Sht4x::getI2CAddress() const {
+    return mAddress;
+};
+
+bool Sht4x::probe() {
+    // Use serial number as a probe method
+    uint32_t serial;
+    uint16_t error = mDriver.serialNumber(serial);
+    return (error == HighLevelError::NoError);
 }
 } // namespace sensirion::upt::i2c_autodetect 
