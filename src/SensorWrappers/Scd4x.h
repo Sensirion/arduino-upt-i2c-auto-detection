@@ -21,6 +21,7 @@ class Scd4x : public ISensor {
     unsigned long getMinimumMeasurementIntervalMs() const override;
     // Same as measurement interval
     unsigned long getInitializationIntervalMs() const override;
+    bool probe() override;
     void* getDriver() override;
 
   private:
