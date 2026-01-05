@@ -103,6 +103,12 @@ unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
     return 2000;
 }
 
+bool Scd30::probe() {
+    uint8_t major, minor;
+    uint16_t error = mDriver.readFirmwareVersion(major, minor);
+    return (error == HighLevelError::NoError);
+}
+
 void* Scd30::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }

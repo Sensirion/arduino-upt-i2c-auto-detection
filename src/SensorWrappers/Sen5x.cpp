@@ -149,6 +149,10 @@ unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
+bool Sen5x::probe() {
+    return _determineSensorVersion() == HighLevelError::NoError;
+}
+
 void* Sen5x::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }

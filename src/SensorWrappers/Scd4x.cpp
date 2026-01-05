@@ -85,6 +85,16 @@ unsigned long Scd4x::getInitializationIntervalMs() const {
     return 12 * 1000;
 }
 
+bool Scd4x::probe() {
+    SCD4xSensorVariant aSensorVariant = SCD4X_SENSOR_VARIANT_MASK;
+    uint16_t error = mDriver.getSensorVariant(aSensorVariant);
+    bool isKnownVariant = (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD40) ||
+                            (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD41) ||
+                            (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD42) ||
+                            (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD43);
+    return (error == 0 && isKnownVariant);
+}
+
 void* Scd4x::getDriver() {
     return std::addressof(mDriver);
 }

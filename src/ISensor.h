@@ -131,9 +131,7 @@ class ISensor {
      *
      * @return true if sensor is responding properly, false otherwise.
      */
-    virtual bool probe() {
-        return true;
-    }
+    virtual bool probe() = 0;
 };
 } // namespace sensirion::upt::i2c_autodetect 
 

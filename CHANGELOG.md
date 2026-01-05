@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0]
+
+### Added
+- Probing logic to allow multiple sensor definition per I2C address.
+
+### Changed
+- Bumped SCD4x driver dependency to 1.1.0
+
+
 ## [2.0.0]
 
 ### Added

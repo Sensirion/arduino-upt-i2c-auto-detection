@@ -87,6 +87,13 @@ unsigned long Sfa3x::getMinimumMeasurementIntervalMs() const {
     return 5000;
 }
 
+bool Sfa3x::probe() {
+    uint8_t markingSize = 32;
+    int8_t markingStr[markingSize];
+    uint16_t error = mDriver.getDeviceMarking(markingStr, markingSize);
+    return (error == HighLevelError::NoError);
+}
+
 void* Sfa3x::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }

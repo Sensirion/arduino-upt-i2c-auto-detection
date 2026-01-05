@@ -90,6 +90,12 @@ unsigned long Svm4x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
+bool Svm4x::probe() {
+    float tempOffset;
+    uint16_t error = mDriver.getTemperatureOffsetForRhtMeasurements(tempOffset);
+    return (error == HighLevelError::NoError);
+}
+
 void* Svm4x::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }

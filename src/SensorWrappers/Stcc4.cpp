@@ -82,6 +82,13 @@ unsigned long Stcc4::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
+bool Stcc4::probe() {
+    uint32_t productId;
+    uint64_t serialNumber;
+    int16_t error = mDriver.getProductId(productId, serialNumber);
+    return (error == HighLevelError::NoError && productId == 0x0901018A);
+}
+
 void* Stcc4::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }
