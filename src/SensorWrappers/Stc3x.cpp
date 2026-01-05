@@ -127,6 +127,13 @@ unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
+bool Stc3x::probe() {
+    uint32_t productId;
+    uint64_t serialNumber;
+    int16_t error = mDriver.getProductId(productId, serialNumber);
+    return (error == HighLevelError::NoError && productId == 0x08010304);
+}
+
 void* Stc3x::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }
