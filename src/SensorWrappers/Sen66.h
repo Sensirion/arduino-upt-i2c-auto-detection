@@ -20,6 +20,7 @@ class Sen66 : public ISensor {
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
     unsigned long getInitializationIntervalMs() const override;
+    bool probe() override;
     void* getDriver() override;
 
   private:
