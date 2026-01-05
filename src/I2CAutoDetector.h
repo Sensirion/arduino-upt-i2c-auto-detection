@@ -52,8 +52,10 @@ class I2CAutoDetector : public IAutoDetector {
         if (error){
             continue;
         }
+        ESP_LOGD("UptSensorScan", "at 0x%02X : potentially a %s.", tableEntry->getI2cAddress(), tableEntry->getSensor().getDeviceType().data());
         tableEntry->getSensor().start();
         if (!tableEntry->getSensor().probe()) continue;
+        ESP_LOGI("UptSensorScan", "at 0x%02X : successfully identified a %s.", tableEntry->getI2cAddress(), tableEntry->getSensor().getDeviceType().data());
 
         sensorList.addSensorIfNotPresent(&tableEntry->getSensor());
       }
