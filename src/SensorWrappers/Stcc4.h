@@ -19,6 +19,7 @@ class Stcc4 : public ISensor {
     size_t getNumberOfDataPoints() const override;
     uint8_t getI2CAddress() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
+    bool probe() override;
     void* getDriver() override;
 
   private:
