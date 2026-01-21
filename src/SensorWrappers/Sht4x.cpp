@@ -2,36 +2,36 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
 using namespace sensirion::upt::core;
 
-Sht4x::Sht4x(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address},
-    mMetadata{core::SHT4X()}{};
+Sht4x::Sht4x(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address}, mMetadata{SHT4X()} {};
 
 uint16_t Sht4x::start() {
     mDriver.begin(mWire, mAddress);
-    return HighLevelError::NoError;
+    return NoError;
 }
 
 uint16_t Sht4x::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     float temperature;
     float humi;
-    uint16_t error = mDriver.measureHighPrecision(temperature, humi);
+    const uint16_t error = mDriver.measureHighPrecision(temperature, humi);
     if (error) {
         return error;
     }
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        core::DataPoint{timeStamp, temperature});
+    measurements.emplace_back(mMetadata,
+                              SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              DataPoint{timeStamp, temperature});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        core::DataPoint{timeStamp, humi});
+    measurements.emplace_back(mMetadata,
+                              SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              DataPoint{timeStamp, humi});
 
-    return HighLevelError::NoError;
+    return NoError;
 }
 
 uint16_t Sht4x::initializationStep() {
@@ -61,7 +61,7 @@ unsigned long Sht4x::getMinimumMeasurementIntervalMs() const {
 }
 
 void* Sht4x::getDriver() {
-    return reinterpret_cast<void*>(&mDriver);
+    return &mDriver;
 }
 
 uint8_t Sht4x::getI2CAddress() const {
@@ -71,7 +71,7 @@ uint8_t Sht4x::getI2CAddress() const {
 bool Sht4x::probe() {
     // Use serial number as a probe method
     uint32_t serial;
-    uint16_t error = mDriver.serialNumber(serial);
-    return (error == HighLevelError::NoError);
+    const uint16_t error = mDriver.serialNumber(serial);
+    return (error == NoError);
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect
