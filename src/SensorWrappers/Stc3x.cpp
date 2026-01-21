@@ -2,16 +2,17 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Stc3x::Stc3x(TwoWire& wire, uint16_t address) : mWire(wire), mAddress{address},
-    mMetadata{core::STC3X()}
- {// The device type is determined more precisely at initializationStep()
- };
+Stc3x::Stc3x(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address},
+      mMetadata{core::STC3X()} {  // The device type is determined more
+                                  // precisely at initializationStep()
+      };
 
 uint16_t Stc3x::start() {
     mDriver.begin(mWire, mAddress);
-    uint16_t error = mDriver.setBinaryGas(0x0001);
+    const uint16_t error = mDriver.setBinaryGas(0x0001);
     return error;
 }
 
@@ -20,19 +21,19 @@ uint16_t Stc3x::measureAndWrite(MeasurementList& measurements,
     float gasValue;
     float temperatureValue;
 
-    uint16_t error =
+    const uint16_t error =
         mDriver.measureGasConcentration(gasValue, temperatureValue);
     if (error) {
         return error;
     }
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::GAS_CONCENTRATION_VOLUME_PERCENTAGE,
         core::DataPoint{timeStamp, gasValue});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        core::DataPoint{timeStamp, temperatureValue});
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              core::DataPoint{timeStamp, temperatureValue});
 
     return HighLevelError::NoError;
 }
@@ -59,18 +60,18 @@ uint16_t Stc3x::initializationStep() {
      * https://sensirion.com/media/documents/7B1D0EA7/61652CD0/Sensirion_Thermal_Conductivity_Datasheet_STC31_D1_1.pdf
      * Section 3.3.13
      */
-    const uint32_t stc31ProductNumber = 0x08010301;
-    const uint32_t mask = 0xFFFFFF00;
+    constexpr uint32_t stc31ProductNumber = 0x08010301;
+    constexpr uint32_t mask = 0xFFFFFF00;
     const uint32_t maskedProductNo = productNumber & mask;
-    const uint32_t maskedSTC31ProductNo = stc31ProductNumber & mask;
+    constexpr uint32_t maskedSTC31ProductNo = stc31ProductNumber & mask;
     if (maskedSTC31ProductNo == maskedProductNo) {
         mMetadata.deviceType = core::STC31();
     }  // else keep default STC3X
 
     // Sensor Serial No
     uint64_t sensorID = 0;
-    sensorID |=
-        (uint64_t)serialNumberRawHigh << 32 | (uint64_t)serialNumberRawLow;
+    sensorID |= static_cast<uint64_t>(serialNumberRawHigh) << 32 |
+                static_cast<uint64_t>(serialNumberRawLow);
     mMetadata.deviceID = sensorID;
 
     // Select gas mode
@@ -104,7 +105,7 @@ uint16_t Stc3x::initializationStep() {
         return error;
     }
 
-    return HighLevelError::NoError;
+    return NoError;
 }
 
 core::DeviceType Stc3x::getDeviceType() const {
@@ -130,11 +131,11 @@ unsigned long Stc3x::getMinimumMeasurementIntervalMs() const {
 bool Stc3x::probe() {
     uint32_t productId;
     uint64_t serialNumber;
-    int16_t error = mDriver.getProductId(productId, serialNumber);
-    return (error == HighLevelError::NoError && productId == 0x08010304);
+    const int16_t error = mDriver.getProductId(productId, serialNumber);
+    return (error == NoError && productId == 0x08010304);
 }
 
 void* Stc3x::getDriver() {
-    return reinterpret_cast<void*>(&mDriver);
+    return &mDriver;
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect

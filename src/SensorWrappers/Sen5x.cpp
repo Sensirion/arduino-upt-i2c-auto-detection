@@ -2,12 +2,10 @@
 #include "SensirionCore.h"
 #include <map>
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Sen5x::Sen5x(TwoWire& wire, uint16_t address) : 
-    mWire(wire),
-    mAddress{address},
-    mMetadata{core::SEN5X()} {};
+Sen5x::Sen5x(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address}, mMetadata{core::SEN5X()} {};
 
 uint16_t Sen5x::start() {
     mDriver.begin(mWire);
@@ -37,48 +35,41 @@ uint16_t Sen5x::measureAndWrite(MeasurementList& measurements,
         return error;
     }
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
         core::DataPoint{timeStamp, massConcentrationPm1p0});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
         core::DataPoint{timeStamp, massConcentrationPm2p5});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
         core::DataPoint{timeStamp, massConcentrationPm4p0});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
         core::DataPoint{timeStamp, massConcentrationPm10p0});
 
+    // Versions 54, 55
+    if (getDeviceType() == core::SEN54() or getDeviceType() == core::SEN55()) {
 
-
-    // Verions 54, 55
-    if (getDeviceType() == core::SEN54() or
-        getDeviceType() == core::SEN55()) {
-
-        measurements.emplace_back(mMetadata, 
-            core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+        measurements.emplace_back(
+            mMetadata, core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
             core::DataPoint{timeStamp, ambientHumidity});
 
-        measurements.emplace_back(mMetadata, 
-            core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+        measurements.emplace_back(
+            mMetadata, core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
             core::DataPoint{timeStamp, ambientTemperature});
 
-        measurements.emplace_back(mMetadata, 
-            core::SignalType::VOC_INDEX,
-            core::DataPoint{timeStamp, vocIndex});
-
+        measurements.emplace_back(mMetadata, core::SignalType::VOC_INDEX,
+                                  core::DataPoint{timeStamp, vocIndex});
     }
     // Version 55
     if (getDeviceType() == core::SEN55()) {
 
-        measurements.emplace_back(mMetadata, 
-            core::SignalType::NOX_INDEX,
-            core::DataPoint{timeStamp, noxIndex});
-
+        measurements.emplace_back(mMetadata, core::SignalType::NOX_INDEX,
+                                  core::DataPoint{timeStamp, noxIndex});
     }
     return HighLevelError::NoError;
 }
@@ -97,14 +88,14 @@ uint16_t Sen5x::initializationStep() {
     }
 
     // Get sensor unique ID (last 8 chars of serial no.)
-    uint8_t serialNumberSize = 32;
+    constexpr uint8_t serialNumberSize = 32;
     unsigned char serialNumber[serialNumberSize];
     error = mDriver.getSerialNumber(serialNumber, serialNumberSize);
     if (error) {
         return error;
     }
-    size_t actualLen = strlen((const char*)serialNumber);
-    size_t numBytesToCopy = min(8, (int)actualLen);
+    size_t actualLen = strlen(reinterpret_cast<const char*>(serialNumber));
+    size_t numBytesToCopy = min(8, static_cast<int>(actualLen));
     uint64_t sensorID = 0;
     for (int i = 0; i < numBytesToCopy - 1; i++) {
         sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
@@ -139,7 +130,7 @@ size_t Sen5x::getNumberOfDataPoints() const {
         {core::SEN55(), 8},
     };
     const auto iter = deviceToSignalCount.find(getDeviceType());
-    if (iter == deviceToSignalCount.cend()){
+    if (iter == deviceToSignalCount.cend()) {
         return 0;
     }
     return iter->second;
@@ -150,11 +141,14 @@ unsigned long Sen5x::getMinimumMeasurementIntervalMs() const {
 }
 
 bool Sen5x::probe() {
-    return _determineSensorVersion() == HighLevelError::NoError;
+    // reset the device before probing to ensure a clean state
+    mDriver.deviceReset();
+
+    return _determineSensorVersion() == NoError;
 }
 
 void* Sen5x::getDriver() {
-    return reinterpret_cast<void*>(&mDriver);
+    return &mDriver;
 }
 
 uint8_t Sen5x::getI2CAddress() const {
@@ -162,9 +156,10 @@ uint8_t Sen5x::getI2CAddress() const {
 };
 
 uint16_t Sen5x::_determineSensorVersion() {
-    uint8_t sensorNameSize = 32;
+    constexpr uint8_t sensorNameSize = 32;
     unsigned char sensorNameStr[sensorNameSize];
-    uint16_t error = mDriver.getProductName(sensorNameStr, sensorNameSize);
+    const uint16_t error =
+        mDriver.getProductName(sensorNameStr, sensorNameSize);
 
     if (error) {
         return error;
@@ -183,4 +178,4 @@ uint16_t Sen5x::_determineSensorVersion() {
     }
     return 0;
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect

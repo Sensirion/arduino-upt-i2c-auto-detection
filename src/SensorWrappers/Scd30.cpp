@@ -2,10 +2,10 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Scd30::Scd30(TwoWire& wire, const uint16_t address) : 
-    mWire(wire), mAddress{address}, mMetadata{core::SCD30()}{};
+Scd30::Scd30(TwoWire& wire, const uint16_t address)
+    : mWire(wire), mAddress{address}, mMetadata{core::SCD30()} {};
 
 uint16_t Scd30::start() {
     mDriver.begin(mWire, mAddress);
@@ -24,7 +24,6 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
         return 1;
     }
 
-  
     float co2Concentration;
     float temperature;
     float humidity;
@@ -34,22 +33,21 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
         return error;
     }
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::CO2_PARTS_PER_MILLION,
-        core::DataPoint{timeStamp, co2Concentration});
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::CO2_PARTS_PER_MILLION,
+                              core::DataPoint{timeStamp, co2Concentration});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS, 
-        core::DataPoint{timeStamp, temperature});
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              core::DataPoint{timeStamp, temperature});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE, 
-        core::DataPoint{timeStamp, humidity});
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              core::DataPoint{timeStamp, humidity});
 
-
-    /* Prepare next reading by querying the dataReadyFlag. We don't need the
+    /* Prepare the next reading by querying the dataReadyFlag. We don't need the
      * value of the flag, but the query seems to finalize setting off the
-     * measurement process, and enables much faster signal readout at the next
+     * measurement process and enables a much faster signal readout at the next
      * call of this function as it then is not required to enter a wait loop
      * (see SensirionI2cScd30::blockingReadMeasurementData()). This procedure is
      * only required for SCD30. */
@@ -57,7 +55,7 @@ uint16_t Scd30::measureAndWrite(MeasurementList& measurements,
     if (error) {
         return error;
     }
-    return HighLevelError::NoError;
+    return NoError;
 }
 
 uint16_t Scd30::initializationStep() {
@@ -105,11 +103,13 @@ unsigned long Scd30::getMinimumMeasurementIntervalMs() const {
 
 bool Scd30::probe() {
     uint8_t major, minor;
-    uint16_t error = mDriver.readFirmwareVersion(major, minor);
-    return (error == HighLevelError::NoError);
+    // stop potential running measurement
+    mDriver.stopPeriodicMeasurement();
+    const uint16_t error = mDriver.readFirmwareVersion(major, minor);
+    return (error == NoError);
 }
 
 void* Scd30::getDriver() {
-    return reinterpret_cast<void*>(&mDriver);
+    return &mDriver;
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect

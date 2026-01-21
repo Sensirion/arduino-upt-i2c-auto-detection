@@ -2,11 +2,10 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Stcc4::Stcc4(TwoWire& wire, uint16_t address) : mWire(wire), 
-    mAddress{address}, mMetadata{core::STCC4()} {
-};
+Stcc4::Stcc4(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address}, mMetadata{core::STCC4()} {};
 
 uint16_t Stcc4::start() {
     mDriver.begin(mWire, mAddress);
@@ -18,28 +17,28 @@ uint16_t Stcc4::measureAndWrite(MeasurementList& measurements,
     int16_t co2;
     float temperatureValue;
     float relativeHumidityValue;
-    uint16_t sensorStatus; // Required by API but not used in this implementation
+    uint16_t
+        sensorStatus;  // Required by API but not used in this implementation
 
-    uint16_t error =
-        mDriver.readMeasurement(co2, temperatureValue, relativeHumidityValue, sensorStatus);
+    const uint16_t error = mDriver.readMeasurement(
+        co2, temperatureValue, relativeHumidityValue, sensorStatus);
     if (error) {
         return error;
     }
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::CO2_PARTS_PER_MILLION,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::CO2_PARTS_PER_MILLION,
         core::DataPoint{timeStamp, static_cast<float>(co2)});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        core::DataPoint{timeStamp, temperatureValue});
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              core::DataPoint{timeStamp, temperatureValue});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
         core::DataPoint{timeStamp, relativeHumidityValue});
 
-
-    return HighLevelError::NoError;
+    return NoError;
 }
 
 uint16_t Stcc4::initializationStep() {
@@ -85,11 +84,13 @@ unsigned long Stcc4::getMinimumMeasurementIntervalMs() const {
 bool Stcc4::probe() {
     uint32_t productId;
     uint64_t serialNumber;
-    int16_t error = mDriver.getProductId(productId, serialNumber);
-    return (error == HighLevelError::NoError && productId == 0x0901018A);
+    // stop a potential running measurement
+    mDriver.stopContinuousMeasurement();
+    const int16_t error = mDriver.getProductId(productId, serialNumber);
+    return (error == NoError && productId == 0x0901018A);
 }
 
 void* Stcc4::getDriver() {
-    return reinterpret_cast<void*>(&mDriver);
+    return &mDriver;
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect

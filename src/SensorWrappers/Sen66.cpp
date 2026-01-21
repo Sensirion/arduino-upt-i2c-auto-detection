@@ -1,11 +1,10 @@
 #include "SensorWrappers/Sen66.h"
 #include "SensirionCore.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Sen66::Sen66(TwoWire& wire, uint16_t address) : mWire(wire), 
-    mAddress{address}, mMetaData{core::SEN66()} {
-};
+Sen66::Sen66(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address}, mMetaData{core::SEN66()} {};
 
 uint16_t Sen66::start() {
     mDriver.begin(mWire, mAddress);
@@ -36,56 +35,44 @@ uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
         return error;
     }
 
-    measurements.emplace_back(mMetaData,
-        core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
-        core::DataPoint{timeStamp, massConcentrationPm1p0}
-    );
+    measurements.emplace_back(
+        mMetaData, core::SignalType::PM1P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm1p0});
+
+    measurements.emplace_back(
+        mMetaData, core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm2p5});
+
+    measurements.emplace_back(
+        mMetaData, core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm4p0});
+
+    measurements.emplace_back(
+        mMetaData, core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
+        core::DataPoint{timeStamp, massConcentrationPm10p0});
 
     measurements.emplace_back(mMetaData,
-        core::SignalType::PM2P5_MICRO_GRAMM_PER_CUBIC_METER,
-        core::DataPoint{timeStamp, massConcentrationPm2p5}
-    );    
+                              core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              core::DataPoint{timeStamp, humidity});
 
     measurements.emplace_back(mMetaData,
-        core::SignalType::PM4P0_MICRO_GRAMM_PER_CUBIC_METER,
-        core::DataPoint{timeStamp, massConcentrationPm4p0}
-    );
+                              core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              core::DataPoint{timeStamp, temperature});
 
-    measurements.emplace_back(mMetaData,
-        core::SignalType::PM10P0_MICRO_GRAMM_PER_CUBIC_METER,
-        core::DataPoint{timeStamp, massConcentrationPm10p0}
-    );  
+    measurements.emplace_back(mMetaData, core::SignalType::VOC_INDEX,
+                              core::DataPoint{timeStamp, vocIndex});
 
-    measurements.emplace_back(mMetaData,
-        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        core::DataPoint{timeStamp, humidity}
-    );
-
-    measurements.emplace_back(mMetaData,
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        core::DataPoint{timeStamp, temperature}
-    );      
-
-    measurements.emplace_back(mMetaData,
-        core::SignalType::VOC_INDEX,
-        core::DataPoint{timeStamp, vocIndex}
-    );   
-
-    measurements.emplace_back(mMetaData,
-        core::SignalType::NOX_INDEX,
-        core::DataPoint{timeStamp, noxIndex}
-    );   
-
+    measurements.emplace_back(mMetaData, core::SignalType::NOX_INDEX,
+                              core::DataPoint{timeStamp, noxIndex});
 
     // Filter out 0xFFFF CO2 value
     if (co2 == 65535) {
         co2 = 0;
     }
 
-    measurements.emplace_back(mMetaData,
-        core::SignalType::CO2_PARTS_PER_MILLION,
-        core::DataPoint{timeStamp, static_cast<float>(co2)}
-    );       
+    measurements.emplace_back(
+        mMetaData, core::SignalType::CO2_PARTS_PER_MILLION,
+        core::DataPoint{timeStamp, static_cast<float>(co2)});
 
     return HighLevelError::NoError;
 }
@@ -146,7 +133,10 @@ uint8_t Sen66::getI2CAddress() const {
 
 bool Sen66::probe() {
     std::basic_string<int8_t> sensorNameStr(32, '\0');
-    uint16_t error = mDriver.getProductName(sensorNameStr.data(), sensorNameStr.capacity());
+    // reset device before probing
+    mDriver.deviceReset();
+    const uint16_t error =
+        mDriver.getProductName(sensorNameStr.data(), sensorNameStr.capacity());
     return !error && sensorNameStr == reinterpret_cast<const int8_t*>("SEN66");
 }
 
@@ -157,4 +147,4 @@ void* Sen66::getDriver() {
 unsigned long Sen66::getInitializationIntervalMs() const {
     return 1200;
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect

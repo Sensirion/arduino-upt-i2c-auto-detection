@@ -2,11 +2,10 @@
 #include "SensirionCore.h"
 #include "Sensirion_UPT_Core.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Scd4x::Scd4x(TwoWire& wire, const uint16_t address) : mWire(wire), 
-    mAddress{address},
-    mMetadata{core::SCD4X()}{};
+Scd4x::Scd4x(TwoWire& wire, const uint16_t address)
+    : mWire(wire), mAddress{address}, mMetadata{core::SCD4X()} {};
 
 uint16_t Scd4x::start() {
     mDriver.begin(mWire, mAddress);
@@ -18,22 +17,22 @@ uint16_t Scd4x::measureAndWrite(MeasurementList& measurements,
     uint16_t co2;
     float temp;
     float humi;
-    uint16_t error = mDriver.readMeasurement(co2, temp, humi);
+    const uint16_t error = mDriver.readMeasurement(co2, temp, humi);
     if (error) {
         return error;
     }
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::CO2_PARTS_PER_MILLION,
+    measurements.emplace_back(
+        mMetadata, core::SignalType::CO2_PARTS_PER_MILLION,
         core::DataPoint{timeStamp, static_cast<float>(co2)});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        core::DataPoint{timeStamp, temp});        
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              core::DataPoint{timeStamp, temp});
 
-    measurements.emplace_back(mMetadata, 
-        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        core::DataPoint{timeStamp, humi});      
+    measurements.emplace_back(mMetadata,
+                              core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              core::DataPoint{timeStamp, humi});
 
     return HighLevelError::NoError;
 }
@@ -86,16 +85,19 @@ unsigned long Scd4x::getInitializationIntervalMs() const {
 }
 
 bool Scd4x::probe() {
+    // stop potential running measurement
+    mDriver.stopPeriodicMeasurement();
     SCD4xSensorVariant aSensorVariant = SCD4X_SENSOR_VARIANT_MASK;
-    uint16_t error = mDriver.getSensorVariant(aSensorVariant);
-    bool isKnownVariant = (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD40) ||
-                            (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD41) ||
-                            (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD42) ||
-                            (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD43);
+    const uint16_t error = mDriver.getSensorVariant(aSensorVariant);
+    const bool isKnownVariant =
+        (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD40) ||
+        (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD41) ||
+        (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD42) ||
+        (aSensorVariant == SCD4X_SENSOR_VARIANT_SCD43);
     return (error == 0 && isKnownVariant);
 }
 
 void* Scd4x::getDriver() {
-    return std::addressof(mDriver);
+    return &mDriver;
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect

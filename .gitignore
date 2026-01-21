@@ -5,3 +5,4 @@ latex
 src/html/**
 src/latex/**
 examples/**/*.cpp
+.idea/

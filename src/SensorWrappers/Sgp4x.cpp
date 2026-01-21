@@ -86,10 +86,10 @@ uint8_t Sgp41::getI2CAddress() const {
 };
 
 bool Sgp41::probe() {
-    // Use getSerialNumber as probe method
+    // Use getSerialNumber as a probe method
     uint16_t serialNo[3];
-    uint16_t error = mDriver.getSerialNumber(serialNo);
-    return (error == HighLevelError::NoError);  
+    const uint16_t error = mDriver.getSerialNumber(serialNo);
+    return (error == NoError);
 }
 
 } // namespace sensirion::upt::i2c_autodetect 
