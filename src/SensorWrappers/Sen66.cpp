@@ -84,8 +84,6 @@ uint16_t Sen66::initializationStep() {
         return error;
     }
 
-    delay(1200);
-
     // Get sensor unique ID (last 8 chars of serial no.)
     constexpr uint16_t serialNumberSize = 32;
     int8_t serialNumber[serialNumberSize] = {0};
@@ -147,7 +145,4 @@ void* Sen66::getDriver() {
     return &mDriver;
 }
 
-unsigned long Sen66::getInitializationIntervalMs() const {
-    return 1200;
-}
 }  // namespace sensirion::upt::i2c_autodetect

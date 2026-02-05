@@ -19,7 +19,6 @@ class Sen66 : public ISensor {
     uint8_t getI2CAddress() const override;
     size_t getNumberOfDataPoints() const override;
     unsigned long getMinimumMeasurementIntervalMs() const override;
-    unsigned long getInitializationIntervalMs() const override;
     bool probe() override;
     void* getDriver() override;
 
