@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.2]
+
+### Changed
+- Removed unnecessary SEN66 delays during initialization
+
+### Fixed
+- Fix probing method for SEN66, causing SEN66 to be undetected.
+
 ## [3.0.1]
 
 ### Fixed
