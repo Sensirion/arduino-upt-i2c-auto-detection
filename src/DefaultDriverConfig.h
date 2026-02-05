@@ -12,12 +12,15 @@
 #include "SensorWrappers/Stc3x.h"
 #include "SensorWrappers/Svm4x.h"
 #include "SensorWrappers/Stcc4.h"
+#include "SensorWrappers/Sen63c.h"
+
 
 namespace sensirion::upt::i2c_autodetect{
 
 using Scd30Mapping = SensorToAddressMapping<0x61, Scd30>;
 using Scd4xMapping = SensorToAddressMapping<0x62, Scd4x>;
 using Sen5xMapping = SensorToAddressMapping<0x69, Sen5x>;
+using Sen63cMapping = SensorToAddressMapping<0x6b, Sen63c>;
 using Sen66Mapping = SensorToAddressMapping<0x6b, Sen66>;
 using Sfa3xMapping = SensorToAddressMapping<0x5d, Sfa3x>;
 using Sgp41Mapping = SensorToAddressMapping<0x59, Sgp41>;
@@ -29,6 +32,7 @@ using Stcc4Mapping = SensorToAddressMapping<0x64, Stcc4>;
 using DefaultI2cDetector = I2CAutoDetector<Scd30Mapping,
                             Scd4xMapping,
                             Sen5xMapping,
+                            Sen63cMapping,
                             Sen66Mapping,
                             Sfa3xMapping,
                             Sgp41Mapping,
