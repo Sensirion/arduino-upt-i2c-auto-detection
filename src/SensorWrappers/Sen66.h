@@ -1,5 +1,5 @@
 #ifndef SEN66_H
-#define SEN66_H_
+#define SEN66_H
 
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
@@ -30,4 +30,4 @@ class Sen66 : public ISensor {
 };
 } // namespace sensirion::upt::i2c_autodetect 
 
-#endif /* SEN66_H*/
+#endif /* SEN66_H */
