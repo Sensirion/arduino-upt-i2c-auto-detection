@@ -1,15 +1,18 @@
-#ifndef SEN66_H
-#define SEN66_H
+#ifndef SEN63C_H
+#define SEN63C_H
 
 #include "ISensor.h"
 #include "Sensirion_UPT_Core.h"
-#include <SensirionI2cSen66.h>
+#include <SensirionI2cSen63c.h>
 
 namespace sensirion::upt::i2c_autodetect{
 
-class Sen66 : public ISensor {
+inline const core::DeviceType SEN63C = core::DeviceTypeRegistry::CreateWiredDeviceType("SEN63C");
+
+
+class Sen63c : public ISensor {
   public:
-    explicit Sen66(TwoWire& wire, uint16_t address);
+    explicit Sen63c(TwoWire& wire, uint16_t address);
     uint16_t start() override;
     uint16_t measureAndWrite(MeasurementList& measurements,
                              unsigned long timeStamp) override;
@@ -24,10 +27,10 @@ class Sen66 : public ISensor {
 
   private:
     TwoWire& mWire;
-    SensirionI2cSen66 mDriver;
+    SensirionI2cSen63c mDriver;
     uint16_t mAddress;
     core::MetaData mMetaData;
 };
 } // namespace sensirion::upt::i2c_autodetect 
 
-#endif /* SEN66_H */
+#endif /* SEN63C_H */

@@ -90,20 +90,13 @@ uint16_t Sen5x::initializationStep() {
     // Get sensor unique ID (last 8 chars of serial no.)
     constexpr uint8_t serialNumberSize = 32;
     unsigned char serialNumber[serialNumberSize];
+
     error = mDriver.getSerialNumber(serialNumber, serialNumberSize);
     if (error) {
         return error;
     }
-    size_t actualLen = strlen(reinterpret_cast<const char*>(serialNumber));
-    size_t numBytesToCopy = min(8, static_cast<int>(actualLen));
-    uint64_t sensorID = 0;
-    for (int i = 0; i < numBytesToCopy - 1; i++) {
-        sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
-        sensorID = sensorID << 8;
-    }
-    sensorID |= serialNumber[actualLen - 1];
-
-    mMetadata.deviceID = sensorID;
+    mMetadata.deviceID = extractSensorId(
+        reinterpret_cast<const int8_t*>(serialNumber), serialNumberSize);
 
     // Start Measurement
     error = mDriver.startMeasurement();

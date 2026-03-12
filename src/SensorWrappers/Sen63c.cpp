@@ -1,17 +1,17 @@
-#include "SensorWrappers/Sen66.h"
+#include "SensorWrappers/Sen63c.h"
 #include "SensirionCore.h"
 
 namespace sensirion::upt::i2c_autodetect {
 
-Sen66::Sen66(TwoWire& wire, uint16_t address)
-    : mWire(wire), mAddress{address}, mMetaData{core::SEN66()} {};
+Sen63c::Sen63c(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address}, mMetaData{SEN63C} {};
 
-uint16_t Sen66::start() {
+uint16_t Sen63c::start() {
     mDriver.begin(mWire, mAddress);
     return 0;
 }
 
-uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
+uint16_t Sen63c::measureAndWrite(MeasurementList& measurements,
                                 const unsigned long timeStamp) {
     uint16_t error = 0;
 
@@ -22,14 +22,11 @@ uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
     float massConcentrationPm10p0 = 0.0;
     float humidity = 0.0;
     float temperature = 0.0;
-    float vocIndex = 0.0;
-    float noxIndex = 0.0;
     uint16_t co2 = 0.0;
 
     error = mDriver.readMeasuredValues(
         massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
-        massConcentrationPm10p0, humidity, temperature, vocIndex, noxIndex,
-        co2);
+        massConcentrationPm10p0, humidity, temperature, co2);
 
     if (error) {
         return error;
@@ -59,12 +56,6 @@ uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
                               core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
                               core::DataPoint{timeStamp, temperature});
 
-    measurements.emplace_back(mMetaData, core::SignalType::VOC_INDEX,
-                              core::DataPoint{timeStamp, vocIndex});
-
-    measurements.emplace_back(mMetaData, core::SignalType::NOX_INDEX,
-                              core::DataPoint{timeStamp, noxIndex});
-
     // Filter out 0xFFFF CO2 value
     if (co2 == 65535) {
         co2 = 0;
@@ -77,7 +68,7 @@ uint16_t Sen66::measureAndWrite(MeasurementList& measurements,
     return HighLevelError::NoError;
 }
 
-uint16_t Sen66::initializationStep() {
+uint16_t Sen63c::initializationStep() {
     // Reset the device to ensure a known state
     uint16_t error = mDriver.deviceReset();
     if (error) {
@@ -99,39 +90,36 @@ uint16_t Sen66::initializationStep() {
     return error;
 }
 
-core::DeviceType Sen66::getDeviceType() const {
+core::DeviceType Sen63c::getDeviceType() const {
     return mMetaData.deviceType;
 }
 
-core::MetaData Sen66::getMetaData() const {
+core::MetaData Sen63c::getMetaData() const {
     return mMetaData;
 }
 
-size_t Sen66::getNumberOfDataPoints() const {
-    return 9;
+size_t Sen63c::getNumberOfDataPoints() const {
+    return 7;
 }
 
-unsigned long Sen66::getMinimumMeasurementIntervalMs() const {
+unsigned long Sen63c::getMinimumMeasurementIntervalMs() const {
     return 1000;
 }
 
-uint8_t Sen66::getI2CAddress() const {
+uint8_t Sen63c::getI2CAddress() const {
     return mAddress;
 };
 
-bool Sen66::probe() {
-    static constexpr int8_t SEN66[] = { 'S','E','N','6','6' };
-    static constexpr std::basic_string_view<int8_t> sen66 {SEN66, sizeof(SEN66)};
-
+bool Sen63c::probe() {
     std::basic_string<int8_t> sensorNameStr(32, '\0');
     // reset device before probing
     mDriver.deviceReset();
     const uint16_t error =
         mDriver.getProductName(sensorNameStr.data(), sensorNameStr.capacity());
-    return !error && std::basic_string_view<int8_t>(sensorNameStr.data()) == sen66;
+    return !error && sensorNameStr == reinterpret_cast<const int8_t*>("SEN63C");
 }
 
-void* Sen66::getDriver() {
+void* Sen63c::getDriver() {
     return &mDriver;
 }
 

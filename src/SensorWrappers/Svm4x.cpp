@@ -1,11 +1,10 @@
 #include "SensorWrappers/Svm4x.h"
 #include "SensirionCore.h"
 
-namespace sensirion::upt::i2c_autodetect{
+namespace sensirion::upt::i2c_autodetect {
 
-Svm4x::Svm4x(TwoWire& wire, uint16_t address) : mWire(wire), 
-    mAddress{address},
-    mMetaData{core::SVM41()} {};
+Svm4x::Svm4x(TwoWire& wire, uint16_t address)
+    : mWire(wire), mAddress{address}, mMetaData{core::SVM41()} {};
 
 uint16_t Svm4x::start() {
     mDriver.begin(mWire);
@@ -24,19 +23,16 @@ uint16_t Svm4x::measureAndWrite(MeasurementList& measurements,
         return error;
     }
 
-    measurements.emplace_back(mMetaData, 
-        core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
-        core::DataPoint{timeStamp, humidity});
+    measurements.emplace_back(mMetaData,
+                              core::SignalType::RELATIVE_HUMIDITY_PERCENTAGE,
+                              core::DataPoint{timeStamp, humidity});
 
+    measurements.emplace_back(mMetaData,
+                              core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
+                              core::DataPoint{timeStamp, temperature});
 
-    measurements.emplace_back(mMetaData, 
-        core::SignalType::TEMPERATURE_DEGREES_CELSIUS,
-        core::DataPoint{timeStamp, temperature});
-
-    measurements.emplace_back(mMetaData, 
-        core::SignalType::NOX_INDEX,
-        core::DataPoint{timeStamp, noxIndex});
-
+    measurements.emplace_back(mMetaData, core::SignalType::NOX_INDEX,
+                              core::DataPoint{timeStamp, noxIndex});
 
     return HighLevelError::NoError;
 }
@@ -54,17 +50,8 @@ uint16_t Svm4x::initializationStep() {
         return error;
     }
 
-    size_t actualLen = strlen((const char*)serialNumber);
-    size_t numBytesToCopy = min(8, (int)actualLen);
-
-    uint64_t sensorID = 0;
-    for (int i = 0; i < numBytesToCopy - 1; i++) {
-        sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
-        sensorID = sensorID << 8;
-    }
-    sensorID |= serialNumber[actualLen - 1];
-
-    mMetaData.deviceID = sensorID;
+    mMetaData.deviceID = extractSensorId(
+        reinterpret_cast<const int8_t*>(serialNumber), serialNumberSize);
 
     // Start Measurement
     return mDriver.startMeasurement();
@@ -99,4 +86,4 @@ bool Svm4x::probe() {
 void* Svm4x::getDriver() {
     return reinterpret_cast<void*>(&mDriver);
 }
-} // namespace sensirion::upt::i2c_autodetect 
+}  // namespace sensirion::upt::i2c_autodetect
