@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "Sensirion_UPT_Core.h"
 #include <vector>
+#include <string.h>
 
 namespace sensirion::upt::i2c_autodetect{
 
@@ -132,6 +133,26 @@ class ISensor {
      * @return true if sensor is responding properly, false otherwise.
      */
     virtual bool probe() = 0;
+
+    /**
+     * @brief Extract a 64-bit sensor ID from a serial number string.
+     *
+     * @param serialNumber The serial number as an array of characters.
+     * @param maxLen The maximum length of the serial number array.
+     * @return The extracted 64-bit sensor ID.
+     */
+    static uint64_t extractSensorId(const int8_t* serialNumber, size_t maxLen) {
+        const size_t actualLen =
+            strnlen(reinterpret_cast<const char*>(serialNumber), maxLen);
+        const size_t numBytesToCopy = min(static_cast<size_t>(8), actualLen);
+        uint64_t sensorID = 0;
+        for (size_t i = 0; i < numBytesToCopy - 1; i++) {
+            sensorID |= (serialNumber[actualLen - numBytesToCopy + i]);
+            sensorID = sensorID << 8;
+        }
+        sensorID |= serialNumber[actualLen - 1];
+        return sensorID;
+    }
 };
 } // namespace sensirion::upt::i2c_autodetect 
 

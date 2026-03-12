@@ -87,17 +87,7 @@ uint16_t Sen68::initializationStep() {
     if (error) {
         return error;
     }
-    const size_t actualLen =
-        strlen(reinterpret_cast<const char*>(serialNumber));
-    const size_t numBytesToCopy = min(8, static_cast<int>(actualLen));
-    uint64_t sensorID = 0;
-    for (int i = 0; i < numBytesToCopy - 1; i++) {
-        sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
-        sensorID = sensorID << 8;
-    }
-    sensorID |= serialNumber[actualLen - 1];
-
-    mMetaData.deviceID = sensorID;
+    mMetaData.deviceID = extractSensorId(serialNumber, serialNumberSize);
 
     // Start Measurement
     error = mDriver.startContinuousMeasurement();

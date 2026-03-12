@@ -43,24 +43,14 @@ uint16_t Sfa3x::initializationStep() {
         return error;
     }
 
+    // Get sensor unique ID (last 8 chars of serial no.)
     constexpr uint8_t serialNumberSize = 32;
     int8_t serialNumber[serialNumberSize];
     error = mDriver.getDeviceMarking(serialNumber, serialNumberSize);
     if (error) {
         return error;
     }
-    const size_t actualLen =
-        strlen(reinterpret_cast<const char*>(serialNumber));
-    const size_t numBytesToCopy = min(8, static_cast<int>(actualLen));
-
-    uint64_t sensorID = 0;
-    for (int i = 0; i < numBytesToCopy - 1; i++) {
-        sensorID |= (serialNumber[actualLen - numBytesToCopy - 1 + i]);
-        sensorID = sensorID << 8;
-    }
-    sensorID |= serialNumber[actualLen - 1];
-
-    mMetadata.deviceID = sensorID;
+    mMetadata.deviceID = extractSensorId(serialNumber, serialNumberSize);
 
     error = mDriver.startContinuousMeasurement();
     return error;

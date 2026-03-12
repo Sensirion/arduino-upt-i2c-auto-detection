@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for SEN63C, SEN65 and SEN68 sensors.
 - Automatic detection of SEN63C, SEN65 and SEN68 via the `DefaultI2cDetector`.
 
+### Changed
+
+- Refactored sensor ID extraction logic into a shared method in `ISensor`.
+- Replaced `strlen` with `strnlen` for safer string length calculation in sensor ID extraction.
+
 ## [3.0.2]
 
 ### Changed
