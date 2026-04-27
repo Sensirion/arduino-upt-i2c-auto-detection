@@ -120,15 +120,14 @@ uint8_t Sen66::getI2CAddress() const {
 };
 
 bool Sen66::probe() {
-    static constexpr int8_t SEN66[] = { 'S','E','N','6','6' };
-    static constexpr std::basic_string_view<int8_t> sen66 {SEN66, sizeof(SEN66)};
-
-    std::basic_string<int8_t> sensorNameStr(32, '\0');
+    constexpr uint8_t sensorNameSize = 32;
+    int8_t sensorName[sensorNameSize] = {0};
     // reset device before probing
     mDriver.deviceReset();
-    const uint16_t error =
-        mDriver.getProductName(sensorNameStr.data(), sensorNameStr.capacity());
-    return !error && std::basic_string_view<int8_t>(sensorNameStr.data()) == sen66;
+    const uint16_t error = mDriver.getProductName(sensorName, sensorNameSize);
+    return !error &&
+           strncmp(reinterpret_cast<const char*>(sensorName), "SEN66",
+                   sensorNameSize) == 0;
 }
 
 void* Sen66::getDriver() {

@@ -158,13 +158,14 @@ uint16_t Sen5x::_determineSensorVersion() {
         return error;
     }
 
-    if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50") == 0) {
+    if (strncmp(reinterpret_cast<const char*>(sensorNameStr), "SEN50",
+                sensorNameSize) == 0) {
         mMetadata.deviceType = core::SEN50();
-    } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54") ==
-               0) {
+    } else if (strncmp(reinterpret_cast<const char*>(sensorNameStr), "SEN54",
+                       sensorNameSize) == 0) {
         mMetadata.deviceType = core::SEN54();
-    } else if (strcmp(reinterpret_cast<const char*>(sensorNameStr), "SEN55") ==
-               0) {
+    } else if (strncmp(reinterpret_cast<const char*>(sensorNameStr), "SEN55",
+                       sensorNameSize) == 0) {
         mMetadata.deviceType = core::SEN55();
     } else {
         mMetadata.deviceType = core::SEN5X();
