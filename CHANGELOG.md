@@ -5,15 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.1.0]
 
 ### Added
-
-- Add support for SEN63C, SEN65 and SEN68 sensors.
-- Automatic detection of SEN63C, SEN65 and SEN68 via the `DefaultI2cDetector`.
+- Add support for SEN62, SEN63C, SEN65, SEN68 and SEN69C sensors.
+- Automatic detection for all SEN6x variants via the `DefaultI2cDetector`.
 
 ### Changed
-
 - Refactored sensor ID extraction logic into a shared method in `ISensor`.
 - Replaced `strlen` with `strnlen` for safer string length calculation in sensor ID extraction.
 

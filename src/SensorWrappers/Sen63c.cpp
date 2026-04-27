@@ -111,12 +111,14 @@ uint8_t Sen63c::getI2CAddress() const {
 };
 
 bool Sen63c::probe() {
-    std::basic_string<int8_t> sensorNameStr(32, '\0');
+    constexpr uint8_t sensorNameSize = 32;
+    int8_t sensorName[sensorNameSize] = {0};
     // reset device before probing
     mDriver.deviceReset();
-    const uint16_t error =
-        mDriver.getProductName(sensorNameStr.data(), sensorNameStr.capacity());
-    return !error && sensorNameStr == reinterpret_cast<const int8_t*>("SEN63C");
+    const uint16_t error = mDriver.getProductName(sensorName, sensorNameSize);
+    return !error &&
+           strncmp(reinterpret_cast<const char*>(sensorName), "SEN63C",
+                   sensorNameSize) == 0;
 }
 
 void* Sen63c::getDriver() {
