@@ -71,7 +71,7 @@ class I2CAutoDetector : public IAutoDetector {
 
     
 
-    /// Helper funciton to implement the initialisation of the detection table
+    /// Helper function to implement the initialisation of the detection table
     ///
     /// Required for fold expression
     /// @tparam T The type of the SensorMapping to be constructed.
