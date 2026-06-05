@@ -22,7 +22,7 @@ uint16_t Sen63c::measureAndWrite(MeasurementList& measurements,
     float massConcentrationPm10p0 = 0.0;
     float humidity = 0.0;
     float temperature = 0.0;
-    uint16_t co2 = 0.0;
+    int16_t co2 = 0.0;
 
     error = mDriver.readMeasuredValues(
         massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
@@ -111,14 +111,14 @@ uint8_t Sen63c::getI2CAddress() const {
 };
 
 bool Sen63c::probe() {
-    constexpr uint8_t sensorNameSize = 32;
-    int8_t sensorName[sensorNameSize] = {0};
+    constexpr uint8_t productTypeSize = 32;
+    int8_t productType[productTypeSize] = {0};
     // reset device before probing
     mDriver.deviceReset();
-    const uint16_t error = mDriver.getProductName(sensorName, sensorNameSize);
-    return !error &&
-           strncmp(reinterpret_cast<const char*>(sensorName), "SEN63C",
-                   sensorNameSize) == 0;
+    const uint16_t error = mDriver.getProductType(productType, productTypeSize);
+    uint32_t productTypeNum =
+        strtoul(reinterpret_cast<const char*>(productType), nullptr, 16);
+    return !error && productTypeNum == 0x00085700;
 }
 
 void* Sen63c::getDriver() {

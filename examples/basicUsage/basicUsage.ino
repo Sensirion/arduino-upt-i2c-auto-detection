@@ -27,9 +27,9 @@ void setup() {
     
     Serial.begin(115200);
 
-    int sda_pin = 21;  // Default on esp32 boards
-    int scl_pin = 22;
-    Wire.begin(sda_pin, scl_pin);
+    constexpr int sdaPin = 21;  // Default on esp32 boards
+    constexpr int sclPin = 22;
+    Wire.begin(sdaPin, sclPin);
 
     maxNumSensors = DefaultI2cDetector::CONFIGURED_SENSORS;
     pCurrentData = new const ISensor::MeasurementList* [maxNumSensors] { nullptr };

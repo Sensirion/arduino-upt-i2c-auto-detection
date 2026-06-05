@@ -120,14 +120,14 @@ uint8_t Sen69c::getI2CAddress() const {
 };
 
 bool Sen69c::probe() {
-    constexpr uint8_t sensorNameSize = 32;
-    int8_t sensorName[sensorNameSize] = {0};
+    constexpr uint8_t productTypeSize = 32;
+    int8_t productType[productTypeSize] = {0};
     // reset device before probing
     mDriver.deviceReset();
-    const uint16_t error = mDriver.getProductName(sensorName, sensorNameSize);
-    return !error &&
-           strncmp(reinterpret_cast<const char*>(sensorName), "SEN69C",
-                   sensorNameSize) == 0;
+    const uint16_t error = mDriver.getProductType(productType, productTypeSize);
+    uint32_t productTypeNum =
+        strtoul(reinterpret_cast<const char*>(productType), nullptr, 16);
+    return !error && productTypeNum == 0x00085900;
 }
 
 void* Sen69c::getDriver() {
