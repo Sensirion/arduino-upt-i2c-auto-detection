@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1]
+
+### Changed
+- Update all SEN6x driver dependencies to the latest release
+
+### Fixed
+- Use product type for probing instead of sensor name, since sensor name is not
+  always consistent and causes probing to fail on some samples.
+
 ## [3.1.0]
 
 ### Added
